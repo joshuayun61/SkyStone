@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -12,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class autonomousCommands extends LinearOpMode {
 
-    hardware myHardware = new hardware();
+    hardware myHardware;
 
     DcMotor BR;
     DcMotor BL;
@@ -22,7 +24,23 @@ public class autonomousCommands extends LinearOpMode {
     Orientation angles;
     Acceleration gravity;
 
-    public autonomousCommands() {
+    public void runOpMode(){
+
+    }
+
+    /**
+     * Create instance of hardware class with correct telemetry + hardwareMap obj
+     * Initialize the hardware variables from the hardware class (motors, IMU, servos, etc.)
+     * Set own local telemetry obj to one that is used in the auto/teleop class.
+     * @param telemetry
+     * @param hardwareMap
+     */
+    public autonomousCommands(Telemetry telemetry, HardwareMap hardwareMap) {
+
+        this.telemetry = telemetry;
+        this.hardwareMap = hardwareMap;
+
+        myHardware = new hardware(telemetry, hardwareMap);
 
         myHardware.setupMotors();
         myHardware.setupIMU();
@@ -32,13 +50,6 @@ public class autonomousCommands extends LinearOpMode {
         FL = myHardware.FL;
         FR = myHardware.FR;
         imu = myHardware.imu;
-
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        gravity  = imu.getGravity();
-    }
-
-    public void runOpMode(){
-
     }
 
     /**

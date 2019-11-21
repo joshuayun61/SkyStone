@@ -23,7 +23,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
 
-@Autonomous(name = "autonomous", group = "Linear OpMode")
+@Autonomous(name = "Autonomous", group = "Linear OpMode")
 
 public class autonomous extends LinearOpMode {
 
@@ -31,38 +31,22 @@ public class autonomous extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //Initialize Classes that have majority of the methods.
-        tfod vision  = new tfod();
+        TensorMethods vision  = new TensorMethods(telemetry, hardwareMap);
+        autonomousCommands commands = new autonomousCommands(telemetry, hardwareMap);
 
-        autonomousCommands commands = new autonomousCommands();
-
+        vision.setup();
+        //autonomousCommands commands = new autonomousCommands();
         while(!opModeIsActive()) {
             vision.runTfod();
         }
-
         if (opModeIsActive()) {
+
             vision.stopTfod();
-            while (opModeIsActive()) {
-                if (vision.skyStoneLocation == 1) {
 
-                } else if (vision.skyStoneLocation == 2) {
-
-                } else {
-
-                }
-                telemetry.update();
-            }
+            while (opModeIsActive()) {}
         }
     }
 
-    private void skyStoneLeft() {
 
-    }
-
-    private void skyStoneRight() {
-
-    }
-
-    private void skyStoneMiddle() {
-
-    }
 }
+

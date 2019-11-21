@@ -7,12 +7,9 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
@@ -21,9 +18,22 @@ public class hardware extends LinearOpMode {
     DcMotor FL,FR,BR,BL;
     BNO055IMU imu;
 
-    public void runOpMode() {
+    @Override
+    public void runOpMode() {}
 
+    /**
+     * Passes the parameters from autonomous so to have a unified telemetry and hardware mapping stemming from autonomous/teleop
+     * @param telemetry passing autonomous/teleop telemetry obj because that is the only one that can be used with the program while the autonomous/teleop program is running.
+     * @param hardwareMap passing autonomous/teleop hardware mapping obj because that is the only one that can be used with the program while the autonomous/teleop program is running.
+     */
+    public hardware(Telemetry telemetry, HardwareMap hardwareMap) {
+        this.telemetry = telemetry;
+        this.hardwareMap = hardwareMap;
     }
+
+    /**
+     * Initializes hardwareMapping for the motors in the program, and reverses the correct ones (Left in this case)
+     */
     public void setupMotors () {
         //Hardware Map with port on rev hub
         FL = hardwareMap.get(DcMotor.class, "FL"); // 1 fl
@@ -36,6 +46,9 @@ public class hardware extends LinearOpMode {
         FL.setDirection(DcMotor.Direction.REVERSE);
     }
 
+    /**
+     * Setup IMU (Inertial Mass Unit) with the correct parameters and hardwareMapping for use in the autnomous commands.
+     */
     public void setupIMU() {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode                = BNO055IMU.SensorMode.IMU; // added new
