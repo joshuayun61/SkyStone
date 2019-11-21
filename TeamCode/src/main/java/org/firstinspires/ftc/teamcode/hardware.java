@@ -20,9 +20,6 @@ public class hardware extends LinearOpMode {
 
     DcMotor FL,FR,BR,BL;
     BNO055IMU imu;
-    Orientation angles;
-    Acceleration gravity;
-    double facing;
 
     public void runOpMode() {
 
@@ -54,8 +51,6 @@ public class hardware extends LinearOpMode {
 
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
-
-        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         imu.initialize(parameters);
 
