@@ -110,7 +110,7 @@ public class autonomousCommands extends LinearOpMode {
      * Gets a new orientation, finds the change in angle from the older orientation.
      * @return Returns the change in angle from the starting point of when the angles were last reset (During reset it is set to 0)
      */
-    public double currentRelativeAngle(){
+    public double currentRelativeAngle() {
         Orientation newAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         double changeInAngle = newAngles.firstAngle - angles.firstAngle;
