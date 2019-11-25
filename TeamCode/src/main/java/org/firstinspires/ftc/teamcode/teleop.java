@@ -14,27 +14,36 @@ public class teleop extends LinearOpMode {
         hardware.setupMotors();
         //hardware.setupServos();
 
-        /*DcMotor FL = hardware.FL;
+        DcMotor FL = hardware.FL;
         DcMotor FR = hardware.FR;
         DcMotor BL = hardware.BL;
-        DcMotor BR = hardware.BR;*/
-        DcMotor Slide = hardware.Slide;
-        Servo intake = hardware.intake;
+        DcMotor BR = hardware.BR;
+        //DcMotor Slide = hardware.Slide;
+        BR.setDirection(DcMotor.Direction.REVERSE);
+        FR.setDirection(DcMotor.Direction.REVERSE);
+        /*Servo intake = hardware.intake;
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);*/
 
         int position = 0;
 
         waitForStart();
 
         while(opModeIsActive()) {
-            /*FL.setPower(gamepad1.right_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x);
+
+            if(gamepad1.right_bumper){
+                FL.setPower((gamepad1.right_stick_y + gamepad1.right_stick_x - gamepad1.left_stick_x)/2);
+                FR.setPower((gamepad1.right_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x)/2);
+                BL.setPower((gamepad1.right_stick_y + gamepad1.right_stick_x - gamepad1.left_stick_x)/2);
+                BR.setPower((gamepad1.right_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x)/2);
+            }
+            FL.setPower(gamepad1.right_stick_y - gamepad1.right_stick_x - gamepad1.left_stick_x);
             FR.setPower(gamepad1.right_stick_y + gamepad1.right_stick_x + gamepad1.left_stick_x);
             BL.setPower(gamepad1.right_stick_y + gamepad1.right_stick_x - gamepad1.left_stick_x);
-            BR.setPower(gamepad1.right_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x);*/
+            BR.setPower(gamepad1.right_stick_y - gamepad1.right_stick_x + gamepad1.left_stick_x);
 
-            if (gamepad1.dpad_up) {
+            /*if (gamepad1.dpad_up) {
                 position += 3;
                 Slide.setTargetPosition(position);
                 Slide.setPower(0.5);
@@ -44,14 +53,14 @@ public class teleop extends LinearOpMode {
                 position -= 3;
                 Slide.setTargetPosition(position);
                 Slide.setPower(0.5);
-            }
+            }*/
 
-            if (gamepad1.x) {
+            /*if (gamepad1.x) {
                 intake.setPosition(0.5);
             }
             if (gamepad1.y) {
                 intake.setPosition(1);
-            }
+            }*/
         }
     }
 }
