@@ -45,8 +45,8 @@ public class hardware extends LinearOpMode {
         //Slide = hardwareMap.get(DcMotor.class, "Slide");
 
         //Motor Reversals
-        //BR.setDirection(DcMotor.Direction.REVERSE);
-        //FR.setDirection(DcMotor.Direction.REVERSE);
+        BR.setDirection(DcMotor.Direction.REVERSE);
+        FR.setDirection(DcMotor.Direction.REVERSE);
     }
 
     /**
