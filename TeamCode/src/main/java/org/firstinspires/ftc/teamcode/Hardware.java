@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
-public class hardware extends LinearOpMode {
+public class Hardware extends LinearOpMode {
 
     DcMotor FL,FR,BR,BL, Slide;
     Servo intake;
@@ -24,24 +24,32 @@ public class hardware extends LinearOpMode {
     public void runOpMode() {}
 
     /**
-     * Passes the parameters from autonomous so to have a unified telemetry and hardware mapping stemming from autonomous/teleop
-     * @param telemetry passing autonomous/teleop telemetry obj because that is the only one that can be used with the program while the autonomous/teleop program is running.
-     * @param hardwareMap passing autonomous/teleop hardware mapping obj because that is the only one that can be used with the program while the autonomous/teleop program is running.
+     * Passes the parameters from Autonomous so to have a unified telemetry and Hardware mapping stemming from Autonomous/teleop
+     * @param telemetry passing Autonomous/teleop telemetry obj because that is the only one that can be used with the program while the Autonomous/teleop program is running.
+     * @param hardwareMap passing Autonomous/teleop Hardware mapping obj because that is the only one that can be used with the program while the Autonomous/teleop program is running.
      */
-    public hardware(Telemetry telemetry, HardwareMap hardwareMap) {
+    public Hardware(Telemetry telemetry, HardwareMap hardwareMap) {
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
+    }
+
+
+    public void setup() {
+        setupIMU();
+        setupMotors();
+        setupServos();
     }
 
     /**
      * Initializes hardwareMapping for the motors in the program, and reverses the correct ones (Left in this case)
      */
     public void setupMotors () {
+
         //Hardware Map with port on rev hub
-        FL = hardwareMap.get(DcMotor.class, "FL"); // 1 fl
-        FR = hardwareMap.get(DcMotor.class, "BR"); // 3 fr
-        BL = hardwareMap.get(DcMotor.class, "BL"); // 0 bl
-        BR = hardwareMap.get(DcMotor.class, "FR"); // 2 Br
+        FL = hardwareMap.get(DcMotor.class, "FL"); //
+        FR = hardwareMap.get(DcMotor.class, "BR"); //
+        BL = hardwareMap.get(DcMotor.class, "BL"); //
+        BR = hardwareMap.get(DcMotor.class, "FR"); //
         Slide = hardwareMap.get(DcMotor.class, "Slide");
 
         //Motor Reversals
@@ -54,7 +62,7 @@ public class hardware extends LinearOpMode {
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        //Slide will be ready for encoders all the time, while the wheels will only in autonomous
+        //Slide will be ready for encoders all the time, while the wheels will only in Autonomous
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -85,7 +93,7 @@ public class hardware extends LinearOpMode {
     }
 
     /**
-     * Setting up the hardware for the servos
+     * Setting up the Hardware for the servos
      */
     public void setupServos() {
         intake = hardwareMap.get(Servo.class, "intake");

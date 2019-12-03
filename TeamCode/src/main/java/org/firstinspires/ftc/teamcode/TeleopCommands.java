@@ -1,42 +1,34 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import java.util.Locale;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-import android.app.Activity;
-import android.view.View;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
-@TeleOp(name="Temporary Mecanum Drive")
+public class TeleopCommands extends LinearOpMode {
 
-public class TeleOPTemp extends OpMode
-{
     DcMotor FL, FR, BR, BL, Slide;
-    
+
     BNO055IMU imu;
-    Orientation angles, originalAngles; 
+    Orientation angles, originalAngles;
     Acceleration gravity;
 
-    @Override
-    public void init() {
+    Gamepad gamepad;
 
-        //Instantiate local class instances
-        hardware hardware = new hardware(telemetry, hardwareMap);
-        hardware.setupMotors();
-        hardware.setupIMU();
-        //hardware.setupServos();
+    public TeleopCommands(Telemetry telemetry, HardwareMap hardwaremap, Gamepad inputGamepad) {
+        gamepad = inputGamepad;
+        this.telemetry = telemetry;
+        this.hardwareMap = hardwaremap;
+        Hardware hardware = new Hardware(telemetry, hardwaremap);
+        hardware.setup();
 
         FL = hardware.FL;
         FR = hardware.FR;
@@ -44,20 +36,18 @@ public class TeleOPTemp extends OpMode
         BR = hardware.BR;
         Slide = hardware.Slide;
 
-
-
         imu = hardware.imu;
     }
 
-
-   
     @Override
-    public void loop() {
-        
+    public void runOpMode() throws InterruptedException {}
+
+
+    public void Mecanum() {
         double drive    = gamepad1.right_stick_y;
         double strafe   = -gamepad1.right_stick_x;
         double spin     = -gamepad1.left_stick_x;
-        
+
         if(gamepad1.right_bumper)
         {
             FL.setPower((drive + strafe + spin)/3);
@@ -65,36 +55,21 @@ public class TeleOPTemp extends OpMode
             BL.setPower((drive - strafe + spin)/3);
             BR.setPower((drive + strafe - spin)/3);
         }
-        else 
+        else
         {
             FL.setPower(drive + strafe + spin);
             FR.setPower(drive - strafe - spin);
             BL.setPower(drive - strafe + spin);
             BR.setPower(drive + strafe - spin);
         }
-        if(gamepad1.y)
-        {
-            turnToAngle(180,.7);
-        }
-        if(gamepad1.a)
-        {
-            Slide.setTargetPosition(Slide.getCurrentPosition() + 3);
-            Slide.setPower(.4);
-            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-        if(gamepad1.b)
-        {
-            Slide.setTargetPosition(Slide.getCurrentPosition() - 3);
-            Slide.setPower(.4);
-            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
     }
-    
+
+
     /**
      * Resets the measurments so that they are starting from 0, useful if you only want to turn relative to current location,
      * rather than having to remeber the original location of the robot.
      */
-    public void resetAngle(){
+    public void resetAngle() {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 
@@ -102,7 +77,7 @@ public class TeleOPTemp extends OpMode
      * Checks which direction to move in,
      */
     public void turnToAngle(int angle, double power) {
-        
+
         //          0
         //  90              -90
         //         180
@@ -111,14 +86,14 @@ public class TeleOPTemp extends OpMode
         BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        
+
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         resetAngle();
-        
+
         telemetry.addData("After Reset: ", currentRelativeAngle());
         telemetry.addData("Heading input: ", angle);
 
@@ -126,7 +101,7 @@ public class TeleOPTemp extends OpMode
 
         //added a special to check if the entered angle is 180,
         //because this will be the most used angle, so it must work best
-        
+
         if(angle == 180)
         {
             left =  power;
@@ -147,51 +122,51 @@ public class TeleOPTemp extends OpMode
                 while (currentRelativeAngle() < 0) {}
             }
         } else {
-            
-        //Turns based on angle set at desired power while currentAngle is not matching the target angle.
-        if (angle < 0) {
-            left = -power;
-            right = power;
-            FL.setPower(left);
-            BL.setPower(left);
-            FR.setPower(right);
-            BR.setPower(right);
-            while (angle < currentRelativeAngle()) {}
-            
-            if(currentRelativeAngle() < angle-1)
-            {
-                left =  .2;
-                right = -.2;
+
+            //Turns based on angle set at desired power while currentAngle is not matching the target angle.
+            if (angle < 0) {
+                left = -power;
+                right = power;
                 FL.setPower(left);
                 BL.setPower(left);
                 FR.setPower(right);
                 BR.setPower(right);
-                while (currentRelativeAngle() < angle-1) {}
+                while (angle < currentRelativeAngle()) {}
+
+                if(currentRelativeAngle() < angle-1)
+                {
+                    left =  .2;
+                    right = -.2;
+                    FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(right);
+                    BR.setPower(right);
+                    while (currentRelativeAngle() < angle-1) {}
+                }
             }
-        }
-        else if (angle > 0) {
-            left =  power;
-            right = -power;
-            FL.setPower(left);
-            BL.setPower(left);
-            FR.setPower(right);
-            BR.setPower(right);
-            while (angle > currentRelativeAngle()) {}
-            
-            if(currentRelativeAngle() > angle+1)
-            {
-                left =  -.2;
-                right = .2;
+            else if (angle > 0) {
+                left =  power;
+                right = -power;
                 FL.setPower(left);
                 BL.setPower(left);
                 FR.setPower(right);
                 BR.setPower(right);
-                while (currentRelativeAngle() > angle+1) {}
+                while (angle > currentRelativeAngle()) {}
+
+                if(currentRelativeAngle() > angle+1)
+                {
+                    left =  -.2;
+                    right = .2;
+                    FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(right);
+                    BR.setPower(right);
+                    while (currentRelativeAngle() > angle+1) {}
+                }
             }
-        }
-        else {
-            return;
-        }
+            else {
+                return;
+            }
         }
 
         //Set power to 0 after the turning
@@ -199,11 +174,11 @@ public class TeleOPTemp extends OpMode
         BL.setPower(0);
         FR.setPower(0);
         BR.setPower(0);
-        
+
         telemetry.addData("Final Heading", currentRelativeAngle());
 
         resetAngle();
-        
+
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -227,18 +202,4 @@ public class TeleOPTemp extends OpMode
 
         return changeInAngle;
     }
-
-    
-    @Override
-    public void stop() {
-    }
-    
-    String formatAngle(AngleUnit angleUnit, double angle) {
-        return formatDegrees(AngleUnit.DEGREES.fromUnit(angleUnit, angle));
-    }
-
-    String formatDegrees(double degrees){
-        return String.format(Locale.getDefault(), "%.1f", AngleUnit.DEGREES.normalize(degrees));
-    }
-
 }

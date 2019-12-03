@@ -12,9 +12,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-public class autonomousCommands extends LinearOpMode {
+public class AutoCommands extends LinearOpMode {
 
-    hardware myHardware;
+    Hardware myHardware;
 
     DcMotor BR;
     DcMotor BL;
@@ -29,18 +29,18 @@ public class autonomousCommands extends LinearOpMode {
     }
 
     /**
-     * Create instance of hardware class with correct telemetry + hardwareMap obj
-     * Initialize the hardware variables from the hardware class (motors, IMU, servos, etc.)
+     * Create instance of Hardware class with correct telemetry + hardwareMap obj
+     * Initialize the Hardware variables from the Hardware class (motors, IMU, servos, etc.)
      * Set own local telemetry obj to one that is used in the auto/teleop class.
      * @param telemetry
      * @param hardwareMap
      */
-    public autonomousCommands(Telemetry telemetry, HardwareMap hardwareMap) {
+    public AutoCommands(Telemetry telemetry, HardwareMap hardwareMap) {
 
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
 
-        myHardware = new hardware(telemetry, hardwareMap);
+        myHardware = new Hardware(telemetry, hardwareMap);
 
         myHardware.setupMotors();
         myHardware.setupIMU();
