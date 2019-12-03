@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Autonomous", group = "Linear OpMode")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Auto", group = "Linear OpMode")
 
-public class Autonomous extends LinearOpMode {
+public class Auto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {

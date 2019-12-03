@@ -24,9 +24,9 @@ public class Hardware extends LinearOpMode {
     public void runOpMode() {}
 
     /**
-     * Passes the parameters from Autonomous so to have a unified telemetry and Hardware mapping stemming from Autonomous/teleop
-     * @param telemetry passing Autonomous/teleop telemetry obj because that is the only one that can be used with the program while the Autonomous/teleop program is running.
-     * @param hardwareMap passing Autonomous/teleop Hardware mapping obj because that is the only one that can be used with the program while the Autonomous/teleop program is running.
+     * Passes the parameters from Auto so to have a unified telemetry and Hardware mapping stemming from Auto/teleop
+     * @param telemetry passing Auto/teleop telemetry obj because that is the only one that can be used with the program while the Auto/teleop program is running.
+     * @param hardwareMap passing Auto/teleop Hardware mapping obj because that is the only one that can be used with the program while the Auto/teleop program is running.
      */
     public Hardware(Telemetry telemetry, HardwareMap hardwareMap) {
         this.telemetry = telemetry;
@@ -35,9 +35,11 @@ public class Hardware extends LinearOpMode {
 
 
     public void setup() {
+
         setupIMU();
         setupMotors();
         setupServos();
+
     }
 
     /**
@@ -62,7 +64,7 @@ public class Hardware extends LinearOpMode {
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        //Slide will be ready for encoders all the time, while the wheels will only in Autonomous
+        //Slide will be ready for encoders all the time, while the wheels will only in Auto
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -72,6 +74,7 @@ public class Hardware extends LinearOpMode {
      * Setup IMU (Inertial Mass Unit) with the correct parameters and hardwareMapping for use in the autnomous commands.
      */
     public void setupIMU() {
+
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode                = BNO055IMU.SensorMode.IMU; // added new
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;

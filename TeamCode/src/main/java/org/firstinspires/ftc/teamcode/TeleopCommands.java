@@ -21,10 +21,12 @@ public class TeleopCommands extends LinearOpMode {
     Orientation angles, originalAngles;
     Acceleration gravity;
 
-    Gamepad gamepad;
+    Gamepad gamepad1;
+    Gamepad gamepad2;
 
-    public TeleopCommands(Telemetry telemetry, HardwareMap hardwaremap, Gamepad inputGamepad) {
-        gamepad = inputGamepad;
+    public TeleopCommands(Telemetry telemetry, HardwareMap hardwaremap, Gamepad inputGamepad1, Gamepad inputGamepad2) {
+        gamepad1 = inputGamepad1;
+        gamepad2 = inputGamepad2;
         this.telemetry = telemetry;
         this.hardwareMap = hardwaremap;
         Hardware hardware = new Hardware(telemetry, hardwaremap);
@@ -43,7 +45,8 @@ public class TeleopCommands extends LinearOpMode {
     public void runOpMode() throws InterruptedException {}
 
 
-    public void Mecanum() {
+    public void mecanum() {
+
         double drive    = gamepad1.right_stick_y;
         double strafe   = -gamepad1.right_stick_x;
         double spin     = -gamepad1.left_stick_x;
@@ -61,6 +64,27 @@ public class TeleopCommands extends LinearOpMode {
             FR.setPower(drive - strafe - spin);
             BL.setPower(drive - strafe + spin);
             BR.setPower(drive + strafe - spin);
+        }
+    }
+
+    public void slideMotor() {
+
+        if (gamepad1.a) {
+            Slide.setTargetPosition(Slide.getCurrentPosition() + 3);
+            Slide.setPower(.4);
+            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        if (gamepad1.b) {
+            Slide.setTargetPosition(Slide.getCurrentPosition() - 3);
+            Slide.setPower(.4);
+            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+    }
+
+    public void turn180() {
+        if(gamepad1.y)
+        {
+            turnToAngle(180,.7);
         }
     }
 
