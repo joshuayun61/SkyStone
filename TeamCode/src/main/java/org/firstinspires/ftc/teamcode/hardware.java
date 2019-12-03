@@ -42,11 +42,22 @@ public class hardware extends LinearOpMode {
         FR = hardwareMap.get(DcMotor.class, "BR"); // 3 fr
         BL = hardwareMap.get(DcMotor.class, "BL"); // 0 bl
         BR = hardwareMap.get(DcMotor.class, "FR"); // 2 Br
-        //Slide = hardwareMap.get(DcMotor.class, "Slide");
+        Slide = hardwareMap.get(DcMotor.class, "Slide");
 
         //Motor Reversals
         BR.setDirection(DcMotor.Direction.REVERSE);
         FR.setDirection(DcMotor.Direction.REVERSE);
+
+        //Set all the motors to float in teleOp
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        //Slide will be ready for encoders all the time, while the wheels will only in autonomous
+        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
     }
 
     /**

@@ -23,7 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
 public class TeleOPTemp extends OpMode
 {
-    DcMotor FL, FR, BR, BL;
+    DcMotor FL, FR, BR, BL, Slide;
     
     BNO055IMU imu;
     Orientation angles, originalAngles; 
@@ -38,16 +38,13 @@ public class TeleOPTemp extends OpMode
         hardware.setupIMU();
         //hardware.setupServos();
 
-        DcMotor FL = hardware.FL;
-        DcMotor FR = hardware.FR;
-        DcMotor BL = hardware.BL;
-        DcMotor BR = hardware.BR;
-        //DcMotor Slide = hardware.Slide;
+        FL = hardware.FL;
+        FR = hardware.FR;
+        BL = hardware.BL;
+        BR = hardware.BR;
+        Slide = hardware.Slide;
 
-        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
 
         imu = hardware.imu;
     }
@@ -75,23 +72,22 @@ public class TeleOPTemp extends OpMode
             BL.setPower(drive - strafe + spin);
             BR.setPower(drive + strafe - spin);
         }
-        
-        
-        if(gamepad1.a)
-        {
-            turnToAngle(90,.7);
-        }
-        if(gamepad1.b)
-        {
-            turnToAngle(-90,.7);
-        }
         if(gamepad1.y)
         {
             turnToAngle(180,.7);
         }
-        
-        
-        
+        if(gamepad1.a)
+        {
+            Slide.setTargetPosition(Slide.getCurrentPosition() + 3);
+            Slide.setPower(.4);
+            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+        if(gamepad1.b)
+        {
+            Slide.setTargetPosition(Slide.getCurrentPosition() - 3);
+            Slide.setPower(.4);
+            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
     
     /**
