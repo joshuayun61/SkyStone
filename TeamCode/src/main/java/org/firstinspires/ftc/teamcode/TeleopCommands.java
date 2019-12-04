@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+
 public class TeleopCommands extends LinearOpMode {
 
     DcMotor FL, FR, BR, BL, Slide;
@@ -47,23 +48,26 @@ public class TeleopCommands extends LinearOpMode {
 
     public void mecanum() {
 
-        double drive    = gamepad1.right_stick_y;
-        double strafe   = -gamepad1.right_stick_x;
-        double spin     = -gamepad1.left_stick_x;
+        double drive    = -gamepad1.right_stick_y;
+        double strafe   = gamepad1.right_stick_x;
+        double spin     = gamepad1.left_stick_x;
 
         if(gamepad1.right_bumper)
         {
-            FL.setPower((drive + strafe + spin)/3);
-            FR.setPower((drive - strafe - spin)/3);
-            BL.setPower((drive - strafe + spin)/3);
-            BR.setPower((drive + strafe - spin)/3);
+
+            FL.setPower(-drive + strafe - spin);
+            FR.setPower(drive - strafe - spin);
+            BL.setPower(-drive - strafe - spin);
+            BR.setPower(drive + strafe - spin);
+
         }
         else
         {
-            FL.setPower(drive + strafe + spin);
-            FR.setPower(drive - strafe - spin);
-            BL.setPower(drive - strafe + spin);
-            BR.setPower(drive + strafe - spin);
+            FL.setPower((-drive + strafe - spin)/3);
+            FR.setPower((drive - strafe - spin)/3);
+            BL.setPower((-drive - strafe -
+                    spin)/3);
+            BR.setPower((drive + strafe - spin)/3);
         }
     }
 

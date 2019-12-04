@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Auto", group = "Linear OpMode")
+@Autonomous(name = "Auto", group = "Linear OpMode")
 
 public class Auto extends LinearOpMode {
 
@@ -18,7 +19,9 @@ public class Auto extends LinearOpMode {
         vuforia.addFieldObjects();
         vuforia.setFieldObjectLocations();
         vuforia.vuforiaSetup();
+
         //AutoCommands commands = new AutoCommands();
+
         while(!opModeIsActive()) {
         }
         if (opModeIsActive()) {
