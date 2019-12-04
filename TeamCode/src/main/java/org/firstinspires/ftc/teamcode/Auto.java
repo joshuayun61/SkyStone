@@ -13,17 +13,20 @@ public class Auto extends LinearOpMode {
         //Initialize Classes that have majority of the methods.
         TensorMethods vision  = new TensorMethods(telemetry, hardwareMap);
         AutoCommands commands = new AutoCommands(telemetry, hardwareMap);
+        VuforiaNavigation vuforia = new VuforiaNavigation(telemetry, hardwareMap);
 
-        vision.setup();
+        vuforia.addFieldObjects();
+        vuforia.setFieldObjectLocations();
+        vuforia.vuforiaSetup();
         //AutoCommands commands = new AutoCommands();
         while(!opModeIsActive()) {
-            vision.runTfod();
         }
         if (opModeIsActive()) {
 
-            vision.stopTfod();
-
-            while (opModeIsActive()) {}
+            while (opModeIsActive()) {
+                vuforia.vuforiaRun();
+            }
+            vuforia.vuforiaStop();
         }
     }
 }
