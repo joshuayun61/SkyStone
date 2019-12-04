@@ -94,7 +94,7 @@ public class ConceptVuforiaSkyStoneNavigation extends LinearOpMode {
     // NOTE: If you are running on a CONTROL HUB, with only one USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     //
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
-    private static final boolean PHONE_IS_PORTRAIT = false  ;
+    private static final boolean PHONE_IS_PORTRAIT = false;
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -280,6 +280,7 @@ public class ConceptVuforiaSkyStoneNavigation extends LinearOpMode {
         // The two examples below assume that the camera is facing forward out the front of the robot.
 
         // We need to rotate the camera around it's long axis to bring the correct camera forward.
+
         if (CAMERA_CHOICE == BACK) {
             phoneYRotate = -90;
         } else {
