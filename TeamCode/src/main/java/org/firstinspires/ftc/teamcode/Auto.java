@@ -12,24 +12,22 @@ public class Auto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         //Initialize Classes that have majority of the methods.
-        TensorMethods vision  = new TensorMethods(telemetry, hardwareMap);
-        AutoCommands commands = new AutoCommands(telemetry, hardwareMap);
-        VuforiaNavigation vuforia = new VuforiaNavigation(telemetry, hardwareMap);
+        //TensorMethods vision  = new TensorMethods(telemetry, hardwareMap);
+        //AutoCommands commands = new AutoCommands(telemetry, hardwareMap);
+        VuforiaNavigation vuforia = new VuforiaNavigation(hardwareMap, telemetry);
 
-        vuforia.addFieldObjects();
-        vuforia.setFieldObjectLocations();
-        vuforia.vuforiaSetup();
-
+        vuforia.setupVuforia();
         //AutoCommands commands = new AutoCommands();
 
         while(!opModeIsActive()) {
+
         }
         if (opModeIsActive()) {
 
             while (opModeIsActive()) {
-                vuforia.vuforiaRun();
+                vuforia.runVuforiaO();
             }
-            vuforia.vuforiaStop();
+            vuforia.stopVuforia();
         }
     }
 }
