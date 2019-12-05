@@ -24,9 +24,9 @@ public class Hardware extends LinearOpMode {
     public void runOpMode() {}
 
     /**
-     * Passes the parameters from Auto so to have a unified telemetry and Hardware mapping stemming from Auto/teleop
-     * @param telemetry passing Auto/teleop telemetry obj because that is the only one that can be used with the program while the Auto/teleop program is running.
-     * @param hardwareMap passing Auto/teleop Hardware mapping obj because that is the only one that can be used with the program while the Auto/teleop program is running.
+     * Passes the parameters from Autonomous12382 so to have a unified telemetry and Hardware mapping stemming from Autonomous12382/teleop
+     * @param telemetry passing Autonomous12382/teleop telemetry obj because that is the only one that can be used with the program while the Autonomous12382/teleop program is running.
+     * @param hardwareMap passing Autonomous12382/teleop Hardware mapping obj because that is the only one that can be used with the program while the Autonomous12382/teleop program is running.
      */
     public Hardware(Telemetry telemetry, HardwareMap hardwareMap) {
         this.telemetry = telemetry;
@@ -64,7 +64,7 @@ public class Hardware extends LinearOpMode {
         BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        //Slide will be ready for encoders all the time, while the wheels will only in Auto
+        //Slide will be ready for encoders all the time, while the wheels will only in Autonomous12382
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 

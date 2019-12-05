@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -14,15 +14,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class AutoCommands extends LinearOpMode {
 
-    Hardware myHardware;
+    private Hardware myHardware;
 
-    DcMotor BR;
-    DcMotor BL;
-    DcMotor FL;
-    DcMotor FR;
-    BNO055IMU imu;
-    Orientation angles;
-    Acceleration gravity;
+    private DcMotor FR,BR,FL,BL;
+    private Servo intake;
+    private BNO055IMU imu;
+    private Orientation angles;
 
     public void runOpMode(){
 
@@ -44,11 +41,15 @@ public class AutoCommands extends LinearOpMode {
 
         myHardware.setupMotors();
         myHardware.setupIMU();
+        myHardware.setupServos();
 
         BR = myHardware.BR;
         BL = myHardware.BL;
         FL = myHardware.FL;
         FR = myHardware.FR;
+
+        intake = myHardware.intake;
+
         imu = myHardware.imu;
     }
 
@@ -56,14 +57,14 @@ public class AutoCommands extends LinearOpMode {
      * Resets the measurments so that they are starting from 0, useful if you only want to turn relative to current location,
      * rather than having to remeber the original location of the robot.
      */
-    public void resetAngle(){
+    private void resetAngle(){
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 
     /**
      * Checks which direction to move in,
      */
-    public void turnToAngle(int angle, double power) {
+    private void turnToAngle(int angle, double power) {
 
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -82,7 +83,7 @@ public class AutoCommands extends LinearOpMode {
             BL.setPower(left);
             FR.setPower(right);
             BR.setPower(right);
-            while (angle > currentRelativeAngle()) {}
+            while (angle > currentRelativeAngle(1)) {}
         }
         else if (angle > 0) {
             left = -power;
@@ -91,7 +92,7 @@ public class AutoCommands extends LinearOpMode {
             BL.setPower(left);
             FR.setPower(right);
             BR.setPower(right);
-            while (angle < currentRelativeAngle()) {}
+            while (angle < currentRelativeAngle(1)) {}
         }
         else {
             return;
@@ -108,12 +109,27 @@ public class AutoCommands extends LinearOpMode {
 
     /**
      * Gets a new orientation, finds the change in angle from the older orientation.
+     * @param angleNumber Which angle to use for checking change, will change based on REV hub orientation.
      * @return Returns the change in angle from the starting point of when the angles were last reset (During reset it is set to 0)
      */
-    public double currentRelativeAngle() {
+    private double currentRelativeAngle(int angleNumber) {
         Orientation newAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
-        double changeInAngle = newAngles.firstAngle - angles.firstAngle;
+        double changeInAngle;
+
+        switch (angleNumber) {
+            case 1:
+                changeInAngle = newAngles.firstAngle - angles.firstAngle;
+                break;
+            case 2:
+                changeInAngle = newAngles.secondAngle - angles.secondAngle;
+                break;
+            case 3:
+                changeInAngle = newAngles.thirdAngle - angles.thirdAngle;
+                break;
+            default:
+                changeInAngle = 0;
+        }
 
         if (changeInAngle < -180){
             changeInAngle += 360;
@@ -124,39 +140,9 @@ public class AutoCommands extends LinearOpMode {
         return changeInAngle;
     }
 
+    public void strafe(double power, double inches) {
 
-    public void strafeLeft(double power, int distance){
-        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        BR.setTargetPosition(BR.getCurrentPosition() + distance);
-        BL.setTargetPosition(BL.getCurrentPosition() - distance);
-        FR.setTargetPosition(FR.getCurrentPosition() - distance);
-        FL.setTargetPosition(FL.getCurrentPosition() + distance);
-
-        BR.setPower(power);
-        BL.setPower(-power);
-        FR.setPower(power);
-        FL.setPower(-power);
-
-        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while(BR.isBusy() && BL.isBusy() && FL.isBusy() && FR.isBusy()){
-            telemetry.addData("Going to ", distance);
-            telemetry.addData("BR", BR.getCurrentPosition());
-            telemetry.addData("BL", BL.getCurrentPosition());
-            telemetry.addData("FR", FR.getCurrentPosition());
-            telemetry.addData("FL", FL.getCurrentPosition());
-            telemetry.update();
-        }
-    }
-
-    public void forward(double power, int distance){
+        int ticks = (int) inchesToTicks(inches);
 
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -168,13 +154,13 @@ public class AutoCommands extends LinearOpMode {
         FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        BR.setTargetPosition(BR.getCurrentPosition() + distance);
-        BL.setTargetPosition(BL.getCurrentPosition() + distance);
-        FR.setTargetPosition(FR.getCurrentPosition() + distance);
-        FL.setTargetPosition(FL.getCurrentPosition() + distance);
+        BR.setTargetPosition(BR.getCurrentPosition() + ticks);
+        BL.setTargetPosition(BL.getCurrentPosition() - ticks);
+        FR.setTargetPosition(FR.getCurrentPosition() - ticks);
+        FL.setTargetPosition(FL.getCurrentPosition() + ticks);
 
-        BR.setPower(-power);
-        BL.setPower(power);
+        BR.setPower(power);
+        BL.setPower(-power);
         FR.setPower(-power);
         FL.setPower(power);
 
@@ -183,8 +169,8 @@ public class AutoCommands extends LinearOpMode {
         FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while(BR.isBusy() && BL.isBusy() && FR.isBusy() && FL.isBusy()){
-            telemetry.addData("Going to ", distance);
+        while(BR.isBusy() && BL.isBusy() && FL.isBusy() && FR.isBusy()){
+            telemetry.addData("Going to ", ticks);
             telemetry.addData("BR", BR.getCurrentPosition());
             telemetry.addData("BL", BL.getCurrentPosition());
             telemetry.addData("FR", FR.getCurrentPosition());
@@ -198,41 +184,10 @@ public class AutoCommands extends LinearOpMode {
         telemetry.clear();
     }
 
-    public void strafe(double power, int distance){
-        //by default a strafe is left
-        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    public void forward(double power, double inches){
 
-        BR.setTargetPosition(BR.getCurrentPosition() - distance);
-        BL.setTargetPosition(BL.getCurrentPosition() + distance);
-        FR.setTargetPosition(FR.getCurrentPosition() + distance);
-        FL.setTargetPosition(FL.getCurrentPosition() - distance);
+        int ticks = (int) inchesToTicks(inches);
 
-        BR.setPower(power);
-        BL.setPower(power);
-        FR.setPower(power);
-        FL.setPower(power);
-
-        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        while(BR.isBusy() && BL.isBusy() && FL.isBusy() && FR.isBusy()) {
-            telemetry.addData("Going to ", distance);
-            telemetry.addData("BR", BR.getCurrentPosition());
-            telemetry.addData("BL", BL.getCurrentPosition());
-            telemetry.addData("FR", FR.getCurrentPosition());
-            telemetry.addData("FL", FL.getCurrentPosition());
-            telemetry.update();
-        }
-    }
-
-    public void spin(double power, int degrees){
-
-        int distance = (int)Math.round(25.7*degrees);
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -243,10 +198,10 @@ public class AutoCommands extends LinearOpMode {
         FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        BR.setTargetPosition(BR.getCurrentPosition() + distance);
-        BL.setTargetPosition(BL.getCurrentPosition() + distance);
-        FR.setTargetPosition(FR.getCurrentPosition() + distance);
-        FL.setTargetPosition(FL.getCurrentPosition() + distance);
+        BR.setTargetPosition(BR.getCurrentPosition() + ticks);
+        BL.setTargetPosition(BL.getCurrentPosition() + ticks);
+        FR.setTargetPosition(FR.getCurrentPosition() + ticks);
+        FL.setTargetPosition(FL.getCurrentPosition() + ticks);
 
         BR.setPower(power);
         BL.setPower(power);
@@ -259,7 +214,7 @@ public class AutoCommands extends LinearOpMode {
         FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         while(BR.isBusy() && BL.isBusy() && FR.isBusy() && FL.isBusy()){
-            telemetry.addData("Going to ", distance);
+            telemetry.addData("Going to ", ticks);
             telemetry.addData("BR", BR.getCurrentPosition());
             telemetry.addData("BL", BL.getCurrentPosition());
             telemetry.addData("FR", FR.getCurrentPosition());
@@ -271,5 +226,20 @@ public class AutoCommands extends LinearOpMode {
         FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.clear();
+    }
+
+    public long inchesToTicks(double inches) {
+        long ticks = 0;
+
+        ticks = Math.round((inches / (Math.PI * 3.937008)) * 537.6);
+
+        return ticks;
+    }
+
+    public void openServo() {
+        intake.setPosition(0.7);
+    }
+    public void closeServo() {
+        intake.setPosition(0.3);
     }
 }

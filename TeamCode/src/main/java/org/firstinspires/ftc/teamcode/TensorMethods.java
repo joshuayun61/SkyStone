@@ -28,7 +28,7 @@ public class TensorMethods extends LinearOpMode {
 
     /**
      * Setup for the telemetry and hardwaremappings since should only have 1 instance of telemetry being used between all the classes.
-     * @param telemetry Pass the telemetry object of the main Auto/teleop class to prevent conflict between the two during telemetry.add___()
+     * @param telemetry Pass the telemetry object of the main Autonomous12382/teleop class to prevent conflict between the two during telemetry.add___()
      * @param hardwareMap Same as above but for Hardware mapping
      */
     public TensorMethods(Telemetry telemetry, HardwareMap hardwareMap) {

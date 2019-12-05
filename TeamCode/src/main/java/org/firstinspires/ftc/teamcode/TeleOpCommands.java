@@ -7,25 +7,22 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 
-public class TeleopCommands extends LinearOpMode {
+public class TeleOpCommands extends LinearOpMode {
 
-    DcMotor FL, FR, BR, BL, Slide;
+    private DcMotor FL, FR, BR, BL, Slide;
+    private BNO055IMU imu;
+    private Orientation angles;
 
-    BNO055IMU imu;
-    Orientation angles, originalAngles;
-    Acceleration gravity;
+    private Gamepad gamepad1;
+    private Gamepad gamepad2;
 
-    Gamepad gamepad1;
-    Gamepad gamepad2;
-
-    public TeleopCommands(Telemetry telemetry, HardwareMap hardwaremap, Gamepad inputGamepad1, Gamepad inputGamepad2) {
+    TeleOpCommands(Telemetry telemetry, HardwareMap hardwaremap, Gamepad inputGamepad1, Gamepad inputGamepad2) {
         gamepad1 = inputGamepad1;
         gamepad2 = inputGamepad2;
         this.telemetry = telemetry;
@@ -43,10 +40,10 @@ public class TeleopCommands extends LinearOpMode {
     }
 
     @Override
-    public void runOpMode() throws InterruptedException {}
+    public void runOpMode() {}
 
 
-    public void mecanum() {
+    void mecanum() {
 
         double drive    = -gamepad1.right_stick_y;
         double strafe   = gamepad1.right_stick_x;
@@ -71,7 +68,7 @@ public class TeleopCommands extends LinearOpMode {
         }
     }
 
-    public void slideMotor() {
+    void slideMotor() {
 
         if (gamepad1.a) {
             Slide.setTargetPosition(Slide.getCurrentPosition() + 3);
@@ -85,7 +82,7 @@ public class TeleopCommands extends LinearOpMode {
         }
     }
 
-    public void turn180() {
+    void turn180() {
         if(gamepad1.y)
         {
             turnToAngle(180,.7);
@@ -97,14 +94,14 @@ public class TeleopCommands extends LinearOpMode {
      * Resets the measurments so that they are starting from 0, useful if you only want to turn relative to current location,
      * rather than having to remeber the original location of the robot.
      */
-    public void resetAngle() {
+    private void resetAngle() {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 
     /**
      * Checks which direction to move in,
      */
-    public void turnToAngle(int angle, double power) {
+    private void turnToAngle(int angle, double power) {
 
         //          0
         //  90              -90
@@ -217,7 +214,7 @@ public class TeleopCommands extends LinearOpMode {
      * Gets a new orientation, finds the change in angle from the older orientation.
      * @return Returns the change in angle from the starting point of when the angles were last reset (During reset it is set to 0)
      */
-    public double currentRelativeAngle() {
+    private double currentRelativeAngle() {
         Orientation newAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
         double changeInAngle = newAngles.firstAngle - angles.firstAngle;

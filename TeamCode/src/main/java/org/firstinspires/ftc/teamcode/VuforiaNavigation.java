@@ -54,39 +54,9 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
-/**
- * This 2019-2020 OpMode illustrates the basics of using the Vuforia localizer to determine
- * positioning and orientation of robot on the SKYSTONE FTC field.
- * The code is structured as a LinearOpMode
- *
- * When images are located, Vuforia is able to determine the position and orientation of the
- * image relative to the camera.  This sample code then combines that information with a
- * knowledge of where the target images are on the field, to determine the location of the camera.
- *
- * From the Audience perspective, the Red Alliance station is on the right and the
- * Blue Alliance Station is on the left.
 
- * Eight perimeter targets are distributed evenly around the four perimeter walls
- * Four Bridge targets are located on the bridge uprights.
- * Refer to the Field Setup manual for more specific location details
- *
- * A final calculation then uses the location of the camera on the robot to determine the
- * robot's location and orientation on the field.
- *
- * @see VuforiaLocalizer
- * @see VuforiaTrackableDefaultListener
- * see  skystone/doc/tutorial/FTC_FieldCoordinateSystemDefinition.pdf
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
- *
- * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
- * is explained below.
- */
+@TeleOp(name="Vuforia Abstracted", group ="")
 
-
-@TeleOp(name="SKYSTONE Vuforia Nav", group ="Concept")
-@Disabled
 public class VuforiaNavigation extends LinearOpMode {
 
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
@@ -97,8 +67,8 @@ public class VuforiaNavigation extends LinearOpMode {
 
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     // We will define some constants and conversions here
-    private static final float mmPerInch        = 25.4f;
-    private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
+    private static final float mmPerInch = 25.4f;
+    private static final float mmTargetHeight = (6) * mmPerInch;          // the height of the center of the target image above the floor
 
     // Constant for Stone Target
     private static final float stoneZ = 2.00f * mmPerInch;
@@ -112,15 +82,15 @@ public class VuforiaNavigation extends LinearOpMode {
 
     // Constants for perimeter targets
     private static final float halfField = 72 * mmPerInch;
-    private static final float quadField  = 36 * mmPerInch;
+    private static final float quadField = 36 * mmPerInch;
 
     // Class Members
     private OpenGLMatrix lastLocation = null;
     private VuforiaLocalizer vuforia = null;
-    private boolean targetVisible = false;
-    private float phoneXRotate    = 0;
-    private float phoneYRotate    = 0;
-    private float phoneZRotate    = 0;
+    public boolean targetVisible = false;
+    private float phoneXRotate = 0;
+    private float phoneYRotate = 0;
+    private float phoneZRotate = 0;
 
     List<VuforiaTrackable> allTrackables = null;
     VuforiaTrackables targetsSkyStone = null;
@@ -131,7 +101,9 @@ public class VuforiaNavigation extends LinearOpMode {
     }
 
 
-    @Override public void runOpMode() {}
+    @Override
+    public void runOpMode() {
+    }
 
 
     public void setupVuforia() {
@@ -259,7 +231,7 @@ public class VuforiaNavigation extends LinearOpMode {
         //
         // Create a transformation matrix describing where the phone is on the robot.
         //
-        // NOTE !!!!  It's very important that you turn OFF your phone's Auto-Screen-Rotation option.
+        // NOTE !!!!  It's very important that you turn OFF your phone's Autonomous12382-Screen-Rotation option.
         // Lock it into Portrait for these numbers to work.
         //
         // Info:  The coordinate frame for the robot looks the same as the field.
@@ -313,7 +285,7 @@ public class VuforiaNavigation extends LinearOpMode {
         targetsSkyStone.activate();
     }
 
-    public void runVuforiaO() {
+    public void searchVuforia() {
 
         // check all the trackable targets to see which one (if any) is visible.
         targetVisible = false;
@@ -331,21 +303,21 @@ public class VuforiaNavigation extends LinearOpMode {
                 break;
             }
         }
+    }
+
+    public VectorF locateVuforia() {
 
         // Provide feedback as to where the robot is located (if we know).
-        if (targetVisible) {
-            // express position (translation) of robot in inches.
-            VectorF translation = lastLocation.getTranslation();
-            telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                    translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+        // express position (translation) of robot in inches.
+        VectorF translation = lastLocation.getTranslation();
+        telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f", translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
 
-            // express the rotation of the robot in degrees.
-            Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-            telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-        } else {
-            telemetry.addData("Visible Target", "none");
-        }
+        // express the rotation of the robot in degrees.
+        Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+        telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+
         telemetry.update();
+        return translation;
     }
 
     public void stopVuforia() {
