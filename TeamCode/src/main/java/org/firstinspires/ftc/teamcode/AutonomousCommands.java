@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-public class AutoCommands extends LinearOpMode {
+public class AutonomousCommands extends LinearOpMode {
 
     private Hardware myHardware;
 
@@ -20,6 +20,7 @@ public class AutoCommands extends LinearOpMode {
     private Servo intake;
     private BNO055IMU imu;
     private Orientation angles;
+    private DcMotor[] driveMotors;
 
     public void runOpMode(){
 
@@ -32,7 +33,7 @@ public class AutoCommands extends LinearOpMode {
      * @param telemetry
      * @param hardwareMap
      */
-    public AutoCommands(Telemetry telemetry, HardwareMap hardwareMap) {
+    public AutonomousCommands(Telemetry telemetry, HardwareMap hardwareMap) {
 
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
@@ -43,10 +44,14 @@ public class AutoCommands extends LinearOpMode {
         myHardware.setupIMU();
         myHardware.setupServos();
 
+        DcMotor[] tempMotors = {myHardware.BR, myHardware.BL, myHardware.FR, myHardware.FL};
+
         BR = myHardware.BR;
         BL = myHardware.BL;
         FL = myHardware.FL;
         FR = myHardware.FR;
+
+        driveMotors = tempMotors;
 
         intake = myHardware.intake;
 
@@ -66,10 +71,9 @@ public class AutoCommands extends LinearOpMode {
      */
     private void turnToAngle(int angle, double power) {
 
-        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        for(DcMotor motor: driveMotors) {
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
 
         resetAngle();
 
@@ -144,15 +148,13 @@ public class AutoCommands extends LinearOpMode {
 
         int ticks = (int) inchesToTicks(inches);
 
-        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        for(DcMotor motor: driveMotors) {
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
 
-        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        for(DcMotor motor: driveMotors) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
 
         BR.setTargetPosition(BR.getCurrentPosition() + ticks);
         BL.setTargetPosition(BL.getCurrentPosition() - ticks);
@@ -164,10 +166,9 @@ public class AutoCommands extends LinearOpMode {
         FR.setPower(-power);
         FL.setPower(power);
 
-        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        for(DcMotor motor: driveMotors) {
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
 
         while(BR.isBusy() && BL.isBusy() && FL.isBusy() && FR.isBusy()){
             telemetry.addData("Going to ", ticks);
@@ -177,10 +178,9 @@ public class AutoCommands extends LinearOpMode {
             telemetry.addData("FL", FL.getCurrentPosition());
             telemetry.update();
         }
-        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        for(DcMotor motor: driveMotors) {
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
         telemetry.clear();
     }
 
@@ -188,15 +188,13 @@ public class AutoCommands extends LinearOpMode {
 
         int ticks = (int) inchesToTicks(inches);
 
-        BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        for(DcMotor motor: driveMotors) {
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
 
-        BR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        BL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        FL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        for(DcMotor motor: driveMotors) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
 
         BR.setTargetPosition(BR.getCurrentPosition() + ticks);
         BL.setTargetPosition(BL.getCurrentPosition() + ticks);
@@ -208,10 +206,9 @@ public class AutoCommands extends LinearOpMode {
         FR.setPower(power);
         FL.setPower(power);
 
-        BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        BL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        for(DcMotor motor: driveMotors) {
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
 
         while(BR.isBusy() && BL.isBusy() && FR.isBusy() && FL.isBusy()){
             telemetry.addData("Going to ", ticks);
@@ -221,10 +218,11 @@ public class AutoCommands extends LinearOpMode {
             telemetry.addData("FL", FL.getCurrentPosition());
             telemetry.update();
         }
-        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        for(DcMotor motor: driveMotors) {
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
         telemetry.clear();
     }
 

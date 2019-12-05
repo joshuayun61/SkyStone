@@ -12,17 +12,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import java.util.ArrayList;
+
 
 public class TeleOpCommands extends LinearOpMode {
 
-    private DcMotor FL, FR, BR, BL, Slide;
+    private DcMotor Slide;
     private BNO055IMU imu;
     private Orientation angles;
+    DcMotor FL, FR, BL, BR;
+
+    private DcMotor[] driveMotors = null;
 
     private Gamepad gamepad1;
     private Gamepad gamepad2;
 
     TeleOpCommands(Telemetry telemetry, HardwareMap hardwaremap, Gamepad inputGamepad1, Gamepad inputGamepad2) {
+
         gamepad1 = inputGamepad1;
         gamepad2 = inputGamepad2;
         this.telemetry = telemetry;
@@ -30,13 +36,17 @@ public class TeleOpCommands extends LinearOpMode {
         Hardware hardware = new Hardware(telemetry, hardwaremap);
         hardware.setup();
 
+        DcMotor[] motorsTemp = {hardware.FL, hardware.FR, hardware.BL, hardware.BR};
+        driveMotors = motorsTemp;
+
+        Slide = hardware.Slide;
+
+        imu = hardware.imu;
+
         FL = hardware.FL;
         FR = hardware.FR;
         BL = hardware.BL;
         BR = hardware.BR;
-        Slide = hardware.Slide;
-
-        imu = hardware.imu;
     }
 
     @Override
@@ -107,15 +117,13 @@ public class TeleOpCommands extends LinearOpMode {
         //  90              -90
         //         180
 
-        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        for (DcMotor motor : driveMotors) {
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
 
-        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        for (DcMotor motor : driveMotors) {
+          motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
 
         resetAngle();
 
@@ -204,10 +212,9 @@ public class TeleOpCommands extends LinearOpMode {
 
         resetAngle();
 
-        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        for (DcMotor motor : driveMotors) {
+           motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
     }
 
     /**

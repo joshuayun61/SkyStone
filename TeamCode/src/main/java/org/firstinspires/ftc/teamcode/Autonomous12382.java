@@ -12,7 +12,7 @@ public class Autonomous12382 extends LinearOpMode {
 
         //Initialize Classes that have majority of the methods.
         //TensorMethods vision  = new TensorMethods(telemetry, hardwareMap);
-        AutoCommands commands = new AutoCommands(telemetry, hardwareMap);
+        AutonomousCommands commands = new AutonomousCommands(telemetry, hardwareMap);
         VuforiaNavigation vuforia = new VuforiaNavigation(hardwareMap, telemetry);
 
         vuforia.setupVuforia();
@@ -25,7 +25,7 @@ public class Autonomous12382 extends LinearOpMode {
             while (opModeIsActive()) {
 
                 commands.forward(0.5, 18);
-                vuforia.searchVuforia();
+/*                vuforia.searchVuforia();
                 if (vuforia.targetVisible) {
                     commands.strafe(0.2, (int) vuforia.locateVuforia().get(0));
                     commands.openServo();
@@ -35,9 +35,9 @@ public class Autonomous12382 extends LinearOpMode {
                 else {
                     telemetry.addLine("Could not find Target, defaulting to Backup Plan");
                     //Add backup plan here
-                }
+                }*/
             }
-            vuforia.stopVuforia();
+            //vuforia.stopVuforia();
         }
     }
 }
