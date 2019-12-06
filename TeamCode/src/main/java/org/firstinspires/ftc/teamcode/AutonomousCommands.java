@@ -201,14 +201,16 @@ public class AutonomousCommands extends LinearOpMode {
         FR.setTargetPosition(FR.getCurrentPosition() + ticks);
         FL.setTargetPosition(FL.getCurrentPosition() + ticks);
 
+        for(DcMotor motor: driveMotors) {
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
         BR.setPower(power);
         BL.setPower(power);
         FR.setPower(power);
         FL.setPower(power);
 
-        for(DcMotor motor: driveMotors) {
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
+
 
         while(BR.isBusy() && BL.isBusy() && FR.isBusy() && FL.isBusy()){
             telemetry.addData("Going to ", ticks);

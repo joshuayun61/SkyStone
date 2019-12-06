@@ -49,14 +49,14 @@ public class Hardware extends LinearOpMode {
 
         //Hardware Map with port on rev hub
         FL = hardwareMap.get(DcMotor.class, "FL"); //
-        FR = hardwareMap.get(DcMotor.class, "BR"); //
+        FR = hardwareMap.get(DcMotor.class, "FR"); //
         BL = hardwareMap.get(DcMotor.class, "BL"); //
-        BR = hardwareMap.get(DcMotor.class, "FR"); //
+        BR = hardwareMap.get(DcMotor.class, "BR"); //
         Slide = hardwareMap.get(DcMotor.class, "Slide");
 
         //Motor Reversals
-        //BR.setDirection(DcMotor.Direction.REVERSE);
-        //FR.setDirection(DcMotor.Direction.REVERSE);
+        BR.setDirection(DcMotor.Direction.REVERSE);
+        FR.setDirection(DcMotor.Direction.REVERSE);
 
         //Set all the motors to float in teleOp
         FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

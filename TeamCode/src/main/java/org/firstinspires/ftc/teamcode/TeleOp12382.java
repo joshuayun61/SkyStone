@@ -20,6 +20,7 @@ public class TeleOp12382 extends LinearOpMode
             commands.mecanum();
             commands.turn180();
             commands.slideMotor();
+            telemetry.update();
         }
     }
 }

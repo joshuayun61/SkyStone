@@ -25,6 +25,7 @@ public class Autonomous12382 extends LinearOpMode {
             while (opModeIsActive()) {
 
                 commands.forward(0.5, 18);
+                break;
 /*                vuforia.searchVuforia();
                 if (vuforia.targetVisible) {
                     commands.strafe(0.2, (int) vuforia.locateVuforia().get(0));
