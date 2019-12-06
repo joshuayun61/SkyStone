@@ -71,7 +71,7 @@ public class Hardware extends LinearOpMode {
     }
 
     /**
-     * Setup IMU (Inertial Mass Unit) with the correct parameters and hardwareMapping for use in the autnomous commands.
+     * Setup IMUCommands (Inertial Mass Unit) with the correct parameters and hardwareMapping for use in the autnomous commands.
      */
     public void setupIMU() {
 
@@ -81,7 +81,7 @@ public class Hardware extends LinearOpMode {
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
         parameters.loggingEnabled      = false; //what does this do?
-        parameters.loggingTag          = "IMU";
+        parameters.loggingTag          = "IMUCommands";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
