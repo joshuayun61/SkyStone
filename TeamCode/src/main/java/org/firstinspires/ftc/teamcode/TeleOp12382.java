@@ -1,26 +1,21 @@
 package org.firstinspires.ftc.teamcode;
 
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name="TeleOp12382 with Abstraction")
+import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
+import org.firstinspires.ftc.teamcode.Robot.Arm;
 
-public class TeleOp12382 extends LinearOpMode
-{
+@TeleOp
+public class TeleOp12382 extends LinearOpMode {
 
-    @Override
     public void runOpMode() {
 
-        TeleOpCommands commands = new TeleOpCommands(telemetry, hardwareMap, gamepad1, gamepad2);
-
+        DriveTrain driveTrain = new DriveTrain(telemetry, hardwareMap, gamepad1);
+        //Arm arm = new Arm(telemetry, hardwareMap, gamepad2);
         waitForStart();
-
         while(opModeIsActive()) {
-            commands.mecanum();
-            commands.turn180();
-            commands.slideMotor();
-            telemetry.update();
+            driveTrain.mecanumDrive();
         }
     }
 }

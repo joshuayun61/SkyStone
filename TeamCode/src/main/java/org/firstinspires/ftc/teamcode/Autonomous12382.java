@@ -3,43 +3,18 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "Autonomous", group = "Linear OpMode")
+import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 
+@Autonomous
 public class Autonomous12382 extends LinearOpMode {
-
-    @Override
-    public void runOpMode() throws InterruptedException {
-
-        //Initialize Classes that have majority of the methods.
-        //TensorMethods vision  = new TensorMethods(telemetry, hardwareMap);
-        AutonomousCommands commands = new AutonomousCommands(telemetry, hardwareMap);
-        VuforiaNavigation vuforia = new VuforiaNavigation(hardwareMap, telemetry);
-
-        vuforia.setupVuforia();
-
-        while(!opModeIsActive()) {
-
-        }
+    public void runOpMode() {
+        DriveTrain driveTrain = new DriveTrain(telemetry, hardwareMap, gamepad1);
+        waitForStart();
         if (opModeIsActive()) {
+            driveTrain.forward(15, 0.5);
 
-            while (opModeIsActive()) {
+            //sleep(2000);
 
-                commands.forward(0.5, 18);
-                break;
-/*                vuforia.searchVuforia();
-                if (vuforia.targetVisible) {
-                    commands.strafe(0.2, (int) vuforia.locateVuforia().get(0));
-                    commands.openServo();
-                    commands.forward(0.5, (int) vuforia.locateVuforia().get(1));
-                    commands.closeServo();
-                }
-                else {
-                    telemetry.addLine("Could not find Target, defaulting to Backup Plan");
-                    //Add backup plan here
-                }*/
-            }
-            //vuforia.stopVuforia();
         }
     }
 }
-
