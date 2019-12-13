@@ -332,7 +332,7 @@ public class VufandTensor extends LinearOpMode {
         waitForStart();
         
        // strafe(.5, 570);
-        drive(.5, 400);
+        strafe(.5, 400);
         while(opModeIsActive())
         {
             
@@ -357,12 +357,12 @@ public class VufandTensor extends LinearOpMode {
 
         BR.setTargetPosition(BR.getCurrentPosition() - distance);
         BL.setTargetPosition(BL.getCurrentPosition() - distance);
-        FR.setTargetPosition(FR.getCurrentPosition() + distance);
+        FR.setTargetPosition(FR.getCurrentPosition() - distance);
         FL.setTargetPosition(FL.getCurrentPosition() - distance);
 
-        BR.setPower(-power);
+        BR.setPower(power);
         BL.setPower(-power);
-        FR.setPower(-power);
+        FR.setPower(power);
         FL.setPower(-power);
         
         BR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -370,10 +370,10 @@ public class VufandTensor extends LinearOpMode {
         FR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         FL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while(FL.isBusy() && FR.isBusy())
+        while(BR.isBusy() && FR.isBusy())
         {
             telemetry.addData("Going to: ", distance);
-            telemetry.addData("AT: ", FL.getCurrentPosition());
+            telemetry.addData("AT: ", FR.getCurrentPosition());
             telemetry.update();
         }
         BR.setPower(0);

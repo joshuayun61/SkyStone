@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 @TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
-
+@Disabled
 public class TensorAndVuforia extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";
