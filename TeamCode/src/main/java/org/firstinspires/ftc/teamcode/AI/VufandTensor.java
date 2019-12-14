@@ -309,10 +309,10 @@ public class VufandTensor extends LinearOpMode {
         } else {
             telemetry.addData("Sorry!", "This device is not compatible with TFOD");
         }
-        
-        if (tfod != null) {
-            tfod.activate();
-        }
+        //no need to start tfod until we drive up
+//        if (tfod != null) {
+//            tfod.activate();
+//        }
 
         // Next, translate the camera lens to where it is on the robot.
         // In this example, it is centered (left to right), but forward of the middle of the robot, and above ground level.
@@ -333,10 +333,7 @@ public class VufandTensor extends LinearOpMode {
         
        // strafe(.5, 570);
         strafe(.5, 400);
-        while(opModeIsActive())
-        {
-            
-        }
+
         
     }
     
