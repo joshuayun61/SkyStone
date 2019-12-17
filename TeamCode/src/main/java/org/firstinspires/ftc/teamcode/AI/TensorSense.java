@@ -74,6 +74,7 @@ public class TensorSense extends LinearOpMode {
 
     public void runTfod() {
 
+
         List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
 
         if (updatedRecognitions != null) {
@@ -96,9 +97,10 @@ public class TensorSense extends LinearOpMode {
 
             }
 
-            telemetry.addData("SkyStone X", skyStoneLeftX);
-            telemetry.addData("Stone 1X", stoneLeftX);
-            telemetry.addData("Stone 2X", stoneRightX);
+
+            telemetry.addData("SkyStone LeftX", skyStoneLeftX);
+            telemetry.addData("Stone 1LeftX", stoneLeftX);
+            telemetry.addData("Stone 2LeftX", stoneRightX);
 
             if (stoneRightX == -1 && skyStoneLeftX < stoneLeftX) {
                 telemetry.addData("SkyStone Position", "Left");
@@ -106,7 +108,7 @@ public class TensorSense extends LinearOpMode {
             } else if (skyStoneLeftX == -1) {
                 telemetry.addData("SkyStone Positio", "Right");
                 stonePosition = 1;
-            } else if (stoneRightX == -1 && stoneLeftX > skyStoneLeftX){
+            } else if (stoneRightX == -1 && stoneLeftX < skyStoneLeftX){
                 telemetry.addData("SkyStone Position", "Center");
                 stonePosition = 0;
             } else {

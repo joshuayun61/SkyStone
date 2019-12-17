@@ -148,6 +148,45 @@ public class DriveTrain extends LinearOpMode {
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
+    public void spin(double distance, double power) {
+
+        //default spin in too the left
+
+        int ticks = inchesToTicks(distance);
+
+        for (DcMotor motor : motors) {
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
+        BR.setTargetPosition(BR.getCurrentPosition() - ticks);
+        BL.setTargetPosition(BL.getCurrentPosition() + ticks);
+        FR.setTargetPosition(FR.getCurrentPosition() - ticks);
+        FL.setTargetPosition(FL.getCurrentPosition() + ticks);
+
+        BR.setPower(power);
+        BL.setPower(power);
+        FR.setPower(power);
+        FL.setPower(power);
+
+        for (DcMotor motor: motors) {
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        while(FL.isBusy() && FR.isBusy() && BR.isBusy() && BL.isBusy()) {
+            telemetry.addData("EncoderPosition", FL.getCurrentPosition());
+            telemetry.addData("EncoderTarget", ticks);
+            telemetry.update();
+        }
+
+        for (DcMotor motor: motors) {
+            motor.setPower(0);
+        }
+
+        for (DcMotor motor: motors) {
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+    }
 
 
     public int inchesToTicks(double distance) {

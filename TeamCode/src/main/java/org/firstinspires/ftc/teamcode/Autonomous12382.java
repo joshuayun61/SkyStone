@@ -7,30 +7,33 @@ import org.firstinspires.ftc.teamcode.AI.TensorSense;
 import org.firstinspires.ftc.teamcode.AI.VufandTensor;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.Robot.IMU;
+import org.firstinspires.ftc.teamcode.Robot.InetialMUnit;
 
 @Autonomous
 public class Autonomous12382 extends LinearOpMode {
     public void runOpMode() {
         DriveTrain driveTrain = new DriveTrain(telemetry, hardwareMap, gamepad1);
         TensorSense sense = new TensorSense(telemetry, hardwareMap);
-        IMU imu = new IMU(telemetry, hardwareMap);
+        InetialMUnit imu = new InetialMUnit(telemetry, hardwareMap, driveTrain);
 
-        sense.setupTfod();
-
+        //sense.setupTfod();
         imu.imuSetup();
+
         waitForStart();
 
+        driveTrain.spin(750, .3);
 
-        driveTrain.drive(16,.25);
+        //driveTrain.drive(24,.35);
 
-        while(sense.stonePosition == -100) {
+
+
+       /* while(opModeIsActive()) {
             sense.runTfod();
+
+            telemetry.addData("Position", sense.stonePosition);
+            telemetry.update();
             sleep(2000);
         }
-
-        telemetry.addData("Position", sense.stonePosition);
-        telemetry.update();
-        sleep(2000);
 
         switch (sense.stonePosition) {
             case (-1) :
@@ -38,6 +41,6 @@ public class Autonomous12382 extends LinearOpMode {
                 break;
             case (1) :
                 driveTrain.strafe(-10, 0.25);
-        }
+        }*/
     }
 }
