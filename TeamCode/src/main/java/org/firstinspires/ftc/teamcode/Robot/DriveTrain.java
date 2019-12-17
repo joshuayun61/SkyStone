@@ -69,78 +69,30 @@ public class DriveTrain extends LinearOpMode {
         }
     }
 
-    public void forward(double distance, double power) {
+    public void drive(double distance, double power) {
 
         int ticks = inchesToTicks(distance);
 
         for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-        for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
-        for (DcMotor motor : motors) {
-            motor.setTargetPosition(motor.getCurrentPosition() + ticks);
-        }
-        for (DcMotor motor: motors) {
-            motor.setPower(power);
-        }
+        BR.setTargetPosition(BR.getCurrentPosition() - ticks);
+        BL.setTargetPosition(BL.getCurrentPosition() - ticks);
+        FR.setTargetPosition(FR.getCurrentPosition() - ticks);
+        FL.setTargetPosition(FL.getCurrentPosition() - ticks);
+
+        BR.setPower(power);
+        BL.setPower(-power);
+        FR.setPower(power);
+        FL.setPower(-power);
+
         for (DcMotor motor: motors) {
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
         while(FL.isBusy() && FR.isBusy() && BR.isBusy() && BL.isBusy()) {
-            telemetry.addData("EncoderPosition", FL.getCurrentPosition());
-            telemetry.addData("EncoderTarget", ticks);
-            telemetry.update();
-        }
-
-        for (DcMotor motor: motors) {
-            motor.setPower(0.5);
-        }
-        for (DcMotor motor: motors) {
-            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
-    }
-
-    public void turn(double power, double distance) {
-
-        int ticks = inchesToTicks(distance);
-
-        for (DcMotor motor : motors) {
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-
-        for (DcMotor motor : motors) {
-            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-
-        for (DcMotor motor : motors) {
-
-            if (motor.equals(FL) || motor.equals(BR)) {
-                motor.setTargetPosition(motor.getCurrentPosition() - ticks);
-            }
-            else {
-                motor.setTargetPosition(motor.getCurrentPosition() + ticks);
-            }
-
-        }
-
-        for (DcMotor motor: motors) {
-            if (motor.equals(FR) || motor.equals(BR)) {
-                motor.setPower(-power);
-            }
-            else {
-                motor.setPower(power);
-            }
-        }
-
-        for (DcMotor motor : motors) {
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-        while(FL.isBusy() && FR.isBusy() && BR.isBusy() && BL.isBusy()){
             telemetry.addData("EncoderPosition", FL.getCurrentPosition());
             telemetry.addData("EncoderTarget", ticks);
             telemetry.update();
@@ -167,25 +119,16 @@ public class DriveTrain extends LinearOpMode {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
-        for (DcMotor motor : motors) {
+        BR.setTargetPosition(BR.getCurrentPosition() + ticks);
+        BL.setTargetPosition(BL.getCurrentPosition() - ticks);
+        FR.setTargetPosition(FR.getCurrentPosition() - ticks);
+        FL.setTargetPosition(FL.getCurrentPosition() + ticks);
 
-            if (motor.equals(FL) || motor.equals(BR)) {
-                motor.setTargetPosition(motor.getCurrentPosition() - ticks);
-            }
-            else {
-                motor.setTargetPosition(motor.getCurrentPosition() + ticks);
-            }
+        BR.setPower(power);
+        BL.setPower(-power);
+        FR.setPower(power);
+        FL.setPower(-power);
 
-        }
-
-        for (DcMotor motor: motors) {
-            if (motor.equals(FL) || motor.equals(BR)) {
-                motor.setPower(-power);
-            }
-            else {
-                motor.setPower(power);
-            }
-        }
 
         for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -206,8 +149,10 @@ public class DriveTrain extends LinearOpMode {
         }
     }
 
+
     public int inchesToTicks(double distance) {
 
         return ((int)(((distance -1) / (Math.PI * 3.937008)) * 537.6));
     }
+
 }

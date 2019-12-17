@@ -1,38 +1,32 @@
 package org.firstinspires.ftc.teamcode.AI;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import com.vuforia.CameraDevice;
 
-@TeleOp(name = "TensorSense", group = "Concept")
-
 public class TensorSense extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Stone";
     private static final String LABEL_SECOND_ELEMENT = "Skystone";
 
-    int stonePosition = 0;
+    public int stonePosition = -100;
 
-    /*
-     * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
-     * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
-     * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
-     * web site at https://developer.vuforia.com/license-manager.
-     *
-     * Vuforia license keys are always 380 characters long, and look as if they contain mostly
-     * random data. As an example, here is a example of a fragment of a valid key:
-     *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
-     * Once you've obtained a license key, copy the string from the Vuforia web site
-     * and paste it in to your code on the next line, between the double quotes.
-     */
+    public TensorSense(Telemetry telemetry, HardwareMap hardwareMap) {
+        this.telemetry = telemetry;
+        this.hardwareMap = hardwareMap;
+    }
+
+
     private static final String VUFORIA_KEY =
             "AcwrW0v/////AAABma7B+GULfEomjfP2ZL34WDgr9iGtLUtgVA/x6Z7Fi/1DgUg69cGmFmMg2vo1yNWmr3/ZSoJJBmj1ahtA+KNA07v5mAdQIYz7zo1TEENpcIUbHBccVQ12zHjxfeXkNDKhapCU9GxljP7QwdGI5h13beyVZYqKls+pnDKDWAyFAcDhE6cf5xs6jzlyKuiG53qulBiROMhFl1Oo1+zkgWCQhUitxXnHag2LmL6EtnjRFhLDMQ65CPrUNBG9Te8+2K1Na4SCURDWRtlRUJPsKX3O/O7DCVugkeJ01v7/pGUf20nIzrz+7zguCPGXN7a715lOmOmQn7LvTKYklTLJ+Si3Q0rGUaqxmGPt57pEJFvIHDZz";
 
@@ -50,7 +44,10 @@ public class TensorSense extends LinearOpMode {
     private TFObjectDetector tfod;
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() {}
+
+
+    public void setupTfod(){
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();
@@ -73,77 +70,58 @@ public class TensorSense extends LinearOpMode {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
         CameraDevice.getInstance().setFlashTorchMode(true);
-        waitForStart();
-
-
-        // getUpdatedRecognitions() will return null if no new information is available since
-        // the last time that call was made.
-
-        List<Recognition> recogs = tfod.getUpdatedRecognitions();
-
-        if(recogs != null)
-        {
-            //if size is 1, that means out of the first two, the skystone was not found,
-            //but it is there. This is known because the success rate of finding two stones
-            //is near perfect.
-            if(recogs.size() == 1)
-            {
-                telemetry.addData("SkyStone is in position", 1);
-                stonePosition = 1;
-            }
-            else
-            {
-                for(int i = 0; i < recogs.size(); i++)
-                {
-                    if(recogs.get(i).getLabel().equals(LABEL_SECOND_ELEMENT))
-                    {
-                        telemetry.addData("SkyStone is in position", i+1);
-                        stonePosition = i+1;
-                    }
-                }
-            }
-            if(stonePosition == 0)
-            {
-                stonePosition = 3;
-            }
-        }
-
-
-
-
-        CameraDevice.getInstance().setFlashTorchMode(false);
-        tfod.shutdown();
-
-        while(opModeIsActive())
-        {
-            telemetry.addData("stonePosition", stonePosition);
-            telemetry.update();
-        }
-
-
-
-//                    //    telemetry.addData("# Object Detected", updatedRecognitions.size());
-//                    if(updatedRecognitions != null) {
-//                        // step through the list of recognitions and display boundary info.
-//                        int i = 0;
-//                        for (Recognition recognition : updatedRecognitions) {
-//
-//                            telemetry.addData(recognition.getLabel(), null);
-//
-////                            telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-////                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-////                                    recognition.getLeft(), recognition.getTop());
-////                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-////                                    recognition.getRight(), recognition.getBottom());
-//                        }
-//                        telemetry.update();
-//                    }
-
-
-
     }
 
+    public void runTfod() {
 
+        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+
+        if (updatedRecognitions != null) {
+            telemetry.addData("# Objects detected", updatedRecognitions.size());
+
+            int skyStoneLeftX = -1;
+            int stoneLeftX = -1;
+            int stoneRightX = -1;
+
+            for (Recognition recognition : updatedRecognitions) {
+                if (recognition.getLabel().equals(LABEL_SECOND_ELEMENT)) {
+                    skyStoneLeftX = (int) recognition.getLeft();
+                }
+                else if (stoneLeftX == -1){
+                    stoneLeftX = (int) recognition.getLeft();
+                }
+                else if (stoneRightX == -1){
+                    stoneRightX = (int) recognition.getLeft();
+                }
+
+            }
+
+            telemetry.addData("SkyStone X", skyStoneLeftX);
+            telemetry.addData("Stone 1X", stoneLeftX);
+            telemetry.addData("Stone 2X", stoneRightX);
+
+            if (stoneRightX == -1 && skyStoneLeftX < stoneLeftX) {
+                telemetry.addData("SkyStone Position", "Left");
+                stonePosition = -1;
+            } else if (skyStoneLeftX == -1) {
+                telemetry.addData("SkyStone Positio", "Right");
+                stonePosition = 1;
+            } else if (stoneRightX == -1 && stoneLeftX > skyStoneLeftX){
+                telemetry.addData("SkyStone Position", "Center");
+                stonePosition = 0;
+            } else {
+                telemetry.addData("SkyStone Position", "Unknown");
+            }
+        }
+
+
+        telemetry.update();
+    }
+
+    public void stopTfod() {
+        CameraDevice.getInstance().setFlashTorchMode(false);
+        tfod.shutdown();
+    }
 
     /**
      * Initialize the Vuforia localization engine.
