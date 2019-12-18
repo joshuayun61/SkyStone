@@ -21,6 +21,11 @@ public class Arm extends LinearOpMode {
         this.hardwareMap = hardwareMap;
 
         gamepad2 = gamepad;
+
+        Intake = hardwareMap.get(Servo.class, "Intake");
+        Slide = hardwareMap.get(DcMotor.class, "Slide");
+        Slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void runOpMode() {}
@@ -30,6 +35,11 @@ public class Arm extends LinearOpMode {
         if(gamepad2.left_stick_button)
         {
             Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        if(Slide.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER)
+        {
+            Slide.setPower(gamepad2.left_stick_y/3);
         }
         if(gamepad2.a)
         {
@@ -69,12 +79,20 @@ public class Arm extends LinearOpMode {
 
         if(gamepad2.right_bumper)
         {
-            Intake.setPosition(.4);
+            Intake.setPosition(.2);
         }
         if(gamepad2.left_bumper)
         {
             Intake.setPosition(.9);
         }
 
+    }
+    public void openArm()
+    {
+        Intake.setPosition(.9);
+    }
+    public void closeArm()
+    {
+        Intake.setPosition(.2);
     }
 }

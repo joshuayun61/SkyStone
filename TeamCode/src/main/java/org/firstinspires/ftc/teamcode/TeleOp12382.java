@@ -13,10 +13,11 @@ public class TeleOp12382 extends LinearOpMode {
     public void runOpMode() {
 
         DriveTrain driveTrain = new DriveTrain(telemetry, hardwareMap, gamepad1);
-        //Arm arm = new Arm(telemetry, hardwareMap, gamepad2);
+        Arm arm = new Arm(telemetry, hardwareMap, gamepad2);
         waitForStart();
         while(opModeIsActive()) {
             driveTrain.mecanumDrive();
+            arm.moveArm();
         }
     }
 }
