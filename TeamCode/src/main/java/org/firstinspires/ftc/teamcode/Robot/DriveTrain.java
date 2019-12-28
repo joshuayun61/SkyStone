@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class DriveTrain extends LinearOpMode {
 
     DcMotor FL, FR, BL, BR;
+    Servo rightRepos, leftRepos;
 
     DcMotor[] motors = new DcMotor[4];
 
@@ -35,6 +37,9 @@ public class DriveTrain extends LinearOpMode {
         FR.setDirection(DcMotor.Direction.REVERSE);
         BR.setDirection(DcMotor.Direction.REVERSE);
 
+        leftRepos = hardwareMap.get(Servo.class, "leftR");
+        rightRepos = hardwareMap.get(Servo.class, "rightR");
+
         DcMotor[] tempMotors = {FL, FR, BL, BR};
         motors = tempMotors;
     }
@@ -42,7 +47,7 @@ public class DriveTrain extends LinearOpMode {
     public void mecanumDrive() {
 
         double drive    = gamepad1.right_stick_y;
-        double strafe   = gamepad1.right_stick_x;
+        double strafe   = -gamepad1.right_stick_x;
         double spin     = gamepad1.left_stick_x;
 
         if(gamepad1.right_bumper)
@@ -67,6 +72,42 @@ public class DriveTrain extends LinearOpMode {
             BL.setPower((drive + strafe - spin)/3);
             BR.setPower((drive - strafe + spin)/3);
         }
+
+        if(gamepad1.right_trigger > 0)
+        {
+            double newStrafe = gamepad1.right_trigger/2;
+            FL.setPower(newStrafe);
+            FR.setPower(-newStrafe);
+            BR.setPower(newStrafe);
+            BL.setPower(-newStrafe);
+        }
+        if(gamepad1.left_trigger > 0)
+        {
+            double newStrafe = gamepad1.left_trigger/2;
+            FL.setPower(-newStrafe);
+            FR.setPower(newStrafe);
+            BR.setPower(-newStrafe);
+            BL.setPower(newStrafe);
+        }
+
+        if (gamepad1.a) {
+            reposOpen();
+        }
+        if(gamepad1.b){
+            reposClose();
+        }
+
+    }
+
+    public void reposOpen()
+    {
+        leftRepos.setPosition(.4);
+        rightRepos.setPosition(.3);
+    }
+    public void reposClose()
+    {
+        leftRepos.setPosition(.9);
+        rightRepos.setPosition(.8);
     }
 
     public void drive(double distance, double power) {
@@ -76,6 +117,9 @@ public class DriveTrain extends LinearOpMode {
         for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        for (DcMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
         BR.setTargetPosition(BR.getCurrentPosition() - ticks);
@@ -102,6 +146,10 @@ public class DriveTrain extends LinearOpMode {
             motor.setPower(0);
         }
 
+        for (DcMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
+
         for (DcMotor motor: motors) {
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
@@ -117,6 +165,10 @@ public class DriveTrain extends LinearOpMode {
 
         for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
+        for (DcMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
         BR.setTargetPosition(BR.getCurrentPosition() + ticks);
@@ -142,6 +194,10 @@ public class DriveTrain extends LinearOpMode {
 
         for (DcMotor motor: motors) {
             motor.setPower(0);
+        }
+
+        for (DcMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
 
         for (DcMotor motor: motors) {

@@ -18,6 +18,8 @@ public class TeleOp12382 extends LinearOpMode {
         while(opModeIsActive()) {
             driveTrain.mecanumDrive();
             arm.moveArm();
+            telemetry.addData("Slide Position", arm.slidePosition());
+            telemetry.update();
         }
     }
 }

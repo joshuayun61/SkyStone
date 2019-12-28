@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.AI;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.Came
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import com.vuforia.CameraDevice;
+
 
 public class TensorSense extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
@@ -93,6 +95,7 @@ public class TensorSense extends LinearOpMode {
                 }
                 else if (stoneRightX == -1){
                     stoneRightX = (int) recognition.getLeft();
+
                 }
 
             }
@@ -102,7 +105,7 @@ public class TensorSense extends LinearOpMode {
             telemetry.addData("Stone 1LeftX", stoneLeftX);
             telemetry.addData("Stone 2LeftX", stoneRightX);
 
-            if (stoneRightX == -1 && skyStoneLeftX < stoneLeftX) {
+            /*if (stoneRightX == -1 && skyStoneLeftX < stoneLeftX) {
                 telemetry.addData("SkyStone Position", "Left");
                 stonePosition = -1;
             } else if (skyStoneLeftX == -1) {
@@ -113,7 +116,43 @@ public class TensorSense extends LinearOpMode {
                 stonePosition = 0;
             } else {
                 telemetry.addData("SkyStone Position", "Unknown");
+            }*/
+
+            if(skyStoneLeftX == -1)
+            {
+                telemetry.addData("SkyStone Position", "Right");
+                stonePosition = 1;
             }
+            else if(skyStoneLeftX != -1 && stoneLeftX != -1)
+            {
+                if(skyStoneLeftX > stoneLeftX)
+                {
+                    telemetry.addData("SkyStone Position", "Center");
+                    stonePosition = 0;
+                }
+                else
+                {
+                    telemetry.addData("SkyStone Position", "Left");
+                    stonePosition = -1;
+                }
+            }
+            else if(skyStoneLeftX != -1)
+            {
+                if(skyStoneLeftX > 500)
+                {
+                    telemetry.addData("SkyStone Position", "Center");
+                    stonePosition = 0;
+                }
+                else
+                {
+                    telemetry.addData("SkyStone Position", "Left");
+                    stonePosition = -1;
+                }
+            }
+
+
+
+
         }
 
 

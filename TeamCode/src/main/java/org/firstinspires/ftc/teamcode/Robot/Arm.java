@@ -14,6 +14,10 @@ public class Arm extends LinearOpMode {
 
     Servo Intake;
 
+    //field constants
+    int bulidPlateHeight = 700;
+    int blockHeight = 1000;
+
     public Arm(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad) {
 
         this.telemetry = telemetry;
@@ -30,6 +34,36 @@ public class Arm extends LinearOpMode {
 
     public void runOpMode() {}
 
+    public int slidePosition()
+    {
+        return Slide.getCurrentPosition();
+    }
+    public void raisePH()
+    {
+        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Slide.setTargetPosition(bulidPlateHeight);
+        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Slide.setPower(.9);
+        while(Slide.isBusy()) {}
+    }
+    public void raiseBH()
+    {
+        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Slide.setTargetPosition(Slide.getCurrentPosition() + blockHeight);
+        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Slide.setPower(.9);
+        while(Slide.isBusy()) {}
+    }
+    public void lowerBH()
+    {
+        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Slide.setTargetPosition(Slide.getCurrentPosition() - blockHeight);
+        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Slide.setPower(.9);
+        while(Slide.isBusy()) {}
+    }
+
+
     public void moveArm() {
 
         if(gamepad2.left_stick_button)
@@ -39,23 +73,19 @@ public class Arm extends LinearOpMode {
 
         if(Slide.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER)
         {
-            Slide.setPower(gamepad2.left_stick_y/3);
+            Slide.setPower(gamepad2.left_stick_y);
         }
         if(gamepad2.a)
         {
-            Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Slide.setTargetPosition(5);
-            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            Slide.setPower(.9);
-            while(Slide.isBusy()) {}
+            raisePH();
         }
-        if(gamepad2.b && !gamepad1.start && !gamepad2.start)
+        if(gamepad2.dpad_up)
         {
-            Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Slide.setTargetPosition(1600);
-            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            Slide.setPower(1);
-            while(Slide.isBusy()) {}
+            raiseBH();
+        }
+        if(gamepad2.dpad_down)
+        {
+            lowerBH();
         }
         if(gamepad2.y)
         {
