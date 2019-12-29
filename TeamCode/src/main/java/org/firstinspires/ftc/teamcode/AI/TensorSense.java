@@ -22,6 +22,7 @@ public class TensorSense extends LinearOpMode {
     private static final String LABEL_SECOND_ELEMENT = "Skystone";
 
     public int stonePosition = -100;
+    public int SkyStoneLeftBound = 0;
 
     public TensorSense(Telemetry telemetry, HardwareMap hardwareMap) {
         this.telemetry = telemetry;
@@ -89,6 +90,7 @@ public class TensorSense extends LinearOpMode {
             for (Recognition recognition : updatedRecognitions) {
                 if (recognition.getLabel().equals(LABEL_SECOND_ELEMENT)) {
                     skyStoneLeftX = (int) recognition.getLeft();
+                    SkyStoneLeftBound = skyStoneLeftX;
                 }
                 else if (stoneLeftX == -1){
                     stoneLeftX = (int) recognition.getLeft();

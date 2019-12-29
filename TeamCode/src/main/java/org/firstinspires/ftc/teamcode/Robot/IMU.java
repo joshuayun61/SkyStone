@@ -49,6 +49,7 @@ public class IMU extends LinearOpMode {
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
+        originalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 
     /**
@@ -308,6 +309,250 @@ public class IMU extends LinearOpMode {
         }
 
         return changeInAngle;
+    }
+
+    public double currentAngle() {
+        Orientation newAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+
+        double changeInAngle = newAngles.firstAngle - originalAngles.firstAngle;
+
+        if (changeInAngle < -180){
+            changeInAngle += 360;
+        } else if (changeInAngle > 180){
+            changeInAngle -= 360;
+        }
+
+        return changeInAngle;
+    }
+
+    public void turnOriginalAngle(int angle, double power) {
+
+        //          0
+        //  90              -90
+        //         180
+
+        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        resetAngle();
+
+        telemetry.addData("After Reset: ", currentRelativeAngle());
+        telemetry.addData("Heading input: ", angle);
+
+        double left, right;
+
+        //added a special to check if the entered angle is 180,
+        //because this will be the most used angle, so it must work best
+
+        if(angle == 180 || angle == 0)
+        {
+            left =  power;
+            right = -power;
+            FL.setPower(left);
+            BL.setPower(left);
+            FR.setPower(right);
+            BR.setPower(right);
+            while (angle > currentAngle() && currentAngle() >= 0) {}
+            if(currentRelativeAngle() < 0)
+            {
+                left =  -.2;
+                right = .2;
+                FL.setPower(left);
+                BL.setPower(left);
+                FR.setPower(right);
+                BR.setPower(right);
+                while (currentAngle() < 0) {}
+            }
+        } else {
+
+            //Turns based on angle set at desired power while currentAngle is not matching the target angle.
+            if (angle < 0) {
+                left =  -power;
+                right = power;
+                FL.setPower(left);
+                BL.setPower(left);
+                FR.setPower(right);
+                BR.setPower(right);
+                while (currentAngle() < angle) {}
+
+                if(currentAngle() <= angle-.5)
+                {
+                    left =  .15;
+                    right = -.15;
+                    FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(right);
+                    BR.setPower(right);
+                    while (currentAngle() < angle) {}
+                }
+                // FOR SOME UNKNOWN REASON, we need to check the angle after turning twice,
+                // to end the 1/7 chance of executing the check that was observed before.
+                if(currentAngle() <= angle-.5)
+                {
+                    left =  .15;
+                    right = -.15;
+                    FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(right);
+                    BR.setPower(right);
+                    while (currentAngle() < angle) {}
+                }
+                if(currentAngle() >= angle+1)
+                {
+                    left = -.12;
+                    right = .12;
+                    FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(right);
+                    BR.setPower(right);
+                    while (currentAngle() > angle+.5) {}
+                }
+                if(currentAngle() >= angle+1)
+                {
+                    left =  -.12;
+                    right = .12;
+                    FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(right);
+                    BR.setPower(right);
+                    while (currentAngle() > angle+.5) {}
+                }
+            }
+            else if (angle > 0) {
+                left =  power;
+                right = -power;
+                FL.setPower(left);
+                BL.setPower(left);
+                FR.setPower(right);
+                BR.setPower(right);
+                while (angle > currentAngle()) {}
+
+                if(currentAngle() >= angle+1)
+                {
+                    left =  -.15;
+                    right = .15;
+                    FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(right);
+                    BR.setPower(right);
+                    while (currentAngle() > angle+.5) {}
+                }
+                // FOR SOME UNKNOWN REASON, we need to check the angle after turning twice,
+                // to end the 1/7 chance of executing the check that was observed before.
+                if(currentAngle() >= angle+1)
+                {
+                    left =  -.15;
+                    right = .15;
+                    FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(right);
+                    BR.setPower(right);
+                    while (currentAngle() > angle+.5) {}
+                }
+                if(currentAngle() <= angle-1)
+                {
+                    left =  .12;
+                    right = -.12;
+                    FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(right);
+                    BR.setPower(right);
+                    while (currentAngle() < angle-.5) {}
+                }
+                if(currentAngle() <= angle-1)
+                {
+                    left =  .15;
+                    right = -.15;
+                    FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(right);
+                    BR.setPower(right);
+                    while (currentAngle() < angle-.5) {}
+                }
+
+            }
+            else {
+                return;
+            }
+        }
+
+        //Set power to 0 after the turning
+        FL.setPower(0);
+        BL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+
+        telemetry.addData("Final Heading", currentAngle());
+
+        //and another round of checks:
+        if(angle > 0) {
+            if(currentAngle() >= angle+1)
+            {
+                left =  -.15;
+                right = .15;
+                FL.setPower(left);
+                BL.setPower(left);
+                FR.setPower(right);
+                BR.setPower(right);
+                while (currentAngle() > angle+.5) {}
+            }
+
+            if(currentAngle() <= angle)
+            {
+                left =  .125;
+                right = -.125;
+                FL.setPower(left);
+                BL.setPower(left);
+                FR.setPower(right);
+                BR.setPower(right);
+                while (currentAngle() < angle-.5) {}
+            }
+        }
+        else{
+
+            if(currentAngle() >= angle+1)
+            {
+                left =  -.15;
+                right = .15;
+                FL.setPower(left);
+                BL.setPower(left);
+                FR.setPower(right);
+                BR.setPower(right);
+                while (currentAngle() > angle+.5) {}
+            }
+            if(currentAngle() <= angle-1)
+            {
+                left =  .12;
+                right = -.12;
+                FL.setPower(left);
+                BL.setPower(left);
+                FR.setPower(right);
+                BR.setPower(right);
+                while (currentAngle() < angle-.5) {}
+            }
+
+        }
+
+        FL.setPower(0);
+        BL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+
+        telemetry.addData("Final FINAL Heading", currentAngle());
+
+        resetAngle();
+
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
 }

@@ -158,6 +158,13 @@ public class DriveTrain extends LinearOpMode {
     public void strafe(double distance, double power) {
 
         int ticks = inchesToTicks(distance);
+        if(ticks > 0)
+        {
+            ticks += 55;
+        }
+        else {
+            ticks -= 55;
+        }
 
         for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -248,6 +255,10 @@ public class DriveTrain extends LinearOpMode {
     public int inchesToTicks(double distance) {
 
         return ((int)(((distance -1) / (Math.PI * 3.937008)) * 537.6));
+    }
+
+    public int ticksToInches (int ticks){
+        return (int)(((Math.PI * 3.937008)*ticks) / 537.6) + 1;
     }
 
 }

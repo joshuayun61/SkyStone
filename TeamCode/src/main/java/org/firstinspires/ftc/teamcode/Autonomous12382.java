@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Robot.IMU;
 import org.firstinspires.ftc.teamcode.Robot.InetialMUnit;
 import org.firstinspires.ftc.teamcode.Robot.Arm;
 
-@Autonomous
+@Autonomous(name = "Autonomous Red Depot")
 public class Autonomous12382 extends LinearOpMode {
     public void runOpMode() {
 
@@ -26,58 +26,72 @@ public class Autonomous12382 extends LinearOpMode {
         arm.openArm();
 
         driveTrain.drive(24,.35);
-        driveTrain.strafe(5,.35);
+        driveTrain.strafe(5,.4);
 
 
        while(sense.stonePosition == -100) {
             sense.runTfod();
             telemetry.addData("Position", sense.stonePosition);
             telemetry.update();
-            sleep(2000);
+            sleep(1000);
        }
 
-       for (int i = 0; i < 90; i++) {
+       for (int i = 0; i < 25; i++) {
            sense.runTfod();
+           telemetry.clear();
+           telemetry.addData("Position", sense.stonePosition);
+           telemetry.update();
        }
-       telemetry.clear();
-       telemetry.addData("Position" , sense.stonePosition);
-       telemetry.update();
-       sleep(2000);
+
 
         switch (sense.stonePosition) {
             case (-1) :
-                driveTrain.strafe(-8, 0.25);
+                driveTrain.strafe(-7, 0.25);
                 break;
             case (1) :
                 driveTrain.strafe(10, 0.25);
         }
 
-       //grab stone and pull out and turn
-       driveTrain.drive(12,.3);
-       arm.closeArm();
-       driveTrain.drive(-6,.45);
-       imu.turnToAngle(90,.2);
 
-       //turn to cross and drop
+
+       //grab stone and pull out and turn
+       driveTrain.drive(13,.3);
+       arm.closeArm();
+       driveTrain.drive(-5,.45);
+       imu.turnOriginalAngle(88,.3);
+
+       //drive depending on where the skystone was
         switch(sense.stonePosition)
         {
             case (-1) :
-                driveTrain.drive(45, .5);
+                driveTrain.drive(44, .5);
                 break;
             case (0) :
-                driveTrain.drive(57, .5);
+                driveTrain.drive(53, .5);
                 break;
             case (1) :
-                driveTrain.drive(69,.5);
+                driveTrain.drive(66,.5);
                 break;
 
         }
-        driveTrain.strafe(36, .4);
-        arm.raisePH();
-        driveTrain.drive(20,.5);
+
+
+
+        //position in front of build site and place
+        arm.raisePH(200);
+        driveTrain.strafe(24, .4);
+        driveTrain.drive(13,.5);
         arm.openArm();
-        driveTrain.drive(-20,.4);
-        driveTrain.strafe(-36,.4);
+        driveTrain.drive(-12,.4);
+
+        //strafe back and lower arm to head for next block
+        driveTrain.strafe(-24,.4);
+        arm.ground();
+        imu.turnOriginalAngle(90,.3);
+
+        //drive back
+        driveTrain.drive(-67,.5);
+        imu.turnOriginalAngle(0,.3);
 
 
 

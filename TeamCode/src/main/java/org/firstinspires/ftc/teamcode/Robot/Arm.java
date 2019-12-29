@@ -15,7 +15,7 @@ public class Arm extends LinearOpMode {
     Servo Intake;
 
     //field constants
-    int bulidPlateHeight = 700;
+    int buildPlateHeight = 700;
     int blockHeight = 1000;
 
     public Arm(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad) {
@@ -38,13 +38,39 @@ public class Arm extends LinearOpMode {
     {
         return Slide.getCurrentPosition();
     }
+
+    public void ground()
+    {
+        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Slide.setTargetPosition(5);
+        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Slide.setPower(.9);
+        while(slidePosition() > 10) {
+            telemetry.addData("Slide Tick",slidePosition());
+            telemetry.update();
+        }
+    }
     public void raisePH()
     {
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Slide.setTargetPosition(bulidPlateHeight);
+        Slide.setTargetPosition(buildPlateHeight);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Slide.setPower(.9);
-        while(Slide.isBusy()) {}
+        while(slidePosition() > 710 || slidePosition() < 690) {
+            telemetry.addData("Slide Tick",slidePosition());
+            telemetry.update();
+        }
+    }
+    public void raisePH(int extra)
+    {
+        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Slide.setTargetPosition(buildPlateHeight + extra);
+        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Slide.setPower(.9);
+        while(Slide.getCurrentPosition() < buildPlateHeight + extra - 20) {
+            telemetry.addData("Slide Tick",slidePosition());
+            telemetry.update();
+        }
     }
     public void raiseBH()
     {
@@ -66,14 +92,14 @@ public class Arm extends LinearOpMode {
 
     public void moveArm() {
 
-        if(gamepad2.left_stick_button)
+        if(gamepad2.left_stick_y != 0)
         {
             Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         if(Slide.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER)
         {
-            Slide.setPower(gamepad2.left_stick_y);
+            Slide.setPower(gamepad2.left_stick_y/1.5);
         }
         if(gamepad2.a)
         {
@@ -87,18 +113,14 @@ public class Arm extends LinearOpMode {
         {
             lowerBH();
         }
-        if(gamepad2.y)
+        if(gamepad2.x)
         {
-            Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Slide.setTargetPosition(2750);
-            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            Slide.setPower(1);
-            while(Slide.isBusy()) {}
+            ground();
         }
-        if(Slide.getCurrentPosition() > 5000)
+        if(Slide.getCurrentPosition() > 4100)
         {
             Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Slide.setTargetPosition(2000);
+            Slide.setTargetPosition(4000);
             Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Slide.setPower(.8);
             while(Slide.isBusy())
@@ -106,6 +128,7 @@ public class Arm extends LinearOpMode {
 
             }
         }
+
 
         if(gamepad2.right_bumper)
         {
