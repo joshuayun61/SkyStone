@@ -12,19 +12,23 @@ public class Arm extends LinearOpMode {
 
     DcMotor Slide;
 
-    Servo Intake;
+    public Servo Intake;
+
+    private DriveTrain myDrive;
 
     //field constants
     int buildPlateHeight = 700;
     int blockHeight = 1000;
 
-    public Arm(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad) {
+    public Arm(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad, DriveTrain driveTrain) {
 
         this.telemetry = telemetry;
 
         this.hardwareMap = hardwareMap;
 
         gamepad2 = gamepad;
+
+        myDrive = driveTrain;
 
         Intake = hardwareMap.get(Servo.class, "Intake");
         Slide = hardwareMap.get(DcMotor.class, "Slide");
@@ -45,9 +49,10 @@ public class Arm extends LinearOpMode {
         Slide.setTargetPosition(5);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Slide.setPower(.9);
-        while(slidePosition() > 10) {
+        while(Slide.getCurrentPosition() > 20) {
             telemetry.addData("Slide Tick",slidePosition());
             telemetry.update();
+            myDrive.mecanumDrive();
         }
     }
     public void raisePH()
@@ -59,6 +64,7 @@ public class Arm extends LinearOpMode {
         while(slidePosition() > 710 || slidePosition() < 690) {
             telemetry.addData("Slide Tick",slidePosition());
             telemetry.update();
+            myDrive.mecanumDrive();
         }
     }
     public void raisePH(int extra)
@@ -67,9 +73,10 @@ public class Arm extends LinearOpMode {
         Slide.setTargetPosition(buildPlateHeight + extra);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Slide.setPower(.9);
-        while(Slide.getCurrentPosition() < buildPlateHeight + extra - 20) {
+        while(Slide.getCurrentPosition() < buildPlateHeight + 550) {
             telemetry.addData("Slide Tick",slidePosition());
             telemetry.update();
+            myDrive.mecanumDrive();
         }
     }
     public void raiseBH()
@@ -78,7 +85,10 @@ public class Arm extends LinearOpMode {
         Slide.setTargetPosition(Slide.getCurrentPosition() + blockHeight);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Slide.setPower(.9);
-        while(Slide.isBusy()) {}
+        while(Slide.isBusy()) {
+
+            myDrive.mecanumDrive();
+        }
     }
     public void lowerBH()
     {
@@ -88,9 +98,29 @@ public class Arm extends LinearOpMode {
         Slide.setPower(.9);
         while(Slide.isBusy()) {}
     }
+    public void blockLift()
+    {
+        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Slide.setTargetPosition(20);
+        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Slide.setPower(.9);
+        while(Slide.isBusy()) {
+
+            myDrive.mecanumDrive();
+        }
+    }
 
 
     public void moveArm() {
+
+        if(gamepad2.right_trigger > 0)
+        {
+            myDrive.slowStrafeRight();
+        }
+        if(gamepad2.left_trigger > 0)
+        {
+            myDrive.slowStrafeleft();
+        }
 
         if(gamepad2.left_stick_y != 0)
         {
@@ -99,7 +129,7 @@ public class Arm extends LinearOpMode {
 
         if(Slide.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER)
         {
-            Slide.setPower(gamepad2.left_stick_y/1.5);
+            Slide.setPower(-gamepad2.left_stick_y/1.5);
         }
         if(gamepad2.a)
         {
@@ -116,6 +146,10 @@ public class Arm extends LinearOpMode {
         if(gamepad2.x)
         {
             ground();
+        }
+        if(gamepad2.b)
+        {
+            blockLift();
         }
         if(Slide.getCurrentPosition() > 4100)
         {
@@ -146,6 +180,6 @@ public class Arm extends LinearOpMode {
     }
     public void closeArm()
     {
-        Intake.setPosition(.2);
+        Intake.setPosition(.18);
     }
 }

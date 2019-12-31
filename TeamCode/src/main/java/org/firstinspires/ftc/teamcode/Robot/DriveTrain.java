@@ -75,19 +75,11 @@ public class DriveTrain extends LinearOpMode {
 
         if(gamepad1.right_trigger > 0)
         {
-            double newStrafe = gamepad1.right_trigger/2;
-            FL.setPower(newStrafe);
-            FR.setPower(-newStrafe);
-            BR.setPower(newStrafe);
-            BL.setPower(-newStrafe);
+            slowStrafeRight();
         }
         if(gamepad1.left_trigger > 0)
         {
-            double newStrafe = gamepad1.left_trigger/2;
-            FL.setPower(-newStrafe);
-            FR.setPower(newStrafe);
-            BR.setPower(-newStrafe);
-            BL.setPower(newStrafe);
+            slowStrafeleft();
         }
 
         if (gamepad1.a) {
@@ -99,15 +91,34 @@ public class DriveTrain extends LinearOpMode {
 
     }
 
-    public void reposOpen()
+    public void reposClose()
     {
         leftRepos.setPosition(.4);
         rightRepos.setPosition(.3);
     }
-    public void reposClose()
+    public void reposOpen()
     {
         leftRepos.setPosition(.9);
         rightRepos.setPosition(.8);
+    }
+    public void slowStrafeRight() {
+
+
+            double newStrafe = .3;
+            FL.setPower(newStrafe);
+            FR.setPower(-newStrafe);
+            BR.setPower(newStrafe);
+            BL.setPower(-newStrafe);
+
+    }
+    public void slowStrafeleft()
+    {
+            double newStrafe = .3;
+            FL.setPower(-newStrafe);
+            FR.setPower(newStrafe);
+            BR.setPower(-newStrafe);
+            BL.setPower(newStrafe);
+
     }
 
     public void drive(double distance, double power) {
@@ -140,6 +151,57 @@ public class DriveTrain extends LinearOpMode {
             telemetry.addData("EncoderPosition", FL.getCurrentPosition());
             telemetry.addData("EncoderTarget", ticks);
             telemetry.update();
+        }
+
+        for (DcMotor motor: motors) {
+            motor.setPower(0);
+        }
+
+        for (DcMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
+
+        for (DcMotor motor: motors) {
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+    }
+
+    public void driveAndArm(double distance, double power, Servo gripper, boolean open) {
+
+        int ticks = inchesToTicks(distance);
+
+        for (DcMotor motor : motors) {
+            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        for (DcMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
+        BR.setTargetPosition(BR.getCurrentPosition() - ticks);
+        BL.setTargetPosition(BL.getCurrentPosition() - ticks);
+        FR.setTargetPosition(FR.getCurrentPosition() - ticks);
+        FL.setTargetPosition(FL.getCurrentPosition() - ticks);
+
+        BR.setPower(power);
+        BL.setPower(-power);
+        FR.setPower(power);
+        FL.setPower(-power);
+
+        for (DcMotor motor: motors) {
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        while(FL.isBusy() && FR.isBusy() && BR.isBusy() && BL.isBusy()) {
+            telemetry.addData("EncoderPosition", FL.getCurrentPosition());
+            telemetry.addData("EncoderTarget", ticks);
+            telemetry.update();
+            if(!open){
+                gripper.setPosition(.2);
+            }
+            else {
+                gripper.setPosition(.9);
+            }
         }
 
         for (DcMotor motor: motors) {
@@ -215,7 +277,8 @@ public class DriveTrain extends LinearOpMode {
 
         //default spin in too the left
 
-        int ticks = inchesToTicks(distance);
+     //   int ticks = inchesToTicks(distance);
+        int ticks = (int)distance;
 
         for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -228,17 +291,17 @@ public class DriveTrain extends LinearOpMode {
         FL.setTargetPosition(FL.getCurrentPosition() + ticks);
 
         BR.setPower(power);
-        BL.setPower(power);
+        BL.setPower(-power);
         FR.setPower(power);
-        FL.setPower(power);
+        FL.setPower(-power);
 
         for (DcMotor motor: motors) {
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
         while(FL.isBusy() && FR.isBusy() && BR.isBusy() && BL.isBusy()) {
-            telemetry.addData("EncoderPosition", FL.getCurrentPosition());
-            telemetry.addData("EncoderTarget", ticks);
+            telemetry.addData("EncoderPosition", FR.getCurrentPosition());
+            telemetry.addData("EncoderTarget", FR.getTargetPosition());
             telemetry.update();
         }
 
