@@ -23,9 +23,9 @@ public class MethodTests extends LinearOpMode {
 
         waitForStart();
 
-        imu.turnOriginalAngle(-90,.3);
+        imu.proportionalIMU(-90);
         while (opModeIsActive()) {
-
+            telemetry.addData(" Heading ",imu.currentAngle());
             telemetry.update();
         }
     }

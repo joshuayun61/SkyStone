@@ -82,11 +82,14 @@ public class Arm extends LinearOpMode {
     public void raiseBH()
     {
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Slide.setTargetPosition(Slide.getCurrentPosition() + blockHeight);
-        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Slide.setPower(.9);
-        while(Slide.isBusy()) {
 
+        Slide.setTargetPosition(Slide.getCurrentPosition() + blockHeight);
+
+        double constant = 0; //Kp constant TBD
+
+        double speed = (Slide.getTargetPosition() - Slide.getCurrentPosition()) * constant;
+
+        while(Slide.getCurrentPosition() < Slide.getTargetPosition()){
             myDrive.mecanumDrive();
         }
     }

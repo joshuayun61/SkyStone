@@ -107,18 +107,7 @@ public class TensorSense extends LinearOpMode {
             telemetry.addData("Stone 1LeftX", stoneLeftX);
             telemetry.addData("Stone 2LeftX", stoneRightX);
 
-            /*if (stoneRightX == -1 && skyStoneLeftX < stoneLeftX) {
-                telemetry.addData("SkyStone Position", "Left");
-                stonePosition = -1;
-            } else if (skyStoneLeftX == -1) {
-                telemetry.addData("SkyStone Positio", "Right");
-                stonePosition = 1;
-            } else if (stoneRightX == -1 && stoneLeftX < skyStoneLeftX){
-                telemetry.addData("SkyStone Position", "Center");
-                stonePosition = 0;
-            } else {
-                telemetry.addData("SkyStone Position", "Unknown");
-            }*/
+
 
             if(skyStoneLeftX == -1)
             {

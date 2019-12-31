@@ -57,7 +57,7 @@ public class Autonomous12382 extends LinearOpMode {
        driveTrain.drive(13,.4);
        arm.closeArm();
        driveTrain.drive(-6,.5);
-       imu.turnOriginalAngle(88,.3);
+       imu.proportionalIMU(90);
 
        //drive depending on where the skystone was
         switch(sense.stonePosition)
@@ -80,22 +80,22 @@ public class Autonomous12382 extends LinearOpMode {
         arm.closeArm();
         arm.raisePH(600);
         //turn and drop
-        driveTrain.spin(-770,.7);
+        imu.proportionalIMU(0);
         driveTrain.drive(10,.5);
         arm.Intake.setPosition(.6);
         //pull out
         driveTrain.drive(-10,.7);
         //180 turn and open repos
-        driveTrain.spin(1550, .5);
+        driveTrain.spin(1550,.5);
         driveTrain.reposOpen();
         //move to center of foundation
         driveTrain.strafe(14,.5);
         //pull foundation
         driveTrain.drive(-12,.4);
         driveTrain.reposClose();
-        driveTrain.drive(35,.6);
+        driveTrain.drive(40,.6);
         //rotate foundation
-        imu.turnOriginalAngle(-90,.6);
+        imu.proportionalIMU(-90);
         sleep(1000);
 
         /* arm.ground();

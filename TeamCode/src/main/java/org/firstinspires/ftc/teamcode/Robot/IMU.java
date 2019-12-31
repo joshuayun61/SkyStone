@@ -23,7 +23,8 @@ public class IMU extends LinearOpMode {
     Orientation angles, originalAngles;
     Acceleration gravity;
     DriveTrain driveTrain;
-
+    public final float Ku = 1f;
+    public float Kp = Ku/2;
     @Override
     public void runOpMode() throws InterruptedException {}
 
@@ -51,6 +52,168 @@ public class IMU extends LinearOpMode {
         imu.initialize(parameters);
         originalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
+
+    public void proportionalIMU(int angle)
+    {
+        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        telemetry.addData("Starting Heading: ", currentAngle());
+        telemetry.addData("Heading input: ", angle);
+
+        double left, right;
+
+        if(angle == 90)
+        {
+            while(currentAngle() < angle - .25 || currentAngle() > angle +.25 ) {
+                double angleDifference = angle - currentAngle();
+
+                left = angleDifference * Kp / 100;
+                right = angleDifference * Kp / 100;
+
+                left = limit(left, .14,.8);
+                right = limit(right, .14,.8);
+
+                FL.setPower(left);
+                BL.setPower(left);
+                FR.setPower(-right);
+                BR.setPower(-right);
+            }
+        }
+        else if( angle == 180)
+        {
+            while(currentAngle() < 179.5) {
+
+                double angleDifference = angleDifference(angle);
+
+                left = angleDifference * Kp / 100;
+                right = angleDifference * Kp / 100;
+
+                left = limit(left, .1 , .3);
+                right = limit(right, .1, .3);
+
+                FL.setPower(left);
+                BL.setPower(left);
+                FR.setPower(-right);
+                BR.setPower(-right);
+            }
+
+        }
+        else if( angle == -90)
+        {
+            while (!( -90.5 < currentAngle() && currentAngle() < -89.5))
+            {
+                double relativeDifference;
+                if(currentAngle() > 0) {
+                    relativeDifference = angle + (360 - currentAngle());
+                }
+                else {
+                    relativeDifference = angle + (360 - currentAngle());
+                }
+                if (relativeDifference < -180){
+                    relativeDifference += 360;
+                } else if (relativeDifference > 180){
+                    relativeDifference -= 360;
+                }
+
+
+                left = relativeDifference * Kp / 100;
+                right = relativeDifference * Kp / 100;
+
+                left = limit(left, .15 , .6);
+                right = limit(right, .15, .6);
+
+                FL.setPower(left);
+                BL.setPower(left);
+                FR.setPower(-right);
+                BR.setPower(-right);
+
+                telemetry.addData("Relative Difference", relativeDifference);
+                telemetry.addLine()
+                        .addData("Left", -left)
+                        .addData("Right", right);
+                telemetry.addData("Current Head", currentAngle());
+                telemetry.update();
+            }
+
+        }
+        else if ( angle == 0)
+        {
+            while(currentAngle() < 0 || currentAngle() > angle +.25 ) {
+                double angleDifference = angle - currentAngle();
+
+                left = angleDifference * Kp / 100;
+                right = angleDifference * Kp / 100;
+
+                left = limit(left, .14,.8);
+                right = limit(right, .14,.8);
+
+                FL.setPower(left);
+                BL.setPower(left);
+                FR.setPower(-right);
+                BR.setPower(-right);
+            }
+        }
+        FL.setPower(0);
+        BL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+
+      //  telemetry.addData("Final Heading", currentAngle());
+
+    }
+
+    public double limit(double input, double lim, double lim2)
+    {
+        if(input > 0) {
+            if (input < lim) {
+                return lim;
+            }
+            else if(input > lim2)
+            {
+                return lim2;
+            }
+        }
+        else if(input < 0)
+        {
+            if(input > 0 - lim)
+            {
+                return 0 - lim;
+            }
+            else if(input < 0 - lim2)
+            {
+                return 0 - lim2;
+            }
+        }
+
+        return input;
+    }
+
+    public double  angleDifference(int angle)
+    {
+        if(angle >= 0 && angle != 180)
+        {
+            return angle - currentAngle();
+        }
+        else if(angle == 180)
+        {
+            double result = angle - (360 - Math.abs(currentAngle()));
+            return result;
+        }
+        else
+        {
+            double result = Math.abs(currentAngle()) - Math.abs(angle);
+            return result;
+        }
+    }
+
 
     /**
      * Resets the measurments so that they are starting from 0, useful if you only want to turn relative to current location,
@@ -194,6 +357,8 @@ public class IMU extends LinearOpMode {
                     BR.setPower(right);
                     while (currentRelativeAngle() > angle+.5) {}
                 }
+
+
                 if(currentRelativeAngle() <= angle-1)
                 {
                     left =  .12;
@@ -329,7 +494,7 @@ public class IMU extends LinearOpMode {
 
         //          0
         //  90              -90
-        //         180
+        //     179.9   -179.9
 
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
