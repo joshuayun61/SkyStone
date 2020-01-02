@@ -11,10 +11,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class DriveTrain extends LinearOpMode {
 
-    DcMotor FL, FR, BL, BR;
+    public DcMotor FL, FR, BL, BR;
     Servo rightRepos, leftRepos;
 
     DcMotor[] motors = new DcMotor[4];
+
+
+    private final float Ku = 2f;
+    private float Kp = Ku/2;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -165,6 +169,85 @@ public class DriveTrain extends LinearOpMode {
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
+
+    public void PropDrive(double distance, double maxSpeed)
+    {
+        int ticks = inchesToTicks(distance);
+
+        int toPower = (Integer.toString(Math.abs(ticks))).length();
+        toPower = (int)Math.pow(10, toPower);
+
+        for (DcMotor motor : motors) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        for (DcMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
+        BR.setTargetPosition(BR.getCurrentPosition() - ticks);
+        BL.setTargetPosition(BL.getCurrentPosition() - ticks);
+        FR.setTargetPosition(FR.getCurrentPosition() - ticks);
+        FL.setTargetPosition(FL.getCurrentPosition() - ticks);
+
+        //convert to abs to reference distance
+        double currentAbs = Math.abs(FR.getCurrentPosition());
+        double targetAbs = Math.abs(FR.getTargetPosition());
+
+        while(currentAbs < targetAbs - 30 || currentAbs > targetAbs + 30) {
+
+
+            for(DcMotor motor : motors)
+            {
+                double relativeDistance = motor.getTargetPosition() - motor.getCurrentPosition();
+                double power = relativeDistance * Kp / 1000;
+                power = limit(power, .15, maxSpeed);
+                motor.setPower(power);
+                telemetry.addData("Power", power);
+            }
+
+            telemetry.addLine()
+                    .addData("Target", BL.getTargetPosition())
+                    .addData("Current", BL.getCurrentPosition());
+            telemetry.update();
+
+            currentAbs = Math.abs(FR.getCurrentPosition());
+            targetAbs = Math.abs(FR.getTargetPosition());
+        }
+
+        FL.setPower(0);
+        BL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+
+    }
+    public double limit(double input, double lim, double lim2)
+    {
+        if(input > 0) {
+            if (input < lim) {
+                return lim;
+            }
+            else if(input > lim2)
+            {
+                return lim2;
+            }
+        }
+        else if(input < 0)
+        {
+            if(input > 0 - lim)
+            {
+                return 0 - lim;
+            }
+            else if(input < 0 - lim2)
+            {
+                return 0 - lim2;
+            }
+        }
+
+        return input;
+    }
+
 
     public void driveAndArm(double distance, double power, Servo gripper, boolean open) {
 

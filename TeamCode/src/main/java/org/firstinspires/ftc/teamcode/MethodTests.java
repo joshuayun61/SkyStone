@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.AI.TensorSense;
 import org.firstinspires.ftc.teamcode.AI.VufandTensor;
@@ -18,15 +19,17 @@ public class MethodTests extends LinearOpMode {
         TensorSense sense = new TensorSense(telemetry, hardwareMap);
         IMU imu = new IMU(telemetry, hardwareMap, driveTrain);
         Arm arm = new Arm(telemetry, hardwareMap, gamepad1, driveTrain);
-       // sense.setupTfod();
+        sense.setupTfod();
         imu.imuSetup();
 
         waitForStart();
 
-        imu.proportionalIMU(-90);
-        while (opModeIsActive()) {
-            telemetry.addData(" Heading ",imu.currentAngle());
+        imu.proportionalIMU(180, .3,.7);
+        while(opModeIsActive())
+        {
             telemetry.update();
         }
+
+
     }
 }

@@ -104,10 +104,10 @@ public class Arm extends LinearOpMode {
     public void blockLift()
     {
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Slide.setTargetPosition(20);
+        Slide.setTargetPosition(50);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Slide.setPower(.9);
-        while(Slide.isBusy()) {
+        while(Slide.getCurrentPosition() < 40) {
 
             myDrive.mecanumDrive();
         }

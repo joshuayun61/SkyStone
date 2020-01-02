@@ -91,56 +91,40 @@ public class TensorSense extends LinearOpMode {
                 if (recognition.getLabel().equals(LABEL_SECOND_ELEMENT)) {
                     skyStoneLeftX = (int) recognition.getLeft();
                     SkyStoneLeftBound = skyStoneLeftX;
-                }
-                else if (stoneLeftX == -1){
+                } else if (stoneLeftX == -1) {
                     stoneLeftX = (int) recognition.getLeft();
-                }
-                else if (stoneRightX == -1){
+                } else if (stoneRightX == -1) {
                     stoneRightX = (int) recognition.getLeft();
 
                 }
 
-            }
+
+                telemetry.addData("SkyStone LeftX", skyStoneLeftX);
+                telemetry.addData("Stone 1LeftX", stoneLeftX);
+                telemetry.addData("Stone 2LeftX", stoneRightX);
 
 
-            telemetry.addData("SkyStone LeftX", skyStoneLeftX);
-            telemetry.addData("Stone 1LeftX", stoneLeftX);
-            telemetry.addData("Stone 2LeftX", stoneRightX);
-
-
-
-            if(skyStoneLeftX == -1)
-            {
-                telemetry.addData("SkyStone Position", "Right");
-                stonePosition = 1;
-            }
-            else if(skyStoneLeftX != -1 && stoneLeftX != -1)
-            {
-                if(skyStoneLeftX > stoneLeftX)
-                {
-                    telemetry.addData("SkyStone Position", "Center");
-                    stonePosition = 0;
-                }
-                else
-                {
-                    telemetry.addData("SkyStone Position", "Left");
-                    stonePosition = -1;
-                }
-            }
-            else if(skyStoneLeftX != -1)
-            {
-                if(skyStoneLeftX > 500)
-                {
-                    telemetry.addData("SkyStone Position", "Center");
-                    stonePosition = 0;
-                }
-                else
-                {
-                    telemetry.addData("SkyStone Position", "Left");
-                    stonePosition = -1;
+                if (skyStoneLeftX == -1 && stoneLeftX != 0 && stoneRightX != 0) {
+                        telemetry.addData("SkyStone Position", "Right");
+                        stonePosition = 1;
+                } else if (skyStoneLeftX != -1 && stoneLeftX != -1) {
+                    if (skyStoneLeftX > stoneLeftX) {
+                        telemetry.addData("SkyStone Position", "Center");
+                        stonePosition = 0;
+                    } else {
+                        telemetry.addData("SkyStone Position", "Left");
+                        stonePosition = -1;
+                    }
+                } else if (skyStoneLeftX != -1) {
+                    if (skyStoneLeftX > 500) {
+                        telemetry.addData("SkyStone Position", "Center");
+                        stonePosition = 0;
+                    } else {
+                        telemetry.addData("SkyStone Position", "Left");
+                        stonePosition = -1;
+                    }
                 }
             }
-
 
 
 
@@ -180,7 +164,7 @@ public class TensorSense extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.8;
+        tfodParameters.minimumConfidence = 0.7;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
