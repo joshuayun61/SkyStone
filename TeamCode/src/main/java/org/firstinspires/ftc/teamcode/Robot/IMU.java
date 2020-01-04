@@ -78,8 +78,12 @@ public class IMU extends LinearOpMode {
                 left = angleDifference * Kp / 100;
                 right = angleDifference * Kp / 100;
 
-                left = limit(left, .14,.8);
-                right = limit(right, .14,.8);
+                left = limit(left);
+                right = limit(right);
+
+                telemetry.addData("LEft", left);
+                telemetry.addData("Right", -right);
+                telemetry.update();
 
                 FL.setPower(left);
                 BL.setPower(left);
@@ -96,8 +100,8 @@ public class IMU extends LinearOpMode {
                 left = angleDifference * Kp / 100;
                 right = angleDifference * Kp / 100;
 
-                left = limit(left, .1 , .3);
-                right = limit(right, .1, .3);
+                left = limit(left);
+                right = limit(right);
 
                 FL.setPower(left);
                 BL.setPower(left);
@@ -127,8 +131,8 @@ public class IMU extends LinearOpMode {
                 left = relativeDifference * Kp / 100;
                 right = relativeDifference * Kp / 100;
 
-                left = limit(left, .15 , .6);
-                right = limit(right, .15, .6);
+                left = limit(left);
+                right = limit(right);
 
                 FL.setPower(left);
                 BL.setPower(left);
@@ -152,8 +156,8 @@ public class IMU extends LinearOpMode {
                 left = angleDifference * Kp / 100;
                 right = angleDifference * Kp / 100;
 
-                left = limit(left, .14,.8);
-                right = limit(right, .14,.8);
+                left = limit(left);
+                right = limit(right);
 
                 FL.setPower(left);
                 BL.setPower(left);
@@ -166,7 +170,7 @@ public class IMU extends LinearOpMode {
         FR.setPower(0);
         BR.setPower(0);
 
-      //  telemetry.addData("Final Heading", currentAngle());
+        telemetry.addData("Final Heading", currentAngle());
 
     }
     public void proportionalIMU(int angle, double min, double max)
@@ -194,8 +198,8 @@ public class IMU extends LinearOpMode {
                 left = angleDifference * Kp / 100;
                 right = angleDifference * Kp / 100;
 
-                left = limit(left, .14,.8);
-                right = limit(right, .14,.8);
+                left = limit(left);
+                right = limit(right);
 
                 FL.setPower(left);
                 BL.setPower(left);
@@ -212,8 +216,8 @@ public class IMU extends LinearOpMode {
                 left = angleDifference * Kp / 100;
                 right = angleDifference * Kp / 100;
 
-                left = limit(left, min , max);
-                right = limit(right, min, max);
+                left = limit(left);
+                right = limit(right);
 
                 if(currentAngle() < 0) {
                     FL.setPower(left);
@@ -251,8 +255,8 @@ public class IMU extends LinearOpMode {
                 left = relativeDifference * Kp / 100;
                 right = relativeDifference * Kp / 100;
 
-                left = limit(left, min , max);
-                right = limit(right, min, max);
+                left = limit(left);
+                right = limit(right);
 
                 FL.setPower(left);
                 BL.setPower(left);
@@ -276,8 +280,8 @@ public class IMU extends LinearOpMode {
                 left = angleDifference * Kp / 100;
                 right = angleDifference * Kp / 100;
 
-                left = limit(left, min,max);
-                right = limit(right, min,max);
+                left = limit(left);
+                right = limit(right);
 
                 FL.setPower(left);
                 BL.setPower(left);
@@ -294,29 +298,24 @@ public class IMU extends LinearOpMode {
 
     }
 
-    public double limit(double input, double lim, double lim2)
+    public double limit(double input)
     {
-        if(input > 0) {
-            if (input < lim) {
-                return lim;
-            }
-            else if(input > lim2)
-            {
-                return lim2;
-            }
-        }
-        else if(input < 0)
+        if(input < 0)
         {
-            if(input > 0 - lim)
+            input -= .12;
+            if(input < -.55)
             {
-                return 0 - lim;
-            }
-            else if(input < 0 - lim2)
-            {
-                return 0 - lim2;
+                input = -.55;
             }
         }
-
+        else
+        {
+            input += .12;
+            if(input > .55)
+            {
+                input = .55;
+            }
+        }
         return input;
     }
 

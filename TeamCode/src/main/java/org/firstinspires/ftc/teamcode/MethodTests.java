@@ -19,17 +19,16 @@ public class MethodTests extends LinearOpMode {
         TensorSense sense = new TensorSense(telemetry, hardwareMap);
         IMU imu = new IMU(telemetry, hardwareMap, driveTrain);
         Arm arm = new Arm(telemetry, hardwareMap, gamepad1, driveTrain);
-        sense.setupTfod();
+        //sense.setupTfod();
         imu.imuSetup();
 
         waitForStart();
 
-        imu.proportionalIMU(180, .3,.7);
+        imu.proportionalIMU(90);
         while(opModeIsActive())
         {
             telemetry.update();
         }
-
 
     }
 }
