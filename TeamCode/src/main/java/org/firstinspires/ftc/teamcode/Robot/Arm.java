@@ -169,11 +169,11 @@ public class Arm extends LinearOpMode {
 
         if(gamepad2.right_bumper)
         {
-            Intake.setPosition(.2);
+            Intake.setPosition(0.1);
         }
         if(gamepad2.left_bumper)
         {
-            Intake.setPosition(.9);
+            Intake.setPosition(1);
         }
 
     }
