@@ -25,8 +25,7 @@ public class Autonomous12382 extends LinearOpMode {
 
 
         driveTrain.driveAndArm(24,.4,arm.Intake,true);
-        driveTrain.strafe(4,.4);
-        sleep(500);
+        driveTrain.strafe(3,.4);
 
         while(sense.stonePosition == -100) {
             arm.openArm();
@@ -44,17 +43,18 @@ public class Autonomous12382 extends LinearOpMode {
         }
         switch (sense.stonePosition) {
             case (-1) :
-                driveTrain.strafe(-6, 0.3);
+                driveTrain.strafe(-8, 0.3);
                 break;
             case (1) :
                 driveTrain.strafe(7, 0.3);
         }
 
 
-       //grab stone and pull out and turn
-       driveTrain.drive(13,.4);
+     //  grab stone and pull out and turn
+       driveTrain.drive(14,.4);
        arm.closeArm();
-       driveTrain.drive(-6,.5);
+       sleep(300);
+       driveTrain.drive(-10,.5);
        imu.proportionalIMU(90);
 
        //drive depending on where the skystone was
@@ -79,18 +79,17 @@ public class Autonomous12382 extends LinearOpMode {
         arm.raisePH(600);
 
         //turn and drop
-        imu.proportionalIMU(0, .2,.3);
-        driveTrain.drive(10,.5);
+        imu.proportionalIMU(0);
+        driveTrain.drive(8,.5);
         arm.Intake.setPosition(.6);
         sleep(200);
 
+        driveTrain.reposClose();
+        sleep(500);
 
-//        driveTrain.reposClose();
-//        sleep(500);
-//
-//        driveTrain.PropDrive(-30,.6);
-//
-//        imu.proportionalIMU(90);
+        driveTrain.PropDrive(-20,.6);
+
+       // imu.proportionalIMU(90);
 
 
 
