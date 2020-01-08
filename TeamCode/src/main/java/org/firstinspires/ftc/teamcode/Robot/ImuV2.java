@@ -70,7 +70,6 @@ public class ImuV2 {
 
         findError(targetAngle);
 
-        if ()
 
         return 0;
     }

@@ -53,7 +53,7 @@ public class IMU extends LinearOpMode {
         originalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 
-    public void proportionalIMU(int angle)
+    public void proportionalIMU(int angle, boolean fast)
     {
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -78,17 +78,32 @@ public class IMU extends LinearOpMode {
                 left = angleDifference * Kp / 100;
                 right = angleDifference * Kp / 100;
 
-                left = limit(left, .11);
-                right = limit(right, .11);
+                if(fast) {
+                    left = limit(left, .2);
+                    right = limit(right, .2);
 
-                telemetry.addData("LEft", left);
-                telemetry.addData("Right", -right);
-                telemetry.update();
+                    telemetry.addData("LEft", left);
+                    telemetry.addData("Right", -right);
+                    telemetry.update();
 
-                FL.setPower(left);
-                BL.setPower(left);
-                FR.setPower(-right);
-                BR.setPower(-right);
+                    FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(-right);
+                    BR.setPower(-right);
+                }
+                else {
+                    left = limit(left, .11);
+                    right = limit(right, .11);
+
+                    telemetry.addData("LEft", left);
+                    telemetry.addData("Right", -right);
+                    telemetry.update();
+
+                    FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(-right);
+                    BR.setPower(-right);
+                }
             }
         }
         else if( angle == 180)
@@ -156,8 +171,8 @@ public class IMU extends LinearOpMode {
                 left = angleDifference * Kp / 100;
                 right = angleDifference * Kp / 100;
 
-                left = limit(left, .05);
-                right = limit(right, .05);
+                left = limit(left, .12);
+                right = limit(right, .12);
 
                 FL.setPower(left);
                 BL.setPower(left);
@@ -180,17 +195,17 @@ public class IMU extends LinearOpMode {
         if(input < 0)
         {
             input -= min;
-            if(input < -.55)
+            if(input < -.45)
             {
-                input = -.55;
+                input = -.45;
             }
         }
         else
         {
             input += min;
-            if(input > .55)
+            if(input > .45)
             {
-                input = .55;
+                input = .45;
             }
         }
         return input;

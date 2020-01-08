@@ -53,43 +53,45 @@ public class Autonomous12382 extends LinearOpMode {
      //  grab stone and pull out and turn
        driveTrain.drive(14,.4);
        arm.closeArm();
-       sleep(300);
        driveTrain.drive(-10,.5);
-       imu.proportionalIMU(90);
+       imu.proportionalIMU(90, false);
+       driveTrain.reposOpen();
 
        //drive depending on where the skystone was
         switch(sense.stonePosition)
         {
             case (-1) :
-                driveTrain.PropDrive(73, .5);
+                driveTrain.PropDrive(68, .3);
                 break;
             case (0) :
-                driveTrain.PropDrive(82, .5);
+                driveTrain.PropDrive(72, .3);
                 break;
             case (1) :
-                driveTrain.PropDrive(91,.5);
+                driveTrain.PropDrive(81,.3);
                 break;
 
         }
 
+        // TODO: 1/8/2020 Change this into light mode because it is impossible to read
+        // TODO: 1/8/2020 Servos are great
 
 
         //raise arm
-        arm.closeArm();
+        arm.Intake.setPosition(.1);
         arm.raisePH(600);
 
         //turn and drop
-        imu.proportionalIMU(0);
-        driveTrain.drive(8,.5);
+        driveTrain.spin(-780, .3);
+        driveTrain.drive(14,.5);
         arm.Intake.setPosition(.6);
         sleep(200);
 
         driveTrain.reposClose();
         sleep(500);
 
-        driveTrain.PropDrive(-20,.6);
+        driveTrain.PropDrive(-30,.6);
 
-       // imu.proportionalIMU(90);
+        imu.proportionalIMU(90, true);
 
 
 
