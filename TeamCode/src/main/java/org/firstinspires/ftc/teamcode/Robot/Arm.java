@@ -49,7 +49,7 @@ public class Arm extends LinearOpMode {
         Slide.setTargetPosition(5);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Slide.setPower(.9);
-        while(Slide.getCurrentPosition() > 20) {
+        while(Slide.getCurrentPosition() > 25) {
             telemetry.addData("Slide Tick",slidePosition());
             telemetry.update();
             myDrive.mecanumDrive();

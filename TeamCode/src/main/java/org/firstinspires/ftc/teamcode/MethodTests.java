@@ -26,7 +26,7 @@ public class MethodTests extends LinearOpMode {
 
         driveTrain.reposClose();
         sleep(1000);
-        imu.proportionalIMU(90 ,true);
+        imu.proportionalIMU(90 ,false);
         while(opModeIsActive())
         {
             telemetry.update();

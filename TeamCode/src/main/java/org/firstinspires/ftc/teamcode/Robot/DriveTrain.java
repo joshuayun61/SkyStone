@@ -93,17 +93,18 @@ public class DriveTrain extends LinearOpMode {
             reposClose();
         }
 
+
     }
 
     public void reposClose()
     {
         leftRepos.setPosition(.4);
-        rightRepos.setPosition(.6);
+        rightRepos.setPosition(.7);
     }
     public void reposOpen()
     {
-        leftRepos.setPosition(.9);
-        rightRepos.setPosition(.2);
+        leftRepos.setPosition(.7);
+        rightRepos.setPosition(.35);
     }
     public void slowStrafeRight() {
 

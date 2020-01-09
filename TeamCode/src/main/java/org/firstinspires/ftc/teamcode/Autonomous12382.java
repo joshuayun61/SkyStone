@@ -64,7 +64,7 @@ public class Autonomous12382 extends LinearOpMode {
                 driveTrain.PropDrive(68, .3);
                 break;
             case (0) :
-                driveTrain.PropDrive(72, .3);
+                driveTrain.PropDrive(78, .3);
                 break;
             case (1) :
                 driveTrain.PropDrive(81,.3);
@@ -82,17 +82,24 @@ public class Autonomous12382 extends LinearOpMode {
 
         //turn and drop
         driveTrain.spin(-780, .3);
-        driveTrain.drive(14,.5);
+        driveTrain.drive(15,.5);
         arm.Intake.setPosition(.6);
         sleep(200);
-
+        driveTrain.drive(2,.6);
         driveTrain.reposClose();
         sleep(500);
 
-        driveTrain.PropDrive(-30,.6);
+        driveTrain.drive(-20,.5);
 
         imu.proportionalIMU(90, true);
 
+        driveTrain.drive(9,.6);
+        driveTrain.strafe(2,.4);
+        driveTrain.reposOpen();
+        sleep(500);
+        driveTrain.drive(-6,.5);
+        arm.ground();
+        driveTrain.drive(-20,.4);
 
 
         //pull foundation
