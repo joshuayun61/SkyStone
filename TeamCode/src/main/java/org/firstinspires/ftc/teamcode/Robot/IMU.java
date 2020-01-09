@@ -53,7 +53,13 @@ public class IMU extends LinearOpMode {
         originalAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
     }
 
-    public void proportionalIMU(int angle, boolean fast)
+    /*  Proportional IMU method used to turn the robot at varying speeds. This allows the bot to slow down as it
+        gets to it's target.
+        @param angle - inputted angle that the robot will turn towards MUST BE (-179.9,179.9) or 180 or 0.
+        @param repositioning - boolean used to toggle power so that when connected to the build plate the robot
+                               can actually pull it.
+    */
+    public void proportionalIMU(int angle, boolean repositioning)
     {
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -70,72 +76,52 @@ public class IMU extends LinearOpMode {
 
         double left, right;
 
-        if(angle == 90)
+        if(angle < 179.9 && angle > 0) // (0,179.9)
         {
-            while(currentAngle() > angle + .15 || currentAngle() < angle - .15) {
+            while(currentAngle() > angle + .15 || currentAngle() < angle - .15)
+            {
                 double angleDifference = angle - currentAngle();
 
                 left = angleDifference * Kp / 100;
                 right = angleDifference * Kp / 100;
 
-                if(fast) {
-                    left = limit(left, .2);
-                    right = limit(right, .2);
+                if(repositioning)
+                {
+                    left = limit(left, .2, .5);
+                    right = limit(right, .2, .5);
 
                     telemetry.addData("LEft", left);
                     telemetry.addData("Right", -right);
                     telemetry.update();
 
-                    FL.setPower(left);
+                   /* FL.setPower(left);
                     BL.setPower(left);
                     FR.setPower(-right);
-                    BR.setPower(-right);
+                    BR.setPower(-right);*/
                 }
-                else {
-                    left = limit(left, .11);
-                    right = limit(right, .11);
+                else
+                {
+                    left = limit(left, .13, .5);
+                    right = limit(right, .13, .5);
 
                     telemetry.addData("LEft", left);
                     telemetry.addData("Right", -right);
                     telemetry.update();
 
-                    FL.setPower(left);
+                   /* FL.setPower(left);
                     BL.setPower(left);
                     FR.setPower(-right);
-                    BR.setPower(-right);
+                    BR.setPower(-right);*/
                 }
             }
         }
-        else if( angle == 180)
+        else if(angle < 0 && angle > -179.9) // (-179.9, 0)
         {
-            while(currentAngle() < 179.5) {
-
-                double angleDifference = angleDifference(angle);
-
-                left = angleDifference * Kp / 100;
-                right = angleDifference * Kp / 100;
-
-                left = limit(left, .05);
-                right = limit(right,.05);
-
-                FL.setPower(left);
-                BL.setPower(left);
-                FR.setPower(-right);
-                BR.setPower(-right);
-            }
-
-        }
-        else if( angle == -90)
-        {
-            while (!( -90.5 < currentAngle() && currentAngle() < -89.5))
+            while (currentAngle() > angle + .15 || currentAngle() < angle - .15) // (ang - .15 < current < ang + .15)
             {
                 double relativeDifference;
-                if(currentAngle() > 0) {
-                    relativeDifference = angle + (360 - currentAngle());
-                }
-                else {
-                    relativeDifference = angle + (360 - currentAngle());
-                }
+                relativeDifference = angle + (360 - currentAngle());
+
                 if (relativeDifference < -180){
                     relativeDifference += 360;
                 } else if (relativeDifference > 180){
@@ -146,38 +132,109 @@ public class IMU extends LinearOpMode {
                 left = relativeDifference * Kp / 100;
                 right = relativeDifference * Kp / 100;
 
-                left = limit(left, .05);
-                right = limit(right,.05);
+                if(repositioning) {
+                    left = limit(left, .2, .5);
+                    right = limit(right, .2, .5);
 
-                FL.setPower(left);
-                BL.setPower(left);
-                FR.setPower(-right);
-                BR.setPower(-right);
+                    telemetry.addData("Left", left);
+                    telemetry.addData("Right", -right);
+                    telemetry.update();
 
-                telemetry.addData("Relative Difference", relativeDifference);
-                telemetry.addLine()
-                        .addData("Left", -left)
-                        .addData("Right", right);
-                telemetry.addData("Current Head", currentAngle());
-                telemetry.update();
+                    /*FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(-right);
+                    BR.setPower(-right);*/
+                }
+                else {
+                    left = limit(left, .13, .5);
+                    right = limit(right, .13, .5);
+
+                    telemetry.addData("Left", left);
+                    telemetry.addData("Right", -right);
+                    telemetry.update();
+
+                   /* FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(-right);
+                    BR.setPower(-right);*/
+
+                }
+
             }
 
         }
+        else if( angle == 180)
+        {
+            while(currentAngle() < 179.5) {
+
+                double angleDifference = angleDifference(angle);
+
+                left = angleDifference * Kp / 100;
+                right = angleDifference * Kp / 100;
+
+                if(repositioning)
+                {
+                    left = limit(left, .2,.5);
+                    right = limit(right,.2,.5);
+
+                    telemetry.addData("Left", left);
+                    telemetry.addData("Right", -right);
+                    telemetry.update();
+
+                    /*FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(-right);
+                    BR.setPower(-right);*/
+                }
+                else
+                {
+                    left = limit(left, .13, .5);
+                    right = limit(right, .13, .5);
+
+                    telemetry.addData("Left", left);
+                    telemetry.addData("Right", -right);
+                    telemetry.update();
+                    /*FL.setPower(left);
+                    BL.setPower(left);
+                    FR.setPower(-right);
+                    BR.setPower(-right);*/
+                }
+
+
+            }
+
+        }
+
         else if ( angle == 0)
         {
-            while(currentAngle() < 0 || currentAngle() > angle +.25 ) {
+            while(currentAngle() < -.15 || currentAngle() > .15 ) {
                 double angleDifference = angle - currentAngle();
 
                 left = angleDifference * Kp / 100;
                 right = angleDifference * Kp / 100;
 
-                left = limit(left, .12);
-                right = limit(right, .12);
+                if(repositioning)
+                {
+                    left = limit(left, .2,.5);
+                    right = limit(right, .2, .5);
 
-                FL.setPower(left);
+                    telemetry.addData("Left", left);
+                    telemetry.addData("Right", -right);
+                    telemetry.update();
+                }
+                else
+                {
+                    left = limit(left, .13, .5);
+                    right = limit(right, .13, .5);
+
+                    telemetry.addData("Left", left);
+                    telemetry.addData("Right", -right);
+                    telemetry.update();
+                }
+                /*FL.setPower(left);
                 BL.setPower(left);
                 FR.setPower(-right);
-                BR.setPower(-right);
+                BR.setPower(-right);*/
             }
         }
         FL.setPower(0);
@@ -190,22 +247,22 @@ public class IMU extends LinearOpMode {
     }
 
 
-    public double limit(double input, double min)
+    public double limit(double input, double min, double max)
     {
-        if(input < 0)
+        if(input > 0)
         {
-            input -= min;
-            if(input < -.45)
+            input += min;
+            if(input > max)
             {
-                input = -.45;
+                input = max;
             }
         }
         else
         {
-            input += min;
-            if(input > .45)
+            input -= min;
+            if(input < -min)
             {
-                input = .45;
+                input = -max;
             }
         }
         return input;
