@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.Robot.Arm;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.Robot.IMU;
 
-@Autonomous(name = "Autonomous BLUE Depot")
-public class AutonomousBlue12382 extends LinearOpMode {
+@Autonomous(name = "Autonomous Red NO REPO")
+public class AutoNoRepoRED extends LinearOpMode {
 
 
     public void runOpMode() {
@@ -23,9 +23,8 @@ public class AutonomousBlue12382 extends LinearOpMode {
 
         waitForStart();
 
-
         driveTrain.driveAndArm(24,.4,arm.Intake,true);
-        driveTrain.strafe(6,.4);
+        driveTrain.strafe(2,.4);
 
         while(sense.stonePosition == -100) {
             arm.openArm();
@@ -43,82 +42,78 @@ public class AutonomousBlue12382 extends LinearOpMode {
         }
         switch (sense.stonePosition) {
             case (-1) :
-                driveTrain.strafe(-7, 0.3);
+                driveTrain.strafe(-7, 0.4);
                 break;
             case (1) :
-                driveTrain.strafe(-16, 0.3);
+                driveTrain.strafe(8, 0.4);
         }
 
 
-     //  grab stone and pull out and turn
-       driveTrain.drive(15,.4);
-       arm.closeArm();
-       driveTrain.drive(-10,.5);
-       imu.proportionalIMU(-90, false);
-       driveTrain.reposOpen();
+        //  grab stone and pull out and turn
+        driveTrain.drive(15,.4);
+        arm.closeArm();
+        driveTrain.drive(-10,.5);
+        imu.proportionalIMU(90, false);
+        arm.closeArm();
 
-       //drive depending on where the skystone was
+
+        //drive depending on where the skystone was
         switch(sense.stonePosition)
         {
             case (-1) :
-                driveTrain.PropDrive(80, .3);
+                driveTrain.drive(48, .3);
                 break;
             case (0) :
-                driveTrain.PropDrive(70, .4);
+                driveTrain.drive(36, .3);
                 break;
             case (1) :
-                driveTrain.PropDrive(88,.3);
+                driveTrain.drive(60,.3);
                 break;
 
         }
-//
-//        // TODO: 1/8/2020 Change this into light mode because it is impossible to read
-//        // TODO: 1/8/2020 Servos are great
-//
 
-        //raise arm
-        arm.Intake.setPosition(.1);
-        arm.raisePH(600);
+        // TODO: 1/8/2020 Change this into light mode because it is impossible to read
+        // TODO: 1/8/2020 Servos are great
 
-        //turn and drop
-        //driveTrain.spin(780, .3);
-        imu.proportionalIMU(0, false);
-        driveTrain.drive(15,.5);
-        arm.Intake.setPosition(.6);
+
+        arm.openArm();
         sleep(200);
-        driveTrain.drive(2,.6);
-        driveTrain.reposClose();
-        sleep(500);
-
-        driveTrain.drive(-20,.5);
-
-        imu.proportionalIMU(-90, true);
-
-        driveTrain.drive(9,.6);
-
 
         switch(sense.stonePosition)
         {
-            case(-1) :
-                driveTrain.strafe(3,.3);
+            case (-1) :
+                driveTrain.drive(-70, .4);
                 break;
-            case(0):
-                driveTrain.strafe(2,.3);
+            case (0) :
+                driveTrain.drive(-61, .4);
                 break;
-            case(1):
-                driveTrain.strafe(4, .3);
+
         }
+        if(!(sense.stonePosition == 1))
+        {
+            imu.proportionalIMU(0,false);
+            driveTrain.drive(20,.4);
+            arm.closeArm();
+            driveTrain.drive(-15,.5);
+            imu.proportionalIMU(90, false);
+            arm.closeArm();
 
+            switch(sense.stonePosition)
+            {
+                case (-1) :
+                    driveTrain.drive(69, .5);
+                    break;
+                case (0) :
+                    driveTrain.drive(65, .5);
+                    break;
 
+            }
+            arm.openArm();
+            sleep(300);
 
-        driveTrain.reposOpen();
-        sleep(500);
-        driveTrain.drive(-6,.5);
-        arm.ground();
-        driveTrain.drive(-33,.4);
+            driveTrain.drive(-12,.6);
 
-
-        //pull foundation
+        }
 
 
 

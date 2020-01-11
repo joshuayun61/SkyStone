@@ -27,7 +27,7 @@ public class Autonomous12382 extends LinearOpMode {
 
 
         driveTrain.driveAndArm(24,.4,arm.Intake,true);
-        driveTrain.strafe(3,.4);
+        driveTrain.strafe(2,.4);
 
         while(sense.stonePosition == -100) {
             arm.openArm();
@@ -45,10 +45,10 @@ public class Autonomous12382 extends LinearOpMode {
         }
         switch (sense.stonePosition) {
             case (-1) :
-                driveTrain.strafe(-8, 0.3);
+                driveTrain.strafe(-7, 0.4);
                 break;
             case (1) :
-                driveTrain.strafe(7, 0.3);
+                driveTrain.strafe(8, 0.4);
         }
 
 
@@ -63,13 +63,13 @@ public class Autonomous12382 extends LinearOpMode {
         switch(sense.stonePosition)
         {
             case (-1) :
-                driveTrain.PropDrive(68, .3);
+                driveTrain.PropDrive(69, .3);
                 break;
             case (0) :
                 driveTrain.PropDrive(78, .3);
                 break;
             case (1) :
-                driveTrain.PropDrive(81,.3);
+                driveTrain.PropDrive(85,.3);
                 break;
 
         }
@@ -91,17 +91,26 @@ public class Autonomous12382 extends LinearOpMode {
         driveTrain.reposClose();
         sleep(500);
 
-        driveTrain.drive(-20,.5);
+        driveTrain.drive(-23,.5);
 
         imu.proportionalIMU(90, true);
 
         driveTrain.drive(9,.6);
-        driveTrain.strafe(2,.4);
+        switch(sense.stonePosition){
+            case(-1) :
+                driveTrain.strafe(3, .4);
+                break;
+            case(0) :
+                driveTrain.strafe(2,.4);
+                break;
+            case(1) :
+                driveTrain.strafe(5, .4);
+        }
         driveTrain.reposOpen();
         sleep(500);
-        driveTrain.drive(-6,.5);
+        driveTrain.drive(-6,.6);
         arm.ground();
-        driveTrain.drive(-20,.4);
+        driveTrain.drive(-33,.5);
 
 
         //pull foundation
