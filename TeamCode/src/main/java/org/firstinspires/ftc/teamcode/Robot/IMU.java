@@ -165,8 +165,8 @@ public class IMU extends LinearOpMode {
                     BR.setPower(-right);
                 }
                 else {
-                    left = limit(left, .13, .5);
-                    right = limit(right, .13, .5);
+                    left = limit(left, .12, .5);
+                    right = limit(right, .12, .5);
 
                     telemetry.addData("Left", left);
                     telemetry.addData("Right", -right);

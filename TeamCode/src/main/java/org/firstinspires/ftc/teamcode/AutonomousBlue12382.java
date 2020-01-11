@@ -4,14 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.AI.TensorSense;
-import org.firstinspires.ftc.teamcode.AI.VufandTensor;
+import org.firstinspires.ftc.teamcode.Robot.Arm;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.Robot.IMU;
-import org.firstinspires.ftc.teamcode.Robot.InetialMUnit;
-import org.firstinspires.ftc.teamcode.Robot.Arm;
 
-@Autonomous(name = "Autonomous Red Depot")
-public class Autonomous12382 extends LinearOpMode {
+@Autonomous(name = "Autonomous BLUE Depot")
+public class AutonomousBlue12382 extends LinearOpMode {
 
 
     public void runOpMode() {
@@ -27,7 +25,7 @@ public class Autonomous12382 extends LinearOpMode {
 
 
         driveTrain.driveAndArm(24,.4,arm.Intake,true);
-        driveTrain.strafe(3,.4);
+        driveTrain.strafe(6,.4);
 
         while(sense.stonePosition == -100) {
             arm.openArm();
@@ -48,7 +46,7 @@ public class Autonomous12382 extends LinearOpMode {
                 driveTrain.strafe(-8, 0.3);
                 break;
             case (1) :
-                driveTrain.strafe(7, 0.3);
+                driveTrain.strafe(-16, 0.3);
         }
 
 
@@ -56,52 +54,52 @@ public class Autonomous12382 extends LinearOpMode {
        driveTrain.drive(14,.4);
        arm.closeArm();
        driveTrain.drive(-10,.5);
-       imu.proportionalIMU(90, false);
+       imu.proportionalIMU(-90, false);
        driveTrain.reposOpen();
 
        //drive depending on where the skystone was
         switch(sense.stonePosition)
         {
             case (-1) :
-                driveTrain.PropDrive(68, .3);
-                break;
-            case (0) :
                 driveTrain.PropDrive(78, .3);
                 break;
+            case (0) :
+                driveTrain.PropDrive(68, .4);
+                break;
             case (1) :
-                driveTrain.PropDrive(81,.3);
+                driveTrain.PropDrive(88,.3);
                 break;
 
         }
-
-        // TODO: 1/8/2020 Change this into light mode because it is impossible to read
-        // TODO: 1/8/2020 Servos are great
-
-
-        //raise arm
-        arm.Intake.setPosition(.1);
-        arm.raisePH(600);
-
-        //turn and drop
-        driveTrain.spin(-780, .3);
-        driveTrain.drive(15,.5);
-        arm.Intake.setPosition(.6);
-        sleep(200);
-        driveTrain.drive(2,.6);
-        driveTrain.reposClose();
-        sleep(500);
-
-        driveTrain.drive(-20,.5);
-
-        imu.proportionalIMU(90, true);
-
-        driveTrain.drive(9,.6);
-        driveTrain.strafe(2,.4);
-        driveTrain.reposOpen();
-        sleep(500);
-        driveTrain.drive(-6,.5);
-        arm.ground();
-        driveTrain.drive(-20,.4);
+//
+//        // TODO: 1/8/2020 Change this into light mode because it is impossible to read
+//        // TODO: 1/8/2020 Servos are great
+//
+//
+//        //raise arm
+//        arm.Intake.setPosition(.1);
+//        arm.raisePH(600);
+//
+//        //turn and drop
+//        driveTrain.spin(-780, .3);
+//        driveTrain.drive(15,.5);
+//        arm.Intake.setPosition(.6);
+//        sleep(200);
+//        driveTrain.drive(2,.6);
+//        driveTrain.reposClose();
+//        sleep(500);
+//
+//        driveTrain.drive(-20,.5);
+//
+//        imu.proportionalIMU(90, true);
+//
+//        driveTrain.drive(9,.6);
+//        driveTrain.strafe(2,.4);
+//        driveTrain.reposOpen();
+//        sleep(500);
+//        driveTrain.drive(-6,.5);
+//        arm.ground();
+//        driveTrain.drive(-20,.4);
 
 
         //pull foundation
