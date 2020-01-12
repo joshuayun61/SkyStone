@@ -37,7 +37,7 @@ public class AutoRepoRedBridge extends LinearOpMode {
         driveTrain.reposOpen();
         sleep(200);
 
-        driveTrain.strafe(10, .4);
+        driveTrain.strafe(15, .4);
         driveTrain.drive(-15,.6);
         arm.ground();
         driveTrain.drive(-15,.6);

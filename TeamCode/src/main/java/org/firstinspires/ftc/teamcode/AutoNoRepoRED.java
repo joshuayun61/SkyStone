@@ -46,12 +46,16 @@ public class AutoNoRepoRED extends LinearOpMode {
                 break;
             case (1) :
                 driveTrain.strafe(8, 0.4);
+                break;
+            case (0) :
+                driveTrain.strafe(-2, .4);
         }
 
 
         //  grab stone and pull out and turn
-        driveTrain.drive(15,.4);
+        driveTrain.drive(15,.3);
         arm.closeArm();
+        sleep(700);
         driveTrain.drive(-10,.5);
         imu.proportionalIMU(90, false);
         arm.closeArm();
@@ -64,10 +68,10 @@ public class AutoNoRepoRED extends LinearOpMode {
                 driveTrain.drive(48, .3);
                 break;
             case (0) :
-                driveTrain.drive(36, .3);
+                driveTrain.drive(64, .3);
                 break;
             case (1) :
-                driveTrain.drive(60,.3);
+                driveTrain.drive(70,.3);
                 break;
 
         }
@@ -82,7 +86,7 @@ public class AutoNoRepoRED extends LinearOpMode {
         switch(sense.stonePosition)
         {
             case (-1) :
-                driveTrain.drive(-70, .4);
+                driveTrain.drive(-68, .4);
                 break;
             case (0) :
                 driveTrain.drive(-61, .4);
@@ -91,9 +95,10 @@ public class AutoNoRepoRED extends LinearOpMode {
         }
         if(!(sense.stonePosition == 1))
         {
-            imu.proportionalIMU(0,false);
+            driveTrain.spin(-780,.4);
             driveTrain.drive(20,.4);
             arm.closeArm();
+            sleep(700);
             driveTrain.drive(-15,.5);
             imu.proportionalIMU(90, false);
             arm.closeArm();
@@ -111,9 +116,10 @@ public class AutoNoRepoRED extends LinearOpMode {
             arm.openArm();
             sleep(300);
 
-            driveTrain.drive(-12,.6);
+
 
         }
+        driveTrain.drive(-12,.6);
 
 
 

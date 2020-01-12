@@ -52,6 +52,7 @@ public class AutoNoRepoBLUE extends LinearOpMode {
         //  grab stone and pull out and turn
         driveTrain.drive(15,.4);
         arm.closeArm();
+        sleep(300);
         driveTrain.drive(-10,.5);
         imu.proportionalIMU(-90, false);
        arm.closeArm();
@@ -77,12 +78,12 @@ public class AutoNoRepoBLUE extends LinearOpMode {
 
 
         arm.openArm();
-        sleep(200);
+        sleep(700);
 
         switch(sense.stonePosition)
         {
             case (-1) :
-                driveTrain.drive(-70, .4);
+                driveTrain.drive(-69, .4);
                 break;
             case (0) :
                 driveTrain.drive(-61, .4);
@@ -94,6 +95,7 @@ public class AutoNoRepoBLUE extends LinearOpMode {
             imu.proportionalIMU(0,false);
             driveTrain.drive(20,.4);
             arm.closeArm();
+            sleep(700);
             driveTrain.drive(-15,.5);
             imu.proportionalIMU(-90, false);
             arm.closeArm();
@@ -101,7 +103,7 @@ public class AutoNoRepoBLUE extends LinearOpMode {
             switch(sense.stonePosition)
             {
                 case (-1) :
-                    driveTrain.drive(69, .5);
+                    driveTrain.drive(68, .5);
                     break;
                 case (0) :
                     driveTrain.drive(65, .5);
@@ -111,9 +113,10 @@ public class AutoNoRepoBLUE extends LinearOpMode {
             arm.openArm();
             sleep(300);
 
-            driveTrain.drive(-12,.6);
+
 
         }
+        driveTrain.drive(-12,.6);
 
 
         //pull foundation

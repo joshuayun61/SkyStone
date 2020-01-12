@@ -78,7 +78,7 @@ public class IMU extends LinearOpMode {
 
         if(angle < 179.9 && angle > 0) // (0,179.9)
         {
-            while(currentAngle() > angle + .15 || currentAngle() < angle - .15) {
+            while(currentAngle() > angle + .17 || currentAngle() < angle - .17) {
                 double angleDifference = angle - currentAngle();
 
                 left = angleDifference * Kp / 100;
@@ -97,8 +97,8 @@ public class IMU extends LinearOpMode {
                     FR.setPower(-right);
                     BR.setPower(-right);
                 } else {
-                    left = limit(left, .1, .5);
-                    right = limit(right, .1, .5);
+                    left = limit(left, .12 , .5);
+                    right = limit(right, .12, .5);
 
                     telemetry.addData("LEft", left);
                     telemetry.addData("Right", -right);
@@ -118,8 +118,8 @@ public class IMU extends LinearOpMode {
                     right = angleDifference * Kp / 100;
 
 
-                        left = limit(left, .1, .5);
-                        right = limit(right, .1, .5);
+                        left = limit(left, .12, .5);
+                        right = limit(right, .12, .5);
 
                         telemetry.addData("LEft", left);
                         telemetry.addData("Right", -right);
@@ -226,7 +226,7 @@ public class IMU extends LinearOpMode {
 
         else if ( angle == 0)
         {
-            while(currentAngle() < -.15 || currentAngle() > .15 ) {
+            while(currentAngle() < -.2 || currentAngle() > .2 ) {
                 double angleDifference = angle - currentAngle();
 
                 left = angleDifference * Kp / 100;
@@ -243,8 +243,8 @@ public class IMU extends LinearOpMode {
                 }
                 else
                 {
-                    left = limit(left, .13, .5);
-                    right = limit(right, .13, .5);
+                    left = limit(left, .125, .5);
+                    right = limit(right, .125, .5);
 
                     telemetry.addData("Left", left);
                     telemetry.addData("Right", -right);

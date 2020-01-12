@@ -55,6 +55,7 @@ public class Autonomous12382 extends LinearOpMode {
      //  grab stone and pull out and turn
        driveTrain.drive(14,.4);
        arm.closeArm();
+       sleep(500);
        driveTrain.drive(-10,.5);
        imu.proportionalIMU(90, false);
        driveTrain.reposOpen();

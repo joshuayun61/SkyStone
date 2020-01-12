@@ -26,7 +26,7 @@ public class AutoRepoBluBridge extends LinearOpMode {
         arm.raisePH(600);
 
         driveTrain.drive(20,.5);
-        driveTrain.strafe(-8,.3);
+        driveTrain.strafe(-15,.3);
         driveTrain.reposOpen();
         sleep(200);
         driveTrain.drive(20, .4);
