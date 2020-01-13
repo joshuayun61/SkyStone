@@ -90,7 +90,7 @@ public class AutonomousBlue12382 extends LinearOpMode {
         driveTrain.reposClose();
         sleep(500);
 
-        driveTrain.drive(-20,.5);
+        driveTrain.drive(-27,.5);
 
         imu.proportionalIMU(-90, true);
 
