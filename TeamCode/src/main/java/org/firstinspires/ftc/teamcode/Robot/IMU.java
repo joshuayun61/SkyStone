@@ -54,8 +54,9 @@ public class IMU extends LinearOpMode {
     }
 
     /*  Proportional IMU method used to turn the robot at varying speeds. This allows the bot to slow down as it
-        gets to it's target.
-        @param angle - inputted angle that the robot will turn towards MUST BE (-179.9,179.9) or 180 or 0.
+        gets to its target.
+        Precondition - input angle must be (-179.9,179.9) (0 or 180)
+        @param angle - inputted angle that the robot will turn towards.
         @param repositioning - boolean used to toggle power so that when connected to the build plate the robot
                                can actually pull it.
     */
