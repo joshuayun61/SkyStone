@@ -171,6 +171,71 @@ public class DriveTrain extends LinearOpMode {
         }
     }
 
+    public void PDrive(double inches)
+    {
+        //convert the distance in inches to ticks
+        int ticks = inchesToTicks(inches);
+        boolean forward;
+        if(ticks > 0)
+            forward = true;
+        else
+            forward = false;
+
+        //Set all motors to run without encoders
+        for(DcMotor motor : motors)
+        {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
+        //We'll stop when the average of all the motors is at the target. This is experimental may need to be reverted, but it purpose
+        //is to not just read off one motor for the while loop.
+        double avgCurrent = (FL.getCurrentPosition() + BL.getCurrentPosition() + BR.getCurrentPosition() + FR.getCurrentPosition()) / 4;
+
+        if(forward)
+        {
+            while(avgCurrent < ticks)
+            {
+                //To create a motor speed that increases as it approaches halfway then decreases as it approaches it's target
+                //most calculations will be based on ticks/2
+
+                //This converts the current position to a standard score from 0 to 1 that we can manipulate for motor speed.
+                double error = (avgCurrent - ticks/2)/ticks/2;
+
+                double power = -(Math.pow(error, 2)) + 1;
+
+                FL.setPower(power);
+                BL.setPower(power);
+                FR.setPower(power);
+                BR.setPower(power);
+
+                avgCurrent = (FL.getCurrentPosition() + BL.getCurrentPosition() + BR.getCurrentPosition() + FR.getCurrentPosition()) / 4;
+            }
+        }
+        else
+        {
+            while(avgCurrent > ticks)
+            {
+                //To create a motor speed that increases as it approaches halfway then decreases as it approaches it's target
+                //most calculations will be based on ticks/2
+
+                //This converts the current position to a standard score from 0 to 1 that we can manipulate for motor speed.
+                double error = (avgCurrent - (ticks/2))/(ticks/2);
+
+                double power = -(Math.pow(error, 2)) + 1;
+
+                FL.setPower(power);
+                BL.setPower(power);
+                FR.setPower(power);
+                BR.setPower(power);
+
+                avgCurrent = (FL.getCurrentPosition() + BL.getCurrentPosition() + BR.getCurrentPosition() + FR.getCurrentPosition()) / 4;
+            }
+        }
+
+    }
+
+
+
     public void PropDrive(double distance, double maxSpeed)
     {
         int ticks = inchesToTicks(distance);
