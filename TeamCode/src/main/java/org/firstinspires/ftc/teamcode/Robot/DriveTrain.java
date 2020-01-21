@@ -185,6 +185,7 @@ public class DriveTrain extends LinearOpMode {
         for(DcMotor motor : motors)
         {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         //We'll stop when the average of all the motors is at the target. This is experimental may need to be reverted, but it purpose
@@ -230,6 +231,9 @@ public class DriveTrain extends LinearOpMode {
 
                 avgCurrent = (FL.getCurrentPosition() + BL.getCurrentPosition() + BR.getCurrentPosition() + FR.getCurrentPosition()) / 4;
             }
+        }
+        for (DcMotor motor: motors) {
+            motor.setPower(0);
         }
 
     }
