@@ -22,11 +22,11 @@ public class MethodTests extends LinearOpMode {
         //sense.setupTfod();
         imu.imuSetup();
 
-        driveTrain.PDrive(24);
+
 
         waitForStart();
 
-
+        driveTrain.PropDrive(24, .7);
         while(opModeIsActive())
         {
             telemetry.update();

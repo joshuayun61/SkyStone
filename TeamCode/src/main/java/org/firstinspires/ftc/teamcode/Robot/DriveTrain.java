@@ -109,20 +109,20 @@ public class DriveTrain extends LinearOpMode {
     public void slowStrafeRight() {
 
 
-            double newStrafe = .3;
-            FL.setPower(newStrafe);
-            FR.setPower(-newStrafe);
-            BR.setPower(newStrafe);
-            BL.setPower(-newStrafe);
+        double newStrafe = .3;
+        FL.setPower(newStrafe);
+        FR.setPower(-newStrafe);
+        BR.setPower(newStrafe);
+        BL.setPower(-newStrafe);
 
     }
     public void slowStrafeleft()
     {
-            double newStrafe = .3;
-            FL.setPower(-newStrafe);
-            FR.setPower(newStrafe);
-            BR.setPower(-newStrafe);
-            BL.setPower(newStrafe);
+        double newStrafe = .3;
+        FL.setPower(-newStrafe);
+        FR.setPower(newStrafe);
+        BR.setPower(-newStrafe);
+        BL.setPower(newStrafe);
 
     }
 
@@ -194,7 +194,7 @@ public class DriveTrain extends LinearOpMode {
 
         if(forward)
         {
-            while(avgCurrent < ticks)
+            while(avgCurrent < ticks - 30)
             {
                 //To create a motor speed that increases as it approaches halfway then decreases as it approaches it's target
                 //most calculations will be based on ticks/2
@@ -203,11 +203,17 @@ public class DriveTrain extends LinearOpMode {
                 double error = (avgCurrent - ticks/2)/ticks/2;
 
                 double power = -(Math.pow(error, 2)) + 1;
+                limit(power, .12,.8);
 
-                FL.setPower(power);
-                BL.setPower(power);
-                FR.setPower(power);
-                BR.setPower(power);
+              //  FL.setPower(-power);
+              //  BL.setPower(-power);
+              //  FR.setPower(-power);
+              //  BR.setPower(-power);
+                telemetry.addData("Power", power);
+                telemetry.addData("AvgCurrent", avgCurrent);
+                telemetry.addData("ticsk:", ticks);
+                telemetry.addData("Error", error);
+                telemetry.update();
 
                 avgCurrent = (FL.getCurrentPosition() + BL.getCurrentPosition() + BR.getCurrentPosition() + FR.getCurrentPosition()) / 4;
             }
@@ -430,7 +436,7 @@ public class DriveTrain extends LinearOpMode {
 
         //default spin in too the left
 
-     //   int ticks = inchesToTicks(distance);
+        //   int ticks = inchesToTicks(distance);
         int ticks = (int)distance;
 
         for (DcMotor motor : motors) {
