@@ -191,24 +191,21 @@ public class OpenCV {
 
             switch (stageToRenderToViewport)
             {
-                case THRESHOLD:
-                {
-                    return thresholdMat;
-                }
-
-                case detection:
+                case detection: //GreyScale W/Boxes
                 {
                     return all;
                 }
-
+                case THRESHOLD: //Converted Black and White to detect yellow
+                {
+                    return thresholdMat;
+                }
                 case RAW_IMAGE:
                 {
                     return input;
                 }
-
                 default:
                 {
-                    return input;
+                    return null;
                 }
             }
         }

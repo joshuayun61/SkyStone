@@ -11,11 +11,13 @@ public class Robot12382 {
     public static Telemetry telemetry;
     public static HardwareMap hardwareMap;
 
+    public OpenCVTestBench openCVTestBench;
+
     Robot12382(Telemetry telemetry, HardwareMap hardwareMap) {
 
         Robot12382.telemetry = telemetry;
         Robot12382.hardwareMap = hardwareMap;
 
-        OpenCVTestBench openCVTestBench = new OpenCVTestBench();
+        openCVTestBench = new OpenCVTestBench();
     }
 }
