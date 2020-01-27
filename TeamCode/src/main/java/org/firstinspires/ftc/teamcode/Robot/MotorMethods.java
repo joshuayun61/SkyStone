@@ -21,6 +21,14 @@ abstract class MotorMethods {
         }
     }
 
+    public void setRunMode(DcMotor.RunMode... runModes) {
+        for (DcMotor.RunMode runMode : runModes) {
+            for (DcMotor motor : motors) {
+                motor.setMode(runMode);
+            }
+        }
+    }
+
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
         for(DcMotor motor: motors) {
             motor.setZeroPowerBehavior(zeroPowerBehavior);

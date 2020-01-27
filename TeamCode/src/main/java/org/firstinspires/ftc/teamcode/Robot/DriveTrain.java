@@ -25,6 +25,7 @@ public class DriveTrain extends MotorMethods {
     private double error;
 
     private ElapsedTime time;
+    double currentTime, pastTime = 0;
 
     public DriveTrain() {
 
@@ -96,10 +97,9 @@ public class DriveTrain extends MotorMethods {
 
 
     public void strafe(strafeDirection direction, double distance, double motorPower, double maxSpeed) {
+
         int ticks = inchesToTicks(distance);
-        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         int directionModifiers[] = direction.modifiers;
         int powerModifiers[] = direction.motorPower.modifiers;
@@ -124,7 +124,7 @@ public class DriveTrain extends MotorMethods {
 
             encoderDistance = targetEncoder - currentEncoder;
 
-            double pidModifier = pidController(encoderDistance, maxSpeed, pastTime, currentTime);
+            double pidModifier = pidController(encoderDistance, maxSpeed);
 
             setPower(motorPower * powerModifiers[FRONT_LEFT] * pidModifier,
                     motorPower * powerModifiers[FRONT_RIGHT] * pidModifier,
@@ -137,9 +137,31 @@ public class DriveTrain extends MotorMethods {
         setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    public void turn(double target, double motorPower, double maxSpeed) {
+
+        double angle = imu.calculateError(target);
+        double pidModifier = pidController(angle, maxSpeed);
+
+        turnPower motorsPowers;
+
+        if (angle > 0) {
+            motorsPowers = turnPower.CW;
+        } else {
+            motorsPowers = turnPower.CCW;
+        }
+
+        int[] powerModifiers = motorsPowers.modifiers;
+
+        while (Math.abs(angle) > 0.005) {
+            setPower(motorPower * powerModifiers[FRONT_LEFT] * pidModifier,
+                    motorPower * powerModifiers[FRONT_RIGHT] * pidModifier,
+                    motorPower * powerModifiers[BACK_LEFT] * pidModifier,
+                    motorPower * powerModifiers[BACK_RIGHT] * pidModifier);
+        }
+    }
 
 
-    private double pidController(double distance, double maxSpeed, double pastTime, double currentTime) {
+    private double pidController(double distance, double maxSpeed) {
 
         double pidOutput = 0;
         error =  (1/( 1 + Math.pow(Math.E,(-1*distance))));
@@ -190,5 +212,12 @@ public class DriveTrain extends MotorMethods {
         strafePower(int... mods) {
             modifiers = mods;
         }
+    }
+
+    private enum turnPower {
+        CW(-1,-1,-1,-1),
+        CCW(1,1,1,1);
+        int[] modifiers;
+        turnPower(int... mods) {modifiers = mods;}
     }
 }
