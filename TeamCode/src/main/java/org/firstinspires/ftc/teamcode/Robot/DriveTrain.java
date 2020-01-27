@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Robot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Robot12382;
 
@@ -20,7 +21,15 @@ public class DriveTrain extends MotorMethods {
 
     private InertialMeasurementUnit imu;
 
+    private double previousError;
+    private double error;
+
+    private ElapsedTime time;
+
     public DriveTrain() {
+
+        time = new ElapsedTime(ElapsedTime.Resolution.MILLISECONDS);
+
         FL = Robot12382.hardwareMap.get(DcMotor.class, "FL");
         FR = Robot12382.hardwareMap.get(DcMotor.class, "FR");
         BL = Robot12382.hardwareMap.get(DcMotor.class, "BL");
@@ -35,6 +44,8 @@ public class DriveTrain extends MotorMethods {
 
         imu = new InertialMeasurementUnit();
         imu.imuSetup();
+
+        time.reset();
     }
 
     public void mecanumDrive(Gamepad gamepad) {
@@ -84,7 +95,7 @@ public class DriveTrain extends MotorMethods {
     }
 
 
-    public void strafe(strafeDirection direction, double distance, double motorPower) {
+    public void strafe(strafeDirection direction, double distance, double motorPower, double maxSpeed) {
         int ticks = inchesToTicks(distance);
         setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
         setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -101,10 +112,24 @@ public class DriveTrain extends MotorMethods {
 
         setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while(FL.isBusy() && FR.isBusy() && BR.isBusy() && BL.isBusy()) {
-            Robot12382.telemetry.addData("EncoderPosition", FL.getCurrentPosition());
-            Robot12382.telemetry.addData("EncoderTarget", ticks);
-            Robot12382.telemetry.update();
+        double currentEncoder = FR.getCurrentPosition();
+        double targetEncoder = FR.getTargetPosition();
+
+        double encoderDistance = ticks;
+
+        double pastTime = 0;
+        double currentTime = 0;
+
+        while (Math.abs(encoderDistance) > 30) {
+
+            encoderDistance = targetEncoder - currentEncoder;
+
+            double pidModifier = pidController(encoderDistance, maxSpeed, pastTime, currentTime);
+
+            setPower(motorPower * powerModifiers[FRONT_LEFT] * pidModifier,
+                    motorPower * powerModifiers[FRONT_RIGHT] * pidModifier,
+                    motorPower * powerModifiers[BACK_LEFT] * pidModifier,
+                    motorPower * powerModifiers[BACK_RIGHT] * pidModifier);
         }
 
         setPower(0);
@@ -112,8 +137,32 @@ public class DriveTrain extends MotorMethods {
         setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    private double pidController(double target) {
-        double pidOutput = imu.calculateError(target);
+
+
+    private double pidController(double distance, double maxSpeed, double pastTime, double currentTime) {
+
+        double pidOutput = 0;
+        error =  (1/( 1 + Math.pow(Math.E,(-1*distance))));
+
+        double p;
+        double i = 0;
+        double d = 0;
+
+        currentTime = time.startTime();
+
+        if (currentTime - pastTime >= 20) {
+
+            p = Math.abs(error) + .15;
+            i += Math.abs(error * 0.02);
+            d += Math.abs((error - previousError) / 2);
+            currentTime = pastTime;
+            previousError = error;
+            pidOutput = p + i + d;
+        }
+        if (pidOutput > maxSpeed) {
+            pidOutput = maxSpeed;
+        }
+
         return pidOutput;
     }
 

@@ -42,6 +42,9 @@ public class OpenCVTestBench {
 
     OpenCvCamera phoneCam;
 
+    public double getColor() {
+        return valMid;
+    }
 
     public void setup() throws InterruptedException {
 
@@ -68,10 +71,17 @@ public class OpenCVTestBench {
 
     static class ColorDetect extends OpenCvPipeline {
 
+        Mat hsv = new Mat();
+        Mat red1 = new Mat();
+        Mat red2 = new Mat();
+        Mat redFinal = new Mat();
+        Mat blur = new Mat();
+
         enum Stage
         {
             RAW_IMAGE,
-            RED,
+            BLURRED,
+            RED
         }
 
         private Stage stageToRenderToViewport = Stage.RAW_IMAGE;
@@ -95,23 +105,28 @@ public class OpenCVTestBench {
         @Override
         public Mat processFrame(Mat input) {
 
-            Mat hsv = new Mat();
-            Mat red1 = new Mat();
-            Mat red2 = new Mat();
-            Mat redFinal = new Mat();
+            Imgproc.GaussianBlur(input, blur, new Size(5,5),0);
 
-            Imgproc.cvtColor(input, hsv, Imgproc.COLOR_RGB2HSV);
+            Imgproc.cvtColor(blur, hsv, Imgproc.COLOR_RGB2HSV);
 
             Core.inRange(hsv, new Scalar(0,50,50), new Scalar(10,255,255), red1);
             Core.inRange(hsv, new Scalar(170,50,50), new Scalar(180,255,255), red2);
 
             Core.bitwise_or(red1, red2, redFinal);
 
+            double[] pixMid = redFinal.get((int)(input.rows()* midPos[1]), (int)(input.cols()* midPos[0]));//gets value at circle
+            valMid = (int)pixMid[0];
+
+            Point pointMid = new Point((int)(input.cols()* midPos[0]), (int)(input.rows()* midPos[1]));
+
+            Imgproc.circle(input, pointMid,5, new Scalar( 255, 0, 0 ),1 );//draws circle
 
             //Returns stages of the pipeline based on how many screen presses
             switch (stageToRenderToViewport) {
                 case RED:
                     return redFinal;
+                case BLURRED:
+                    return blur;
                 case RAW_IMAGE:
                     return input;
                 default:

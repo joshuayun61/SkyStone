@@ -17,6 +17,8 @@ public class TeleOp extends LinearOpMode {
         robot.openCVTestBench.start();
 
         while (opModeIsActive()) {
+            telemetry.addData("Color is Red: ", robot.openCVTestBench.getColor());
+            telemetry.update();
         }
 
         robot.openCVTestBench.stop();
