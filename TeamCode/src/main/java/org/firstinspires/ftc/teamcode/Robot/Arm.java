@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Robot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Robot12382;
@@ -67,34 +68,32 @@ public class Arm extends MotorMethods {
 
 
 
-    public void moveArm(double left_stick_y, boolean a, boolean b, boolean x,
-                        boolean left_bumper, boolean right_bumper, boolean dpad_up,
-                        boolean dpad_down) {
-        if (a) {
+    public void moveArm(Gamepad gamepad) {
+        if (gamepad.a) {
             movePlatformHeight();
         }
-        if (b) {
+        if (gamepad.b) {
             liftBlock();
         }
-        if (x) {
+        if (gamepad.x) {
             setToGroundPosition();
         }
-        if (dpad_up) {
+        if (gamepad.dpad_up) {
             moveOneBlockHeight(true);
         }
-        if (dpad_down) {
+        if (gamepad.dpad_down) {
             moveOneBlockHeight(false);
         }
-        if (right_bumper) {
+        if (gamepad.right_bumper) {
             openArm();
         }
-        if (left_bumper) {
+        if (gamepad.left_bumper) {
             closeArm();
         }
-        if(left_stick_y != 0)
+        if(gamepad.left_stick_y != 0)
         {
             setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            setPower(-left_stick_y/1.5);
+            setPower(-gamepad.left_stick_y/1.5);
         }
         if (slidePosition() > 4100) {
             setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
