@@ -14,6 +14,8 @@ public class Arm extends LinearOpMode {
 
     public Servo Intake;
 
+    public Servo grab, spin;
+
     private DriveTrain myDrive;
 
     //field constants
@@ -35,6 +37,24 @@ public class Arm extends LinearOpMode {
         Slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
+
+    public Arm(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad, DriveTrain driveTrain, boolean New) {
+
+        this.telemetry = telemetry;
+
+        this.hardwareMap = hardwareMap;
+
+        gamepad2 = gamepad;
+
+        myDrive = driveTrain;
+
+        spin = hardwareMap.get(Servo.class, "spin");
+        grab = hardwareMap.get(Servo.class, "grab");
+        Slide = hardwareMap.get(DcMotor.class, "Slide");
+        Slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
 
     public void runOpMode() {}
 
@@ -110,6 +130,40 @@ public class Arm extends LinearOpMode {
         while(Slide.getCurrentPosition() < 40) {
 
             myDrive.mecanumDrive();
+        }
+    }
+
+    public void newArm()
+    {
+        if(gamepad2.left_stick_y != 0)
+        {
+            Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        if(Slide.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER)
+        {
+            Slide.setPower(-gamepad2.left_stick_y/4);
+        }
+
+        if(gamepad2.x)
+        {
+            spin.setPosition(.0);
+        }
+        if(gamepad2.y)
+        {
+            spin.setPosition(1);
+        }
+        if(gamepad2.a)
+        {
+            grab.setPosition(.8);
+        }
+        if(gamepad2.b)
+        {
+            grab.setPosition(.1);
+        }
+        if(gamepad2.right_bumper)
+        {
+            spin.setPosition(.5);
         }
     }
 

@@ -118,6 +118,8 @@ public class OpenCV extends LinearOpMode {
         private Stage stageToRenderToViewport = Stage.detection;
         private Stage[] stages = Stage.values();
 
+
+
         @Override
         public void onViewportTapped()
         {

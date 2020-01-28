@@ -47,6 +47,27 @@ public class DriveTrain extends LinearOpMode {
         DcMotor[] tempMotors = {FL, FR, BL, BR};
         motors = tempMotors;
     }
+    public DriveTrain(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad, boolean New) {
+
+        gamepad1 = gamepad;
+
+        this.telemetry = telemetry;
+
+        this.hardwareMap = hardwareMap;
+
+        FL = hardwareMap.get(DcMotor.class, "FL");
+        FR = hardwareMap.get(DcMotor.class, "FR");
+        BL = hardwareMap.get(DcMotor.class, "BL");
+        BR = hardwareMap.get(DcMotor.class, "BR");
+
+        FR.setDirection(DcMotor.Direction.REVERSE);
+        BR.setDirection(DcMotor.Direction.REVERSE);
+
+
+
+        DcMotor[] tempMotors = {FL, FR, BL, BR};
+        motors = tempMotors;
+    }
 
     public void mecanumDrive() {
 
@@ -86,12 +107,12 @@ public class DriveTrain extends LinearOpMode {
             slowStrafeleft();
         }
 
-        if (gamepad1.a) {
-            reposOpen();
-        }
-        if(gamepad1.b){
-            reposClose();
-        }
+//        if (gamepad1.a) {
+//            reposOpen();
+//        }
+//        if(gamepad1.b){
+//            reposClose();
+//        }
 
 
     }

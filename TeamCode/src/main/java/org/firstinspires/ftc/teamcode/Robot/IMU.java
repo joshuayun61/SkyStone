@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.Robot;
-
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
@@ -38,7 +35,12 @@ public class IMU extends LinearOpMode {
         BR = driveTrain.BR;
     }
 
-    public void imuSetup() {
+    /*  IMU Setup Method used to initialize IMU tracking in any class that the IMU is intended to be used.
+        Precondition    - IMU has never been used in the class, otherwise the original values will be overwritten.
+        Postcondition   - IMU is ready to be used with any methods in this class.
+     */
+    public void imuSetup()
+    {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode = BNO055IMU.SensorMode.IMU; // added new
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -266,22 +268,22 @@ public class IMU extends LinearOpMode {
 
     }
 
-
-    public double limit(double input, double min, double max)
-    {
-        if(input > 0)
-        {
+    /*  Limit method used to ensure that an inputted value is between max and mininum inputted values.
+        This method is designed to work for motor powers, if positives are entered with a negative value
+        it's all good.
+        @param input    - the value to be changed if necessary
+        @param min      - minimum value to be returned if the input is below
+        @param max      - maximum value to be returned if the input is above
+     */
+    public double limit(double input, double min, double max) {
+        if (input > 0) {
             input += min;
-            if(input > max)
-            {
+            if (input > max) {
                 input = max;
             }
-        }
-        else
-        {
+        } else {
             input -= min;
-            if(input > -min)
-            {
+            if (input > -min) {
                 input = -min;
             }
         }
