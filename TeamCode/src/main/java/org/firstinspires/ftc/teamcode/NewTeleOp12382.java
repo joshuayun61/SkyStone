@@ -18,7 +18,11 @@ public class NewTeleOp12382 extends LinearOpMode {
         while (opModeIsActive())
         {
             driveTrain.mecanumDrive();
+
             arm.newArm();
+            driveTrain.suck();
+            telemetry.addData("FL", driveTrain.FL.getCurrentPosition());
+            telemetry.update();
         }
     }
 }

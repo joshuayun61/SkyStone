@@ -12,7 +12,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class DriveTrain extends LinearOpMode {
 
     public DcMotor FL, FR, BL, BR;
+    public DcMotor LS, RS;
     Servo rightRepos, leftRepos;
+
+    boolean powerOn = false;
 
     DcMotor[] motors = new DcMotor[4];
 
@@ -41,6 +44,7 @@ public class DriveTrain extends LinearOpMode {
         FR.setDirection(DcMotor.Direction.REVERSE);
         BR.setDirection(DcMotor.Direction.REVERSE);
 
+
         leftRepos = hardwareMap.get(Servo.class, "leftR");
         rightRepos = hardwareMap.get(Servo.class, "rightR");
 
@@ -60,8 +64,15 @@ public class DriveTrain extends LinearOpMode {
         BL = hardwareMap.get(DcMotor.class, "BL");
         BR = hardwareMap.get(DcMotor.class, "BR");
 
+
+        LS = hardwareMap.get(DcMotor.class, "LS");
+        RS = hardwareMap.get(DcMotor.class, "RS");
+
         FR.setDirection(DcMotor.Direction.REVERSE);
         BR.setDirection(DcMotor.Direction.REVERSE);
+
+
+        RS.setDirection(DcMotor.Direction.REVERSE);
 
 
 
@@ -115,6 +126,25 @@ public class DriveTrain extends LinearOpMode {
 //        }
 
 
+    }
+
+    public void suck()
+    {
+
+        if(powerOn) {
+            LS.setPower(.6);
+            RS.setPower(.6);
+        }
+        else
+        {
+            LS.setPower(0);
+            RS.setPower(0);
+        }
+        if(gamepad1.x)
+        {
+            sleep(150);
+            powerOn = !powerOn;
+        }
     }
 
     public void reposClose()
