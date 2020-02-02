@@ -8,40 +8,32 @@ import org.firstinspires.ftc.teamcode.Robot.Arm;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.Robot.IMU;
 
-@Autonomous(name = "Autonomous Red Bridge")
+@Autonomous(name = "Red Bridge")
 public class AutoRepoRedBridge extends LinearOpMode {
 
 
     public void runOpMode() {
 
         DriveTrain driveTrain = new DriveTrain(telemetry, hardwareMap, gamepad1);
-        TensorSense sense = new TensorSense(telemetry, hardwareMap);
+     //   TensorSense sense = new TensorSense(telemetry, hardwareMap);
         IMU imu = new IMU(telemetry, hardwareMap, driveTrain);
-        Arm arm = new Arm(telemetry, hardwareMap, gamepad1, driveTrain);
+        Arm arm = new Arm(telemetry, hardwareMap, gamepad1, driveTrain, true);
         // sense.setupTfod();
         imu.imuSetup();
 
         waitForStart();
 
-        arm.raisePH(600);
-
-        driveTrain.drive(20,.5);
-        driveTrain.strafe(8,.3);
-        driveTrain.reposOpen();
-        sleep(300);
-        driveTrain.drive(20, .4);
-        driveTrain.reposClose();
-        sleep(400);
-        driveTrain.drive(-30,.35);
-        imu.proportionalIMU(-90,true);
-        driveTrain.reposOpen();
-        sleep(200);
-
-        driveTrain.strafe(15, .4);
-        driveTrain.drive(-15,.6);
-        arm.ground();
-        driveTrain.drive(-15,.6);
-
+       driveTrain.drive(-24, .6);
+       arm.openRepos();
+       driveTrain.strafe(15, .3);
+       driveTrain.drive(-10,.3);
+       arm.closeRepos();
+       sleep(1000);
+       driveTrain.drive(36,.6);
+       imu.proportionalIMU(-90,true);
+       arm.openRepos();
+        driveTrain.strafe(16, .3);
+        driveTrain.drive(33,.3);
 
 
         //pull foundation

@@ -14,6 +14,8 @@ public class Arm extends LinearOpMode {
 
     public Servo Intake;
 
+    public Servo LR, RR;
+
     public Servo grab, spin;
 
     private DriveTrain myDrive;
@@ -47,6 +49,9 @@ public class Arm extends LinearOpMode {
         gamepad2 = gamepad;
 
         myDrive = driveTrain;
+
+        RR = hardwareMap.get(Servo.class, "RR");
+        LR = hardwareMap.get(Servo.class, "LR");
 
         spin = hardwareMap.get(Servo.class, "spin");
         grab = hardwareMap.get(Servo.class, "grab");
@@ -142,16 +147,16 @@ public class Arm extends LinearOpMode {
 
         if(Slide.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER)
         {
-            Slide.setPower(-gamepad2.left_stick_y/4);
+            Slide.setPower(gamepad2.left_stick_y/2);
         }
 
         if(gamepad2.x)
         {
-            spin.setPosition(.0);
+            spin.setPosition(0);
         }
         if(gamepad2.y)
         {
-            spin.setPosition(1);
+            spin.setPosition(.8);
         }
         if(gamepad2.a)
         {
@@ -161,10 +166,34 @@ public class Arm extends LinearOpMode {
         {
             grab.setPosition(.1);
         }
+
+
+        if(gamepad2.left_bumper)
+        {
+            LR.setPosition(.8);
+            RR.setPosition(.3);
+        }
         if(gamepad2.right_bumper)
         {
-            spin.setPosition(.5);
+            LR.setPosition(.3);
+            RR.setPosition(.8);
         }
+        if(gamepad2.dpad_down)
+        {
+            grab.setPosition(.25);
+        }
+    }
+
+    public void closeRepos()
+    {
+        LR.setPosition(.3);
+        RR.setPosition(.8);
+    }
+
+    public void openRepos()
+    {
+        LR.setPosition(.8);
+        RR.setPosition(.3);
     }
 
 

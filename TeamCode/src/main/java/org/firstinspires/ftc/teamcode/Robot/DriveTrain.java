@@ -15,7 +15,7 @@ public class DriveTrain extends LinearOpMode {
     public DcMotor LS, RS;
     Servo rightRepos, leftRepos;
 
-    boolean powerOn = false;
+    public boolean powerOn = false;
 
     DcMotor[] motors = new DcMotor[4];
 
@@ -45,8 +45,8 @@ public class DriveTrain extends LinearOpMode {
         BR.setDirection(DcMotor.Direction.REVERSE);
 
 
-        leftRepos = hardwareMap.get(Servo.class, "leftR");
-        rightRepos = hardwareMap.get(Servo.class, "rightR");
+   //     leftRepos = hardwareMap.get(Servo.class, "leftR");
+    //    rightRepos = hardwareMap.get(Servo.class, "rightR");
 
         DcMotor[] tempMotors = {FL, FR, BL, BR};
         motors = tempMotors;
@@ -82,7 +82,7 @@ public class DriveTrain extends LinearOpMode {
 
     public void mecanumDrive() {
 
-        double drive    = gamepad1.right_stick_y;
+        double drive    = -gamepad1.right_stick_y;
         double strafe   = -gamepad1.right_stick_x;
         double spin     = gamepad1.left_stick_x;
 
@@ -131,21 +131,41 @@ public class DriveTrain extends LinearOpMode {
     public void suck()
     {
 
-        if(powerOn) {
-            LS.setPower(.6);
-            RS.setPower(.6);
-        }
-        else
+        if(gamepad1.dpad_up)
         {
-            LS.setPower(0);
-            RS.setPower(0);
+            suckIn();
+        }
+        if(gamepad1.dpad_down)
+        {
+            suckOut();
         }
         if(gamepad1.x)
         {
-            sleep(150);
-            powerOn = !powerOn;
+            suckOff();
         }
     }
+
+    public void suckIn()
+    {
+
+            LS.setPower(.4);
+            RS.setPower(.4);
+
+    }
+    public void suckOff()
+    {
+
+        LS.setPower(0);
+        RS.setPower(0);
+
+    }
+
+    public void suckOut()
+    {
+        LS.setPower(-.5);
+        RS.setPower(-.5);
+    }
+
 
     public void reposClose()
     {

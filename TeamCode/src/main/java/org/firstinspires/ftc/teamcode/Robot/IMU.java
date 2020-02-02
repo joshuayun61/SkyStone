@@ -88,7 +88,7 @@ public class IMU extends LinearOpMode {
                 right = angleDifference * Kp / 100;
 
                 if (repositioning) {
-                    left = limit(left, .25, .5);
+                    left = limit(left, .25, 5);
                     right = limit(right, .25, .5);
 
                     telemetry.addData("LEft", left);
@@ -100,8 +100,8 @@ public class IMU extends LinearOpMode {
                     FR.setPower(-right);
                     BR.setPower(-right);
                 } else {
-                    left = limit(left, .12 , .5);
-                    right = limit(right, .12, .5);
+                    left = limit(left, .12 , .4);
+                    right = limit(right, .12, .4);
 
                     telemetry.addData("LEft", left);
                     telemetry.addData("Right", -right);
@@ -203,6 +203,7 @@ public class IMU extends LinearOpMode {
                     telemetry.addData("Right", -right);
                     telemetry.update();
 
+
                     FL.setPower(left);
                     BL.setPower(left);
                     FR.setPower(-right);
@@ -210,8 +211,8 @@ public class IMU extends LinearOpMode {
                 }
                 else
                 {
-                    left = limit(left, .13, .5);
-                    right = limit(right, .13, .5);
+                    left = limit(left, .13, .4);
+                    right = limit(right, .13, .4);
 
                     telemetry.addData("Left", left);
                     telemetry.addData("Right", -right);
