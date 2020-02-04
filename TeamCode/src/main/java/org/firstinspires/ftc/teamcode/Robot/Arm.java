@@ -63,8 +63,8 @@ public class Arm extends MotorMethods {
         while(slidePosition() < 40) {}
     }
 
-    public void openArm() { Intake.setPosition(1); }
-    public void closeArm() { Intake.setPosition(.1); }
+    private void openArm() { Intake.setPosition(1); }
+    private void closeArm() { Intake.setPosition(.1); }
 
 
 

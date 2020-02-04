@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Robot;
 
-import android.widget.TabWidget;
-
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 
@@ -22,7 +20,7 @@ public class InertialMeasurementUnit {
     public void imuSetup() {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode = BNO055IMU.SensorMode.IMU; // added new
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
         parameters.loggingEnabled = false; //what does this do?
@@ -35,7 +33,7 @@ public class InertialMeasurementUnit {
 
     public double calculateError(double target) {
 
-        double error = imu.getAngularOrientation().firstAngle - target;
+        double error =  imu.getAngularOrientation().firstAngle - target;
 
         if (error < -Pi) {
             error += 2 * Pi;

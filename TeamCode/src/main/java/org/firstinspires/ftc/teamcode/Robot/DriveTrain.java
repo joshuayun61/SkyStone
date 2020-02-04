@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Robot;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Robot12382;
@@ -19,7 +20,7 @@ public class DriveTrain extends MotorMethods {
     private final int BACK_LEFT = 2;
     private final int BACK_RIGHT = 3;
 
-    private InertialMeasurementUnit imu;
+    public InertialMeasurementUnit imu;
 
     private double previousError;
     private double error;
@@ -52,7 +53,7 @@ public class DriveTrain extends MotorMethods {
     public void mecanumDrive(Gamepad gamepad) {
 
         double drive = gamepad.right_stick_y;
-        double strafe = -gamepad.right_stick_x;
+        double strafe = gamepad.right_stick_x;
         double spin = gamepad.left_stick_x;
 
         double flPower = drive - strafe - spin;
@@ -67,31 +68,31 @@ public class DriveTrain extends MotorMethods {
                 motorPowers[i] /= 6;
             }
         }
-        else if (!gamepad.right_bumper) {
+        if (!gamepad.right_bumper) {
             for (int i=0; i < motorPowers.length; i++) {
                 motorPowers[i] /= 3;
             }
         }
 
-        if(gamepad.right_trigger == 0 && gamepad.left_trigger == 0) {
-            FL.setPower(flPower);
-            FR.setPower(frPower);
-            BL.setPower(blPower);
-            BR.setPower(brPower);
-        }
-        else if(gamepad.right_trigger > 0)
+        if(gamepad.left_trigger > 0)
         {
             FL.setPower(.3);
             FR.setPower(-.3);
             BR.setPower(.3);
             BL.setPower(-.3);
         }
-        else
+        else if (gamepad.right_trigger > 0)
         {
             FL.setPower(-.3);
             FR.setPower(.3);
             BR.setPower(-.3);
             BL.setPower(.3);
+        }
+        else {
+            FL.setPower(motorPowers[0]);
+            FR.setPower(motorPowers[1]);
+            BL.setPower(motorPowers[2]);
+            BR.setPower(motorPowers[3]);
         }
     }
 
@@ -115,21 +116,24 @@ public class DriveTrain extends MotorMethods {
         double currentEncoder = FR.getCurrentPosition();
         double targetEncoder = FR.getTargetPosition();
 
-        double encoderDistance = ticks;
 
         double pastTime = 0;
         double currentTime = 0;
 
-        while (Math.abs(encoderDistance) > 30) {
+        while (Math.abs(targetEncoder - currentEncoder) > 30) {
 
-            encoderDistance = targetEncoder - currentEncoder;
-
-            double pidModifier = pidController(encoderDistance, maxSpeed);
+            double errorPID = (targetEncoder - currentEncoder) / targetEncoder;
+            currentEncoder = FR.getCurrentPosition();
+            double pidModifier = pidController(errorPID, maxSpeed);
 
             setPower(motorPower * powerModifiers[FRONT_LEFT] * pidModifier,
                     motorPower * powerModifiers[FRONT_RIGHT] * pidModifier,
                     motorPower * powerModifiers[BACK_LEFT] * pidModifier,
                     motorPower * powerModifiers[BACK_RIGHT] * pidModifier);
+
+            Robot12382.telemetry.addData("Distance", currentEncoder);
+            Robot12382.telemetry.addData("PID", pidModifier);
+            Robot12382.telemetry.update();
         }
 
         setPower(0);
@@ -142,29 +146,27 @@ public class DriveTrain extends MotorMethods {
         double angle = imu.calculateError(target);
         double pidModifier = pidController(angle, maxSpeed);
 
-        turnPower motorsPowers;
-
-        if (angle > 0) {
-            motorsPowers = turnPower.CW;
-        } else {
-            motorsPowers = turnPower.CCW;
+        while (Math.abs(angle) > 0.01) {
+            Robot12382.telemetry.addData("Angle: ", (angle));
+            Robot12382.telemetry.addData("PID: ", pidModifier);
+            Robot12382.telemetry.update();
+            int isCC = (int) ( angle / (Math.abs(angle)));
+            Robot12382.telemetry.addData("CC: ", isCC);
+            angle = imu.calculateError(target);
+            pidModifier = pidController(angle, maxSpeed);
+            setPower(motorPower * pidModifier * -isCC,
+                    motorPower * pidModifier * isCC,
+                    motorPower * pidModifier * -isCC,
+                   motorPower * pidModifier * isCC);
         }
-
-        int[] powerModifiers = motorsPowers.modifiers;
-
-        while (Math.abs(angle) > 0.005) {
-            setPower(motorPower * powerModifiers[FRONT_LEFT] * pidModifier,
-                    motorPower * powerModifiers[FRONT_RIGHT] * pidModifier,
-                    motorPower * powerModifiers[BACK_LEFT] * pidModifier,
-                    motorPower * powerModifiers[BACK_RIGHT] * pidModifier);
-        }
+        setPower(0);
     }
 
 
     private double pidController(double distance, double maxSpeed) {
 
         double pidOutput = 0;
-        error =  (1/( 1 + Math.pow(Math.E,(-1*distance))));
+        error =  distance;
 
         double p;
         double i = 0;
@@ -179,6 +181,10 @@ public class DriveTrain extends MotorMethods {
             d += Math.abs((error - previousError) / 2);
             currentTime = pastTime;
             previousError = error;
+            Robot12382.telemetry.addData("P: ", (p));
+            Robot12382.telemetry.addData("I: ", i);
+            Robot12382.telemetry.addData("D: ", (d));
+
             pidOutput = p + i + d;
         }
         if (pidOutput > maxSpeed) {
@@ -193,8 +199,8 @@ public class DriveTrain extends MotorMethods {
     public enum strafeDirection {
         FORWARD(strafePower.FORWARD,-1,-1,-1,-1),
         BACKWARD(strafePower.BACKWARD,1,1,1,1),
-        LEFT(strafePower.LEFT,1,-1,1,-1),
-        RIGHT(strafePower.RIGHT,-1,1,-1,1);
+        LEFT(strafePower.LEFT,1,-1,-1,1),
+        RIGHT(strafePower.RIGHT,-1,1,1,-1);
         strafePower motorPower;
         int[] modifiers;
         strafeDirection(strafePower power, int... mods) {
@@ -206,18 +212,11 @@ public class DriveTrain extends MotorMethods {
     private enum strafePower {
         FORWARD(-1,1,-1,1),
         BACKWARD(1,-1,1,-1),
-        LEFT(1,-1,1,-1),
-        RIGHT(-1,1,-1,1);
+        LEFT(1,-1,-1,1),
+        RIGHT(-1,1,1,-1);
         int[] modifiers;
         strafePower(int... mods) {
             modifiers = mods;
         }
-    }
-
-    private enum turnPower {
-        CW(-1,-1,-1,-1),
-        CCW(1,1,1,1);
-        int[] modifiers;
-        turnPower(int... mods) {modifiers = mods;}
     }
 }

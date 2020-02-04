@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp
-public class TeleOp extends LinearOpMode {
+import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous (name = "Clean")
+public class Autonomous extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -13,11 +13,9 @@ public class TeleOp extends LinearOpMode {
 
         waitForStart();
 
+        robot.driveTrain.turn(Math.PI / 2, 0.5, 0.5);
 
         while (opModeIsActive()) {
-            robot.driveTrain.mecanumDrive(gamepad1);
-            telemetry.update();
         }
-
     }
 }
