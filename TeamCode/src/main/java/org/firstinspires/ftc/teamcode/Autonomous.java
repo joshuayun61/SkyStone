@@ -2,10 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
-
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous (name = "Clean")
 public class Autonomous extends LinearOpMode {
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -13,9 +12,10 @@ public class Autonomous extends LinearOpMode {
 
         waitForStart();
 
-        robot.driveTrain.turn(Math.PI / 2, 0.5, 0.5);
+        Thread driveTrainAutonomous = new Thread(robot.driveTrainAutonomous);
 
         while (opModeIsActive()) {
+
         }
     }
 }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -13,16 +14,24 @@ public class Robot12382 {
     public static HardwareMap hardwareMap;
 
     public OpenCVTestBench openCVTestBench;
+    public DriveTrain driveTrainTeleOp;
+    public DriveTrain driveTrainStrafe;
+    public DriveTrain driveTrainTurn;
 
-    public DriveTrain driveTrain;
-
-    Robot12382(Telemetry telemetry, HardwareMap hardwareMap) {
+    Robot12382(Telemetry telemetry, HardwareMap hardwareMap, final Gamepad gamepad1, final Gamepad gamepad2) {
 
         Robot12382.telemetry = telemetry;
         Robot12382.hardwareMap = hardwareMap;
 
-        driveTrain = new DriveTrain();
+        driveTrainTeleOp = new DriveTrain() {
+            @Override
+            public void run() {
+                mecanumDrive(gamepad1);
+            }
+        };
+    }
 
-        //openCVTestBench = new OpenCVTestBench();
+    Robot12382(Telemetry telemetry, HardwareMap hardwareMap) {
+
     }
 }

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Robot12382;
 
-public class DriveTrain extends MotorMethods {
+public class DriveTrain extends MotorMethods implements Runnable{
 
     private final float Ku = .85f;
     private float Kp = Ku/2;
@@ -49,6 +49,9 @@ public class DriveTrain extends MotorMethods {
 
         time.reset();
     }
+
+    @Override
+    public void run() {}
 
     public void mecanumDrive(Gamepad gamepad) {
 
@@ -97,7 +100,7 @@ public class DriveTrain extends MotorMethods {
     }
 
 
-    public void strafe(strafeDirection direction, double distance, double motorPower, double maxSpeed) {
+    public void strafe(strafeDirection direction, double distance, double maxSpeed) {
 
         int ticks = inchesToTicks(distance);
         setRunMode(DcMotor.RunMode.RUN_USING_ENCODER, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -108,17 +111,13 @@ public class DriveTrain extends MotorMethods {
         addTargetPosition(ticks * directionModifiers[FRONT_LEFT], ticks * directionModifiers[FRONT_RIGHT],
                 ticks * directionModifiers[BACK_LEFT], ticks * directionModifiers[BACK_RIGHT]);
 
-        setPower(motorPower * powerModifiers[FRONT_LEFT], motorPower * powerModifiers[FRONT_RIGHT],
-                motorPower * powerModifiers[BACK_LEFT], motorPower * powerModifiers[BACK_RIGHT]);
+        setPower(maxSpeed * powerModifiers[FRONT_LEFT], maxSpeed * powerModifiers[FRONT_RIGHT],
+                maxSpeed * powerModifiers[BACK_LEFT], maxSpeed * powerModifiers[BACK_RIGHT]);
 
         setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         double currentEncoder = FR.getCurrentPosition();
         double targetEncoder = FR.getTargetPosition();
-
-
-        double pastTime = 0;
-        double currentTime = 0;
 
         while (Math.abs(targetEncoder - currentEncoder) > 30) {
 
@@ -126,14 +125,10 @@ public class DriveTrain extends MotorMethods {
             currentEncoder = FR.getCurrentPosition();
             double pidModifier = pidController(errorPID, maxSpeed);
 
-            setPower(motorPower * powerModifiers[FRONT_LEFT] * pidModifier,
-                    motorPower * powerModifiers[FRONT_RIGHT] * pidModifier,
-                    motorPower * powerModifiers[BACK_LEFT] * pidModifier,
-                    motorPower * powerModifiers[BACK_RIGHT] * pidModifier);
-
-            Robot12382.telemetry.addData("Distance", currentEncoder);
-            Robot12382.telemetry.addData("PID", pidModifier);
-            Robot12382.telemetry.update();
+            setPower(powerModifiers[FRONT_LEFT] * pidModifier,
+                    powerModifiers[FRONT_RIGHT] * pidModifier,
+                    powerModifiers[BACK_LEFT] * pidModifier,
+                    powerModifiers[BACK_RIGHT] * pidModifier);
         }
 
         setPower(0);
@@ -147,11 +142,7 @@ public class DriveTrain extends MotorMethods {
         double pidModifier = pidController(angle, maxSpeed);
 
         while (Math.abs(angle) > 0.01) {
-            Robot12382.telemetry.addData("Angle: ", (angle));
-            Robot12382.telemetry.addData("PID: ", pidModifier);
-            Robot12382.telemetry.update();
             int isCC = (int) ( angle / (Math.abs(angle)));
-            Robot12382.telemetry.addData("CC: ", isCC);
             angle = imu.calculateError(target);
             pidModifier = pidController(angle, maxSpeed);
             setPower(motorPower * pidModifier * -isCC,
@@ -181,10 +172,6 @@ public class DriveTrain extends MotorMethods {
             d += Math.abs((error - previousError) / 2);
             currentTime = pastTime;
             previousError = error;
-            Robot12382.telemetry.addData("P: ", (p));
-            Robot12382.telemetry.addData("I: ", i);
-            Robot12382.telemetry.addData("D: ", (d));
-
             pidOutput = p + i + d;
         }
         if (pidOutput > maxSpeed) {
