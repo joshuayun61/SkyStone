@@ -9,13 +9,14 @@ public class TeleOp extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        Robot12382 robot = new Robot12382(telemetry, hardwareMap);
+        Robot12382 robot = new Robot12382(telemetry, hardwareMap, gamepad1);
+
+        Thread drive = new Thread(robot.driveTrain);
 
         waitForStart();
 
         while (opModeIsActive()) {
-            robot.driveTrain.mecanumDrive(gamepad1);
-            telemetry.update();
+            drive.run();
         }
 
     }

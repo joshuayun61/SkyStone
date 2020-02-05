@@ -1,11 +1,8 @@
-package org.firstinspires.ftc.teamcode.Robot;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.Robot12382;
 
 public class DriveTrain extends MotorMethods implements Runnable{
 
@@ -20,13 +17,20 @@ public class DriveTrain extends MotorMethods implements Runnable{
     private final int BACK_LEFT = 2;
     private final int BACK_RIGHT = 3;
 
+
+    private strafeDirection direction;
+    private double target;
+    private double maxSpeed;
+
+    private Gamepad gamepad;
+
     public InertialMeasurementUnit imu;
 
-    private double previousError;
-    private double error;
-
     private ElapsedTime time;
-    double currentTime, pastTime = 0;
+    private double currentTime = 0;
+    private double pastTime = 0;
+
+    private double previousError;
 
     public DriveTrain() {
 
@@ -50,10 +54,24 @@ public class DriveTrain extends MotorMethods implements Runnable{
         time.reset();
     }
 
+    /**
+     *Gets overridden when the driveTrain is instantiated with Anonymous Subclass, used for threading
+     */
     @Override
     public void run() {}
 
-    public void mecanumDrive(Gamepad gamepad) {
+    /**
+     * Sets the gamepad for the driveTrain thread to use during TeleOp
+     * @param gamepad Gamepad to be used in the TeleOp driveTrain, usually gamepad1
+     */
+    public void setGamepad(Gamepad gamepad) {
+        this.gamepad = gamepad;
+    }
+
+    /**
+     * TeleOp method that runs in a thread in the TeleOp Class
+     */
+    public void mecanumDrive() {
 
         double drive = gamepad.right_stick_y;
         double strafe = gamepad.right_stick_x;
@@ -100,10 +118,48 @@ public class DriveTrain extends MotorMethods implements Runnable{
     }
 
 
-    public void strafe(strafeDirection direction, double distance, double maxSpeed) {
+    /**
+     * Sets the parameters for the move method which should change after every autonomous command to change how far, in which
+     * direction, and how fast the robot should be moving
+     * @param direction The direction Turn, Spline, Strafe, Move Forward/Backward the Robot is taking.
+     * @param target The destination (Encoder tick, IMU radian, etc.)
+     * @param maxSpeed The max speed the robot can go after PID controller is accounted for.
+     */
+    public void setMoveParameters(strafeDirection direction, double target, double maxSpeed) {
+        this.direction = direction;
+        this.target = target;
+        this.maxSpeed = maxSpeed;
 
-        int ticks = inchesToTicks(distance);
-        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    /**
+     * The command in a thread that takes the parameters of the setMoveParameters and actually move the
+     * Robot based on those parameters
+     */
+    public void move() {
+
+        if (direction.equals(strafeDirection.CCW) || direction.equals(strafeDirection.CW)) {
+            runIMUMotors(target, maxSpeed);
+        }
+        else if (direction.equals(strafeDirection.FORWARD) || direction.equals(strafeDirection.BACKWARD)){
+            int ticks = inchesToTicksDrive(target);
+            runEncoderMotors(ticks, direction, maxSpeed);
+        }
+        else if (direction.equals(strafeDirection.LEFT) || direction.equals(strafeDirection.RIGHT)) {
+            int ticks = inchesToTicksStrafe(target);
+            runEncoderMotors(ticks, direction, maxSpeed);
+        }
+        else {
+            int ticks = inchesToTicksSpline(target);
+            runEncoderMotors(ticks, direction, maxSpeed);
+        }
+
+
+    }
+
+    private void runEncoderMotors(int ticks, strafeDirection direction, double maxSpeed) {
+
+        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         int directionModifiers[] = direction.modifiers;
         int powerModifiers[] = direction.motorPower.modifiers;
@@ -136,10 +192,9 @@ public class DriveTrain extends MotorMethods implements Runnable{
         setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void turn(double target, double maxSpeed) {
-
+    private void runIMUMotors(double target, double maxSpeed) {
         double angle = imu.calculateError(target);
-        double pidModifier = pidController(angle, maxSpeed);
+        double pidModifier;
 
         while (Math.abs(angle) > 0.01) {
             int isCC = (int) ( angle / (Math.abs(angle)));
@@ -154,10 +209,15 @@ public class DriveTrain extends MotorMethods implements Runnable{
     }
 
 
-    private double pidController(double distance, double maxSpeed) {
+    /**
+     *
+     * @param error Current error that is passed into the PID controller
+     * @param maxSpeed The cap that the PID can return to prevent it from pusing the robot too fast
+     * @return The Speed that the Robot should go
+     */
+    private double pidController(double error, double maxSpeed) {
 
         double pidOutput = 0;
-        error =  distance;
 
         double p;
         double i = 0;
@@ -167,7 +227,7 @@ public class DriveTrain extends MotorMethods implements Runnable{
 
         if (currentTime - pastTime >= 20) {
 
-            p = Math.abs(error) + .15;
+            p = Kp * Math.abs(error) + .15;
             i += Math.abs(error * 0.02);
             d += Math.abs((error - previousError) / 2);
             currentTime = pastTime;
@@ -181,13 +241,29 @@ public class DriveTrain extends MotorMethods implements Runnable{
         return pidOutput;
     }
 
-    private int inchesToTicks(double distance) { return ((int)(((distance -1) / (Math.PI * 3.937008)) * 537.6)); }
+    /**
+     * Simple conversions based on the SPLINE, STRAFE, DRIVE measurments for the different move functions
+     * @param distance the distance in inches, that you want to move
+     * @return
+     */
+    private int inchesToTicksDrive(double distance) { return ((int)(((distance -1) / (Math.PI * 3.937008)) * 537.6)); }
+    private int inchesToTicksStrafe(double distance) { return ((int)(((distance -1) / (Math.PI * 3.937008)) * 537.6)); }
+    private int inchesToTicksSpline(double distance) { return ((int)(((distance -1) / (Math.PI * 3.937008)) * 537.6)); }
 
+    /**
+     * The enums that are responsible for making sure that the motors are negated correctly for the encoders
+     */
     public enum strafeDirection {
         FORWARD(strafePower.FORWARD,-1,-1,-1,-1),
         BACKWARD(strafePower.BACKWARD,1,1,1,1),
         LEFT(strafePower.LEFT,1,-1,-1,1),
-        RIGHT(strafePower.RIGHT,-1,1,1,-1);
+        RIGHT(strafePower.RIGHT,-1,1,1,-1),
+        FL(strafePower.FL, -1,-1,-1,-1),
+        FR(strafePower.FL, -1,-1,-1,-1),
+        BL(strafePower.FL, -1,-1,-1,-1),
+        BR(strafePower.FL, -1,-1,-1,-1),
+        CW(strafePower.TURN),
+        CCW(strafePower.TURN);
         strafePower motorPower;
         int[] modifiers;
         strafeDirection(strafePower power, int... mods) {
@@ -195,12 +271,16 @@ public class DriveTrain extends MotorMethods implements Runnable{
             modifiers = mods;
         }
     }
-
     private enum strafePower {
         FORWARD(-1,1,-1,1),
         BACKWARD(1,-1,1,-1),
         LEFT(1,-1,-1,1),
-        RIGHT(-1,1,1,-1);
+        RIGHT(-1,1,1,-1),
+        FL(-1,-1,-1,-1),
+        FR(-1,-1,-1,-1),
+        BL(-1,-1,-1,-1),
+        BR(-1,-1,-1,-1),
+        TURN();
         int[] modifiers;
         strafePower(int... mods) {
             modifiers = mods;

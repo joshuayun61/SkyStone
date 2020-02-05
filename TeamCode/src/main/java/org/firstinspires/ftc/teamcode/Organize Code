@@ -1,0 +1,64 @@
+DriveTrain:
+
+	Teleop Drive
+	
+	Autonomous Motion: (I method using ENUM to Switch between, using selector between IMU and Encoder)
+
+		setTarget (Handle Turn and Move), set maxSpeed, set direction --> one method --> setAutoParameters
+
+		setGamepad
+	
+		Spline
+
+			Encoder + PID
+
+		Strafe (4 Directions):
+
+			Encoder + PID
+
+		Turn (2 Directions):
+
+			IMU.Calculate Error + PID
+
+IMU:
+
+	Calculate Error
+
+Robot
+
+	Overloaded Constructor:
+
+		Autonomous: (No Gamepad)
+
+			Drivetrain (Auto) Create Override Run for the Moving Methods
+
+			Auto.setParameters //Default = 0,0,FORWARD
+
+
+		TeleOp: (Gamepad):
+
+			Drivetrain (TeleOp) Create Override Run for the Teleop Method
+			TeleOp.setGamepad(Gamepad)
+
+Auto
+
+	Robot robot = new Robot(No Gamepad)
+
+	Thread drive = new Thread(Robot.Drivetrain (Autonomous))
+
+	setParameters(Whatever is needed)
+
+	drive.run()
+	drive.stop()/drive.interupt
+
+	Repeat
+
+TeleOp
+
+	Robot robot = new Robot(Gamepad)
+
+	Thread drive = new Thread(Robot.Drivetrain (TeleOp))
+
+	while (opModeIsActive) {
+		drive.start();
+	}
