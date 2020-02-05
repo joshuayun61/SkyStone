@@ -14,24 +14,15 @@ public class Robot12382 {
     public static HardwareMap hardwareMap;
 
     public OpenCVTestBench openCVTestBench;
-    public DriveTrain driveTrainTeleOp;
-    public DriveTrain driveTrainStrafe;
-    public DriveTrain driveTrainTurn;
+    public DriveTrain driveTrain;
 
-    Robot12382(Telemetry telemetry, HardwareMap hardwareMap, final Gamepad gamepad1, final Gamepad gamepad2) {
+    Robot12382(Telemetry telemetry, HardwareMap hardwareMap) {
 
         Robot12382.telemetry = telemetry;
         Robot12382.hardwareMap = hardwareMap;
 
-        driveTrainTeleOp = new DriveTrain() {
-            @Override
-            public void run() {
-                mecanumDrive(gamepad1);
-            }
-        };
-    }
-
-    Robot12382(Telemetry telemetry, HardwareMap hardwareMap) {
+        driveTrain = new DriveTrain();
 
     }
+
 }

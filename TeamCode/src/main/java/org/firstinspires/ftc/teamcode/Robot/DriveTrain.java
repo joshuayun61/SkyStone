@@ -136,7 +136,7 @@ public class DriveTrain extends MotorMethods implements Runnable{
         setRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void turn(double target, double motorPower, double maxSpeed) {
+    public void turn(double target, double maxSpeed) {
 
         double angle = imu.calculateError(target);
         double pidModifier = pidController(angle, maxSpeed);
@@ -145,10 +145,10 @@ public class DriveTrain extends MotorMethods implements Runnable{
             int isCC = (int) ( angle / (Math.abs(angle)));
             angle = imu.calculateError(target);
             pidModifier = pidController(angle, maxSpeed);
-            setPower(motorPower * pidModifier * -isCC,
-                    motorPower * pidModifier * isCC,
-                    motorPower * pidModifier * -isCC,
-                   motorPower * pidModifier * isCC);
+            setPower(pidModifier * -isCC,
+                    pidModifier * isCC,
+                    pidModifier * -isCC,
+                    pidModifier * isCC);
         }
         setPower(0);
     }

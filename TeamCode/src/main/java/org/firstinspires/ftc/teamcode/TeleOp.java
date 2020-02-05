@@ -13,10 +13,8 @@ public class TeleOp extends LinearOpMode {
 
         waitForStart();
 
-        Thread driveTrainThread = new Thread(robot.driveTrainTeleOp);
-
         while (opModeIsActive()) {
-            robot.driveTrainTeleOp.mecanumDrive(gamepad1);
+            robot.driveTrain.mecanumDrive(gamepad1);
             telemetry.update();
         }
 
