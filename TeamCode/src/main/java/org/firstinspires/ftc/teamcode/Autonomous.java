@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.apache.commons.math3.util.FastMath;
+
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous (name = "Clean")
 
 /**
