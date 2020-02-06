@@ -18,6 +18,5 @@ public class TeleOp extends LinearOpMode {
         while (opModeIsActive()) {
             drive.run();
         }
-
     }
 }
