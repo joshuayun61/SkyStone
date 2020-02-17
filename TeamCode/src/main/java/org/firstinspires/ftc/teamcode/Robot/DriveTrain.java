@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode.Robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.teamcode.Robot.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -15,18 +19,18 @@ public class DriveTrain extends LinearOpMode {
     public DcMotor LS, RS;
     Servo rightRepos, leftRepos;
 
+    public final float Ku = .85f;
+    public float Kp = Ku/2;
+
+    boolean reverse = false;
+
     public boolean powerOn = false;
+    private double error;
 
     DcMotor[] motors = new DcMotor[4];
 
-
-    private final float Ku = 2f;
-    private float Kp = Ku/2;
-
     @Override
-    public void runOpMode() throws InterruptedException {
-
-    }
+    public void runOpMode() throws InterruptedException {}
 
     public DriveTrain(Telemetry telemetry, HardwareMap hardwareMap, Gamepad gamepad) {
 
@@ -74,17 +78,34 @@ public class DriveTrain extends LinearOpMode {
 
         RS.setDirection(DcMotor.Direction.REVERSE);
 
-
-
         DcMotor[] tempMotors = {FL, FR, BL, BR};
         motors = tempMotors;
     }
 
     public void mecanumDrive() {
 
-        double drive    = -gamepad1.right_stick_y;
-        double strafe   = -gamepad1.right_stick_x;
-        double spin     = gamepad1.left_stick_x;
+        double drive, strafe, spin;
+
+        if(!reverse) {
+             drive = -gamepad1.right_stick_y;
+             strafe = -gamepad1.right_stick_x;
+             spin = gamepad1.left_stick_x;
+        }
+        else
+        {
+             drive = gamepad1.right_stick_y;
+             strafe = gamepad1.right_stick_x;
+             spin = gamepad1.left_stick_x;
+        }
+
+        if(gamepad1.y)
+        {
+             reverse = true;
+        }
+        if(gamepad1.b)
+        {
+            reverse = false;
+        }
 
         if(gamepad1.right_bumper)
         {
@@ -118,14 +139,6 @@ public class DriveTrain extends LinearOpMode {
             slowStrafeleft();
         }
 
-//        if (gamepad1.a) {
-//            reposOpen();
-//        }
-//        if(gamepad1.b){
-//            reposClose();
-//        }
-
-
     }
 
     public void suck()
@@ -148,8 +161,8 @@ public class DriveTrain extends LinearOpMode {
     public void suckIn()
     {
 
-            LS.setPower(.4);
-            RS.setPower(.4);
+            LS.setPower(.45);
+            RS.setPower(.45);
 
     }
     public void suckOff()
@@ -197,6 +210,16 @@ public class DriveTrain extends LinearOpMode {
 
     }
 
+    public double PISpin(int angle,IMU imu, ElapsedTime time)
+    {
+       // while(imu.currentAngle() != angle)
+        //{
+            error = imu.PISend(angle);
+            error += time.time()/20;
+        //}
+        return error;
+    }
+
     public void drive(double distance, double power) {
 
         int ticks = inchesToTicks(distance);
@@ -241,6 +264,7 @@ public class DriveTrain extends LinearOpMode {
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
+
 
     public void PDrive(double inches)
     {
@@ -369,6 +393,67 @@ public class DriveTrain extends LinearOpMode {
         BR.setPower(0);
 
     }
+    public void PropDriveIMU(double distance, double maxSpeed, IMU imu)
+    {
+        int ticks = inchesToTicks(distance);
+        double angle = imu.currentAngle();
+
+        int toPower = (Integer.toString(Math.abs(ticks))).length();
+        toPower = (int)Math.pow(10, toPower);
+
+        for (DcMotor motor : motors) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        for (DcMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
+        BR.setTargetPosition(BR.getCurrentPosition() - ticks);
+        BL.setTargetPosition(BL.getCurrentPosition() - ticks);
+        FR.setTargetPosition(FR.getCurrentPosition() - ticks);
+        FL.setTargetPosition(FL.getCurrentPosition() - ticks);
+
+        //convert to abs to reference distance
+        double currentAbs = Math.abs(FR.getCurrentPosition());
+        double targetAbs = Math.abs(FR.getTargetPosition());
+
+        while(currentAbs < targetAbs - 20 || currentAbs > targetAbs + 20) {
+
+            // Left = -
+
+                double relativeDistance = FR.getTargetPosition() - FR.getCurrentPosition();
+                double power = relativeDistance * Kp / 1000;
+                power = limit(power, .15, maxSpeed);
+                double correction = angle - imu.currentAngle();
+                correction = correction * Kp /10;
+
+                FL.setPower(power + correction);
+                BL.setPower(power + correction);
+                BR.setPower(power - correction);
+                FR.setPower(power - correction);
+
+               // motor.setPower(power);
+                telemetry.addData("Left", power + correction);
+                telemetry.addData("Right", power - correction);
+
+
+            telemetry.addLine()
+                    .addData("Target", BL.getTargetPosition())
+                    .addData("Current", BL.getCurrentPosition());
+            telemetry.update();
+
+            currentAbs = Math.abs(FR.getCurrentPosition());
+            targetAbs = Math.abs(FR.getTargetPosition());
+        }
+
+        FL.setPower(0);
+        BL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+
+    }
     public double limit(double input, double lim, double lim2)
     {
         if(input > 0) {
@@ -450,20 +535,26 @@ public class DriveTrain extends LinearOpMode {
     public void strafe(double distance, double power) {
 
         int ticks = inchesToTicks(distance);
+        boolean positive;
         if(ticks > 0)
         {
             ticks += 55;
+            positive = true;
         }
         else {
             ticks -= 55;
+            positive = false;
         }
 
-        for (DcMotor motor : motors) {
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
+//        for (DcMotor motor : motors) {
+//            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        }
 
         for (DcMotor motor : motors) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        for (DcMotor motor: motors) {
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         for (DcMotor motor : motors) {
@@ -475,20 +566,40 @@ public class DriveTrain extends LinearOpMode {
         FR.setTargetPosition(FR.getCurrentPosition() - ticks);
         FL.setTargetPosition(FL.getCurrentPosition() + ticks);
 
-        BR.setPower(power);
-        BL.setPower(-power);
-        FR.setPower(power);
-        FL.setPower(-power);
 
-
-        for (DcMotor motor : motors) {
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if(positive) {
+            BR.setPower(power);
+            BL.setPower(-power);
+            FR.setPower(-power);
+            FL.setPower(power);
+        }
+        else
+        {
+            BR.setPower(-power);
+            BL.setPower(power);
+            FR.setPower(power);
+            FL.setPower(-power);
         }
 
-        while(FL.isBusy() && FR.isBusy() && BR.isBusy() && BL.isBusy()) {
-            telemetry.addData("EncoderPosition", FL.getCurrentPosition());
-            telemetry.addData("EncoderTarget", ticks);
-            telemetry.update();
+        if(positive)
+        {
+            while(FL.getCurrentPosition() < FL.getTargetPosition())
+            {
+                telemetry.addLine()
+                    .addData("Target", FL.getTargetPosition())
+                        .addData("Current", FL.getCurrentPosition());
+                telemetry.update();
+            }
+        }
+        else
+        {
+            while(FL.getCurrentPosition() > FL.getTargetPosition())
+            {
+                telemetry.addLine()
+                        .addData("Target", FL.getTargetPosition())
+                        .addData("Current", FL.getCurrentPosition());
+                telemetry.update();
+            }
         }
 
         for (DcMotor motor: motors) {
@@ -499,20 +610,29 @@ public class DriveTrain extends LinearOpMode {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
 
-        for (DcMotor motor: motors) {
-            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
+
     }
     public void spin(double distance, double power) {
 
-        //default spin in too the left
+        //default spin in to the left
 
         //   int ticks = inchesToTicks(distance);
         int ticks = (int)distance;
+        boolean positive;
+        if(ticks > 0)
+        {
+            positive = true;
+        }
+        else
+        {
+            positive = false;
+        }
 
         for (DcMotor motor : motors) {
-            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        for (DcMotor motor: motors) {
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
 
         BR.setTargetPosition(BR.getCurrentPosition() - ticks);
@@ -520,28 +640,133 @@ public class DriveTrain extends LinearOpMode {
         FR.setTargetPosition(FR.getCurrentPosition() - ticks);
         FL.setTargetPosition(FL.getCurrentPosition() + ticks);
 
-        BR.setPower(power);
-        BL.setPower(-power);
-        FR.setPower(power);
-        FL.setPower(-power);
-
-        for (DcMotor motor: motors) {
-            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if(positive) {
+            BR.setPower(-power);
+            BL.setPower(power);
+            FR.setPower(-power);
+            FL.setPower(power);
+        }
+        else
+        {
+            BR.setPower(power);
+            BL.setPower(-power);
+            FR.setPower(power);
+            FL.setPower(-power);
         }
 
-        while(FL.isBusy() && FR.isBusy() && BR.isBusy() && BL.isBusy()) {
-            telemetry.addData("EncoderPosition", FR.getCurrentPosition());
-            telemetry.addData("EncoderTarget", FR.getTargetPosition());
-            telemetry.update();
+        if(positive)
+        {
+            while(FL.getCurrentPosition() < FL.getTargetPosition())
+            {
+                telemetry.addLine()
+                        .addData("Target", FL.getTargetPosition())
+                        .addData("Current", FL.getCurrentPosition());
+                telemetry.update();
+            }
+        }
+        else
+        {
+            while(FL.getCurrentPosition() > FL.getTargetPosition())
+            {
+                telemetry.addLine()
+                        .addData("Target", FL.getTargetPosition())
+                        .addData("Current", FL.getCurrentPosition());
+                telemetry.update();
+            }
+        }
+
+
+
+        for (DcMotor motor: motors) {
+            motor.setPower(0);
+        }
+
+
+    }
+
+    public void imuStrafe(int distance, double power, IMU imu)
+    {
+        int ticks = inchesToTicks(distance);
+        boolean positive;
+        if(ticks > 0)
+        {
+            ticks += 255;
+            positive = true;
+        }
+        else {
+            ticks -= 255;
+            positive = false;
+        }
+
+//        for (DcMotor motor : motors) {
+//            motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        }
+
+        for (DcMotor motor : motors) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        for (DcMotor motor: motors) {
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        for (DcMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
+        BR.setTargetPosition(BR.getCurrentPosition() + ticks);
+        BL.setTargetPosition(BL.getCurrentPosition() - ticks);
+        FR.setTargetPosition(FR.getCurrentPosition() - ticks);
+        FL.setTargetPosition(FL.getCurrentPosition() + ticks);
+
+        double startAngle = imu.currentAngle();
+        double correction = 0;
+
+        if(positive)
+        {
+            while(FL.getCurrentPosition() < FL.getTargetPosition())
+            {
+                correction = startAngle - imu.currentAngle();
+                correction = correction * imu.Kp /10;
+                    BR.setPower(power - correction);
+                    BL.setPower(-power + correction);
+                    FR.setPower(-power - correction);
+                    FL.setPower(power + correction);
+
+                telemetry.addLine()
+                        .addData("Positive Target", FL.getTargetPosition())
+                        .addData("Current", FL.getCurrentPosition())
+                        .addData("Correction", correction);
+                telemetry.update();
+            }
+        }
+        else
+        {
+            while(FL.getCurrentPosition() > FL.getTargetPosition())
+            {
+                correction = startAngle - imu.currentAngle();
+                correction = correction * imu.Kp /10;
+                BR.setPower(-power - correction);
+                BL.setPower(power + correction);
+                FR.setPower(power - correction);
+                FL.setPower(-power + correction);
+
+                telemetry.addLine()
+                        .addData(" !Positive Target", FL.getTargetPosition())
+                        .addData("Current", FL.getCurrentPosition())
+                        .addData("Correction", correction);
+                telemetry.update();
+            }
         }
 
         for (DcMotor motor: motors) {
             motor.setPower(0);
         }
 
-        for (DcMotor motor: motors) {
-            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        for (DcMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
+
+
     }
 
 

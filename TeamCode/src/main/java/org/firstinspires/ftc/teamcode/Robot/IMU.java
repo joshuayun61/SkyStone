@@ -35,6 +35,11 @@ public class IMU extends LinearOpMode {
         BR = driveTrain.BR;
     }
 
+    public IMU(Telemetry telemetry)
+    {
+        this.telemetry = telemetry;
+    }
+
     /*  IMU Setup Method used to initialize IMU tracking in any class that the IMU is intended to be used.
         Precondition    - IMU has never been used in the class, otherwise the original values will be overwritten.
         Postcondition   - IMU is ready to be used with any methods in this class.
@@ -247,8 +252,8 @@ public class IMU extends LinearOpMode {
                 }
                 else
                 {
-                    left = limit(left, .125, .5);
-                    right = limit(right, .125, .5);
+                    left = limit(left, .12, .5);
+                    right = limit(right, .12, .5);
 
                     telemetry.addData("Left", left);
                     telemetry.addData("Right", -right);
@@ -268,6 +273,23 @@ public class IMU extends LinearOpMode {
         telemetry.addData("Final Heading", currentAngle());
 
     }
+
+    /*
+        sends a motor power to the drivetrain that is to be manipulated and sent out there
+        no cap this is either mad nice and short or mad trash lol.
+     */
+    double error;
+    int integral;
+    float refreshConstant = .02f;
+    public double PISend(int angle)
+    {
+        error = angle - currentAngle();
+        error = error * Kp / 100;
+        return error;
+    }
+
+
+
 
     /*  Limit method used to ensure that an inputted value is between max and mininum inputted values.
         This method is designed to work for motor powers, if positives are entered with a negative value

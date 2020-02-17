@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Robot12382;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -39,10 +40,10 @@ public class OpenCV extends LinearOpMode {
     private static int valLeft = -1;
     private static int valRight = -1;
 
-    private static float rectHeight = .6f/8f;
+    private static float rectHeight = 1.3f/8f;
     private static float rectWidth = 1.5f/8f;
 
-    private static float offsetX = 0f/8f;//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive
+    private static float offsetX = -.1f/8f;//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive
     private static float offsetY = 0f/8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
 
     private static float[] midPos = {4f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
@@ -53,12 +54,12 @@ public class OpenCV extends LinearOpMode {
     private final int rows = 640;
     private final int cols = 480;
 
-    OpenCvCamera phoneCam;
+    OpenCvCamera phoneCam, webCam;
 
     @Override
     public void runOpMode() throws InterruptedException{}
 
-    public void setup() throws InterruptedException {
+    public void setupPhoneCam() throws InterruptedException {
 
         int cameraMonitorViewId = this.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", this.hardwareMap.appContext.getPackageName());
 
@@ -66,6 +67,7 @@ public class OpenCV extends LinearOpMode {
         //phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);//remove this
 
+        phoneCam.showFpsMeterOnViewport(true);
         phoneCam.openCameraDevice();//open camera
         phoneCam.setPipeline(new StageSwitchingPipeline());//different stages
         phoneCam.startStreaming(rows, cols, OpenCvCameraRotation.UPRIGHT);//display on RC
@@ -73,6 +75,19 @@ public class OpenCV extends LinearOpMode {
         //width = height in this case, because camera is in portrait mode.
 
     }
+
+    public void setupWebCam() throws InterruptedException {
+        int cameraMonitorViewId = this.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", this.hardwareMap.appContext.getPackageName());
+
+        webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"), cameraMonitorViewId);
+        webCam.showFpsMeterOnViewport(true);
+        webCam.openCameraDevice();//open camera
+        webCam.setPipeline(new StageSwitchingPipeline());//different stages
+        webCam.startStreaming(rows, cols, OpenCvCameraRotation.UPRIGHT);//display on RC
+        //width, height
+        //width = height in this case, because camera is in portrait mode.
+    }
+
     public void stopStreaming()
     {
         phoneCam.stopStreaming();

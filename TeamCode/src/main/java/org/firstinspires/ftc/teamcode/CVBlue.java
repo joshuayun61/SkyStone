@@ -25,7 +25,7 @@ public class CVBlue extends LinearOpMode {
         // sense.setupTfod();
         OpenCV cv = new OpenCV(telemetry, hardwareMap);
         imu.imuSetup();
-        cv.setup();
+      //'  cv.setup();
         cv.getValue();
         while (!isStopRequested() && !opModeIsActive()) {
             telemetry.addData("Stone Position", cv.getValue());

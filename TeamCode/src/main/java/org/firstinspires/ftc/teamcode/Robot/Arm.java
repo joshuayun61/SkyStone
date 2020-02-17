@@ -10,13 +10,13 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Arm extends LinearOpMode {
 
-    DcMotor Slide;
+    public DcMotor Slide;
 
     public Servo Intake;
 
     public Servo LR, RR;
 
-    public Servo grab, spin;
+    public Servo grab, spin, auto_arm, auto_grab;
 
     private DriveTrain myDrive;
 
@@ -55,6 +55,9 @@ public class Arm extends LinearOpMode {
 
         spin = hardwareMap.get(Servo.class, "spin");
         grab = hardwareMap.get(Servo.class, "grab");
+
+        auto_arm = hardwareMap.get(Servo.class, "auto_arm");
+        auto_grab = hardwareMap.get(Servo.class, "auto_grab");
         Slide = hardwareMap.get(DcMotor.class, "Slide");
         Slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -68,71 +71,15 @@ public class Arm extends LinearOpMode {
         return Slide.getCurrentPosition();
     }
 
-    public void ground()
+    public void home()
     {
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Slide.setTargetPosition(5);
+        Slide.setTargetPosition(0);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Slide.setPower(.9);
-        while(Slide.getCurrentPosition() > 25) {
-            telemetry.addData("Slide Tick",slidePosition());
-            telemetry.update();
-            myDrive.mecanumDrive();
-        }
-    }
-    public void raisePH()
-    {
-        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Slide.setTargetPosition(buildPlateHeight);
-        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Slide.setPower(.9);
-        while(slidePosition() > 710 || slidePosition() < 690) {
-            telemetry.addData("Slide Tick",slidePosition());
-            telemetry.update();
-            myDrive.mecanumDrive();
-        }
-    }
-    public void raisePH(int extra)
-    {
-        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Slide.setTargetPosition(buildPlateHeight + extra);
-        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Slide.setPower(.9);
-        while(Slide.getCurrentPosition() < buildPlateHeight + 550) {
-            telemetry.addData("Slide Tick",slidePosition());
-            telemetry.update();
-            myDrive.mecanumDrive();
-        }
-    }
-    public void raiseBH()
-    {
-        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        Slide.setTargetPosition(Slide.getCurrentPosition() + blockHeight);
-
-        double constant = 0; //Kp constant TBD
-
-        double speed = (Slide.getTargetPosition() - Slide.getCurrentPosition()) * constant;
-
-        while(Slide.getCurrentPosition() < Slide.getTargetPosition()){
-            myDrive.mecanumDrive();
-        }
-    }
-    public void lowerBH()
-    {
-        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Slide.setTargetPosition(Slide.getCurrentPosition() - blockHeight);
-        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Slide.setPower(.9);
-        while(Slide.isBusy()) {}
-    }
-    public void blockLift()
-    {
-        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Slide.setTargetPosition(50);
-        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Slide.setPower(.9);
-        while(Slide.getCurrentPosition() < 40) {
+        Slide.setPower(.95);
+        spin.setPosition(0);
+        grab.setPosition(.6);
+        while(Slide.getCurrentPosition() < 1) {
 
             myDrive.mecanumDrive();
         }
@@ -147,41 +94,48 @@ public class Arm extends LinearOpMode {
 
         if(Slide.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER)
         {
-            Slide.setPower(gamepad2.left_stick_y/2);
+            Slide.setPower(-gamepad2.left_stick_y);
         }
 
+        //spin out
         if(gamepad2.x)
-        {
-            spin.setPosition(0);
-        }
-        if(gamepad2.y)
         {
             spin.setPosition(.8);
         }
+        //spin in
+        if(gamepad2.y)
+        {
+            spin.setPosition(0);
+        }
+        //open grabber
         if(gamepad2.a)
         {
-            grab.setPosition(.8);
+            //grab.setPosition(.6);
+            raiseAutoArm();
         }
+        //close grabber
         if(gamepad2.b)
         {
-            grab.setPosition(.1);
+            //grab.setPosition(.1);
+            lowerAutoArm();
         }
-
 
         if(gamepad2.left_bumper)
         {
-            LR.setPosition(.8);
-            RR.setPosition(.3);
+            closeRepos();
         }
+
         if(gamepad2.right_bumper)
         {
-            LR.setPosition(.3);
-            RR.setPosition(.8);
+           openRepos();
         }
+
         if(gamepad2.dpad_down)
         {
-            grab.setPosition(.25);
+            home();
         }
+
+
     }
 
     public void closeRepos()
@@ -192,80 +146,25 @@ public class Arm extends LinearOpMode {
 
     public void openRepos()
     {
-        LR.setPosition(.8);
-        RR.setPosition(.3);
+        LR.setPosition(.9);
+        RR.setPosition(0);
     }
 
 
-    public void moveArm() {
-
-        if(gamepad2.right_trigger > 0)
-        {
-            myDrive.slowStrafeRight();
-        }
-        if(gamepad2.left_trigger > 0)
-        {
-            myDrive.slowStrafeleft();
-        }
-
-        if(gamepad2.left_stick_y != 0)
-        {
-            Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
-
-        if(Slide.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER)
-        {
-            Slide.setPower(-gamepad2.left_stick_y/1.5);
-        }
-        if(gamepad2.a)
-        {
-            raisePH();
-        }
-        if(gamepad2.dpad_up)
-        {
-            raiseBH();
-        }
-        if(gamepad2.dpad_down)
-        {
-            lowerBH();
-        }
-        if(gamepad2.x)
-        {
-            ground();
-        }
-        if(gamepad2.b)
-        {
-            blockLift();
-        }
-        if(Slide.getCurrentPosition() > 4100)
-        {
-            Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            Slide.setTargetPosition(4000);
-            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            Slide.setPower(.8);
-            while(Slide.isBusy())
-            {
-
-            }
-        }
-
-
-        if(gamepad2.right_bumper)
-        {
-            Intake.setPosition(0.1);
-        }
-        if(gamepad2.left_bumper)
-        {
-            Intake.setPosition(1);
-        }
-
-    }
-    public void openArm()
+    public void raiseAutoArm()
     {
-        Intake.setPosition(.9);
+        auto_grab.setPosition(.15);
+        sleep(400);
+        auto_arm.setPosition(.7);
     }
-    public void closeArm()
+    public void lowerAutoArm()
     {
-        Intake.setPosition(.18);
+        auto_arm.setPosition(.33);
+        auto_grab.setPosition(.8);
+    }
+    public void dropBlock()
+    {
+        auto_arm.setPosition(.55);
+        auto_grab.setPosition(.8);
     }
 }
