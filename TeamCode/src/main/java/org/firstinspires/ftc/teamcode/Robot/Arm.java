@@ -77,16 +77,18 @@ public class Arm extends LinearOpMode {
 
     public void home()
     {
-        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Slide.setTargetPosition(0);
-        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Slide.setPower(.95);
-        spin.setPosition(0);
-        grab.setPosition(.1);
-        while(Slide.getCurrentPosition() < 1)
-        {
+        if(Slide.getCurrentPosition() > 100) {
+            Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            Slide.setTargetPosition(0);
+            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Slide.setPower(.95);
+            spin.setPosition(0);
             grab.setPosition(.1);
-            myDrive.mecanumDrive();
+            while (Slide.getCurrentPosition() < 3) {
+                grab.setPosition(.1);
+                myDrive.mecanumDrive();
+                myDrive.suck();
+            }
         }
 
     }
@@ -139,6 +141,7 @@ public class Arm extends LinearOpMode {
         if(gamepad2.b)
         {
             grab.setPosition(0);
+            tipIn.setPosition(.4);
 
         }
 
@@ -159,7 +162,7 @@ public class Arm extends LinearOpMode {
 
         if(gamepad2.dpad_left)
         {
-            tipIn.setPosition(.3);
+            tipIn.setPosition(.4);
         }
         if(gamepad2.dpad_right)
         {
@@ -206,14 +209,14 @@ public class Arm extends LinearOpMode {
 
     public void openRepos()
     {
-        LR.setPosition(.9);
-        RR.setPosition(0);
+        LR.setPosition(.8);
+        RR.setPosition(.3);
     }
 
 
     public void raiseAutoArm()
     {
-        auto_grab.setPosition(.1);
+        auto_grab.setPosition(.05);
         sleep(400);
         auto_arm.setPosition(.7);
     }
@@ -224,7 +227,7 @@ public class Arm extends LinearOpMode {
     }
     public void dropBlock()
     {
-        auto_arm.setPosition(.55);
-        auto_grab.setPosition(.8);
+        auto_arm.setPosition(.4);
+        auto_grab.setPosition(.9);
     }
 }

@@ -31,7 +31,7 @@ public class MethodTests extends LinearOpMode {
 
         waitForStart();
 
-        driveTrain.PropDriveIMU(20,.6, imu);
+        driveTrain.spline(.4,20,135);
 
     }
 }

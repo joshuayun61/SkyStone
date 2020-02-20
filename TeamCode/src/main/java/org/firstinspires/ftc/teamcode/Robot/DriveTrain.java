@@ -769,6 +769,63 @@ public class DriveTrain extends LinearOpMode {
 
     }
 
+    public void spline(double power, int inches, int direction)
+    {
+        int distance = inchesToTicks(inches);
+
+        for (DcMotor motor : motors) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+        for (DcMotor motor: motors) {
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        for (DcMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
+        if(direction == 45)
+        {
+            BR.setTargetPosition(-distance);
+
+            while (BR.getCurrentPosition() > BR.getTargetPosition()) {
+                FL.setPower(-power);
+                BR.setPower(-power);
+            }
+        }
+        else if(direction == 135)
+        {
+            FR.setTargetPosition(-distance);
+
+            while(FR.getCurrentPosition() > FR.getTargetPosition()) {
+                FR.setPower(-power);
+                BL.setPower(-power);
+            }
+        }
+        else if(direction == 225) {
+            BR.setTargetPosition(distance);
+
+            while (BR.getCurrentPosition() < BR.getTargetPosition()) {
+                FL.setPower(power);
+                BR.setPower(power);
+            }
+
+        }
+        else if(direction == 315)
+        {
+            FR.setTargetPosition(distance);
+
+            while(FR.getCurrentPosition() < FR.getTargetPosition()) {
+                FR.setPower(power);
+                BL.setPower(power);
+            }
+        }
+        FR.setPower(0);
+        BL.setPower(0);
+        FL.setPower(0);
+        BR.setPower(0);
+    }
+
 
     public int inchesToTicks(double distance) {
 

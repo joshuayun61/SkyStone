@@ -204,15 +204,15 @@ public class IMU extends LinearOpMode {
                     left = limit(left, .2,.5);
                     right = limit(right,.2,.5);
 
-                    telemetry.addData("Left", left);
-                    telemetry.addData("Right", -right);
+                    telemetry.addData("Left", -left);
+                    telemetry.addData("Right", right);
                     telemetry.update();
 
 
-                    FL.setPower(left);
-                    BL.setPower(left);
-                    FR.setPower(-right);
-                    BR.setPower(-right);
+                    FL.setPower(-left);
+                    BL.setPower(-left);
+                    FR.setPower(right);
+                    BR.setPower(right);
                 }
                 else
                 {
