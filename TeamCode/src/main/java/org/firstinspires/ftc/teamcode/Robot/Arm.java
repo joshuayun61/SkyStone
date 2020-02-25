@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -65,6 +66,7 @@ public class Arm extends LinearOpMode {
         Slide = hardwareMap.get(DcMotor.class, "Slide");
         Slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Slide.setDirection(DcMotor.Direction.REVERSE);
     }
 
 
@@ -81,7 +83,7 @@ public class Arm extends LinearOpMode {
             Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             Slide.setTargetPosition(0);
             Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            Slide.setPower(.95);
+            Slide.setPower(1);
             spin.setPosition(0);
             grab.setPosition(.1);
             while (Slide.getCurrentPosition() < 3) {
@@ -95,7 +97,7 @@ public class Arm extends LinearOpMode {
     public void max()
     {
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Slide.setTargetPosition(8500);
+        Slide.setTargetPosition(9000);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Slide.setPower(.95);
         while(Slide.getCurrentPosition() < 1)
@@ -104,8 +106,23 @@ public class Arm extends LinearOpMode {
         }
     }
 
+    public void readyToPlace()
+    {
+        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Slide.setTargetPosition(3500);
+        Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Slide.setPower(1);
+        while(Slide.getCurrentPosition() < 3500)
+        {
+            myDrive.mecanumDrive();
+        }
+
+        spin.setPosition(.4);
+    }
+
     public void newArm()
     {
+        Slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         if(gamepad2.left_stick_y != 0)
         {
             Slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -116,7 +133,7 @@ public class Arm extends LinearOpMode {
             Slide.setPower(-gamepad2.left_stick_y);
         }
 
-        if(Slide.getCurrentPosition() >= 9000)
+        if(Slide.getCurrentPosition() >= 9200)
         {
             max();
         }
@@ -155,16 +172,22 @@ public class Arm extends LinearOpMode {
            openRepos();
         }
 
+        if(gamepad2.dpad_up)
+        {
+            readyToPlace();
+
+        }
+
         if(gamepad2.dpad_down)
         {
             home();
         }
 
-        if(gamepad2.dpad_left)
+        if(gamepad2.dpad_left) //rotate away
         {
             tipIn.setPosition(.4);
         }
-        if(gamepad2.dpad_right)
+        if(gamepad2.dpad_right) //rotate in
         {
             tipIn.setPosition(.7);
         }
@@ -192,6 +215,10 @@ public class Arm extends LinearOpMode {
         {
             raiseAutoArm();
         }
+        if(gamepad2.left_bumper && gamepad2.x)
+        {
+            pinchBlock();
+        }
         if(gamepad2 .right_trigger > 0)
         {
             lowerAutoArm();
@@ -200,6 +227,17 @@ public class Arm extends LinearOpMode {
 
 
     }
+
+    public void tipOut()
+    {
+        tipIn.setPosition(.4);
+    }
+    public void tipIn()
+    {
+        tipIn.setPosition(.7);
+    }
+
+
 
     public void closeRepos()
     {
@@ -230,4 +268,11 @@ public class Arm extends LinearOpMode {
         auto_arm.setPosition(.4);
         auto_grab.setPosition(.9);
     }
+    public void pinchBlock()
+    {
+        auto_arm.setPosition(.25);
+        auto_grab.setPosition(.09);
+        sleep(100);
+    }
+
 }

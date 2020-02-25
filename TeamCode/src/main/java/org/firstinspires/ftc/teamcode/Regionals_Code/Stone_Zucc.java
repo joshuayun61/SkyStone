@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.Robot.IMU;
 import org.firstinspires.ftc.teamcode.Robot.OpenCV;
 
-@Autonomous(name = "Stones Only")
-public class Stones_Only extends LinearOpMode {
+@Autonomous(name = "Stones Zucc")
+public class Stone_Zucc extends LinearOpMode {
     int stonePosition = -100;
     ElapsedTime time = new ElapsedTime();
 
@@ -32,34 +32,13 @@ public class Stones_Only extends LinearOpMode {
         waitForStart();
 
         stonePosition = cv.getValue();
-        arm.lowerAutoArm();
-        driveTrain.imuStrafe(25,.35,imu);
-        switch (stonePosition)
-        {
-            case(0):
-                driveTrain.drive(-6,.6);
-                break;
-            case(1):
-                break;
-            case(2):
-                driveTrain.drive(7,.6);
-                break;
-        }
-        driveTrain.strafe(2,.6);
-        arm.pinchBlock();
-        driveTrain.strafe(-6,.6);
-        switch (stonePosition)
-        {
-            case(0):
-                driveTrain.PropDriveIMU(-50,.6,imu);
-                break;
-            case(1):
-                break;
-            case(2):
-                driveTrain.PropDriveIMU(-60,.6, imu);
-                break;
-        }
-        arm.raiseAutoArm();
+        driveTrain.suckOut();
+        arm.tipIn();
+        driveTrain.PropDriveIMU(-30,.6,imu);
+        driveTrain.drive(-12,.4);
+        driveTrain.drive(17,.5);
+        driveTrain.suckOff();
+        imu.proportionalIMU(90,false);
 
 
     }

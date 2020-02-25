@@ -23,15 +23,12 @@ public class MethodTests extends LinearOpMode {
     public void runOpMode() {
 
         DriveTrain driveTrain = new DriveTrain(telemetry, hardwareMap, gamepad1, true);
-      //  TensorSense sense = new TensorSense(telemetry, hardwareMap);
-         IMU imu = new IMU(telemetry, hardwareMap, driveTrain);
-       // Arm arm = new Arm(telemetry, hardwareMap, gamepad1, driveTrain);
-        //sense.setupTfod();
+        IMU imu = new IMU(telemetry, hardwareMap, driveTrain);
         imu.imuSetup();
 
         waitForStart();
 
-        driveTrain.spline(.4,20,135);
+        driveTrain.PropDriveIMU(20,.6,imu);
 
     }
 }

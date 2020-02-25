@@ -46,12 +46,12 @@ public class CVAuto extends LinearOpMode {
 
         driveTrain.imuStrafe(25,.37, imu);
         if(stonePosition == 0) {
-                driveTrain.drive(-6, .55);
+                driveTrain.drive(-6, .55);//here too
         }
         //Grab Skystone
         driveTrain.strafe(2,.3);
-        arm.raiseAutoArm();
-        driveTrain.spline(.5,19,315);
+        arm.pinchBlock();
+        driveTrain.spline(.5,24,315);//stanley and travis are here
 
         imu.proportionalIMU(0,false);
         //Drive past Line
@@ -69,8 +69,7 @@ public class CVAuto extends LinearOpMode {
         }
 //        //Deposit 1st Skystone
         driveTrain.strafe(2,.4);
-        arm.dropBlock();
-        sleep(300);
+        arm.lowerAutoArm();
         arm.raiseAutoArm();
         driveTrain.strafe(-2,.4);
 
@@ -92,7 +91,7 @@ public class CVAuto extends LinearOpMode {
             //Grab 2nd Stone
             arm.lowerAutoArm();
             driveTrain.imuStrafe(5, .35, imu);
-            arm.raiseAutoArm();
+            arm.pinchBlock();
             sleep(100);
 
             switch(stonePosition) {

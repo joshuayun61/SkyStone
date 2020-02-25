@@ -95,14 +95,11 @@ public class TensorSense extends LinearOpMode {
                     stoneLeftX = (int) recognition.getLeft();
                 } else if (stoneRightX == -1) {
                     stoneRightX = (int) recognition.getLeft();
-
                 }
-
 
                 telemetry.addData("SkyStone LeftX", skyStoneLeftX);
                 telemetry.addData("Stone 1LeftX", stoneLeftX);
                 telemetry.addData("Stone 2LeftX", stoneRightX);
-
 
                 if (skyStoneLeftX == -1 && stoneLeftX != 0 && stoneRightX != 0) {
                         telemetry.addData("SkyStone Position", "Right");

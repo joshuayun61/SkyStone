@@ -18,6 +18,7 @@ public class DriveTrain extends LinearOpMode {
     public DcMotor FL, FR, BL, BR;
     public DcMotor LS, RS;
     Servo rightRepos, leftRepos;
+    public DcMotor tapeMeasure;
 
     public final float Ku = .85f;
     public float Kp = Ku/2;
@@ -71,6 +72,8 @@ public class DriveTrain extends LinearOpMode {
 
         LS = hardwareMap.get(DcMotor.class, "LS");
         RS = hardwareMap.get(DcMotor.class, "RS");
+
+        tapeMeasure = hardwareMap.get(DcMotor.class, "TM");
 
         FR.setDirection(DcMotor.Direction.REVERSE);
         BR.setDirection(DcMotor.Direction.REVERSE);
@@ -137,6 +140,19 @@ public class DriveTrain extends LinearOpMode {
         if(gamepad1.left_trigger > 0)
         {
             slowStrafeleft();
+        }
+
+        if(gamepad1.dpad_right)
+        {
+            tapeMeasure.setPower(-.7);
+        }
+        else if(gamepad1.dpad_left)
+        {
+            tapeMeasure.setPower(.7);
+        }
+        else
+        {
+            tapeMeasure.setPower(0);
         }
 
     }
