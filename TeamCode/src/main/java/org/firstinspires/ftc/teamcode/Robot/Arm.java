@@ -213,7 +213,7 @@ public class Arm extends LinearOpMode {
 
         if(gamepad2.left_trigger > 0)
         {
-            raiseAutoArm();
+            raiseAutoFull();
         }
         if(gamepad2.left_bumper && gamepad2.x)
         {
@@ -254,19 +254,20 @@ public class Arm extends LinearOpMode {
 
     public void raiseAutoArm()
     {
-        auto_grab.setPosition(.05);
+        auto_grab.setPosition(.7);
         sleep(400);
-        auto_arm.setPosition(.7);
+        auto_arm.setPosition(.6);
     }
     public void lowerAutoArm()
     {
-        auto_arm.setPosition(.33);
-        auto_grab.setPosition(.8);
-    }
-    public void dropBlock()
-    {
         auto_arm.setPosition(.4);
-        auto_grab.setPosition(.9);
+        auto_grab.setPosition(.25);
+    }
+    public void raiseAutoFull()
+    {
+        auto_grab.setPosition(.72);
+        sleep(100);
+        auto_arm.setPosition(.7);
     }
     public void pinchBlock()
     {

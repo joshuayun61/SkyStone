@@ -114,7 +114,8 @@ public class CVAuto extends LinearOpMode {
             }
 
             driveTrain.strafe(8,.5);
-            arm.dropBlock();
+            arm.lowerAutoArm();
+            arm.raiseAutoFull();
             sleep(150);
             arm.openRepos();
             imu.proportionalIMU(90,false);

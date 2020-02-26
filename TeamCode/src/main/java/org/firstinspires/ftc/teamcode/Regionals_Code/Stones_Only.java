@@ -31,32 +31,36 @@ public class Stones_Only extends LinearOpMode {
 
         waitForStart();
 
+
         stonePosition = cv.getValue();
+        arm.openRepos();
         arm.lowerAutoArm();
         driveTrain.imuStrafe(25,.35,imu);
         switch (stonePosition)
         {
             case(0):
-                driveTrain.drive(-6,.6);
+                driveTrain.drive(-7,.6);
                 break;
             case(1):
+                driveTrain.drive(-3,.8);
                 break;
             case(2):
                 driveTrain.drive(7,.6);
                 break;
         }
         driveTrain.strafe(2,.6);
-        arm.pinchBlock();
+        arm.raiseAutoArm();
+        sleep(100);
         driveTrain.strafe(-6,.6);
         switch (stonePosition)
         {
             case(0):
-                driveTrain.PropDriveIMU(-50,.6,imu);
+                driveTrain.PropDriveIMU(-40,.6,imu);
                 break;
             case(1):
                 break;
             case(2):
-                driveTrain.PropDriveIMU(-60,.6, imu);
+                driveTrain.PropDriveIMU(-50,.6, imu);
                 break;
         }
         arm.raiseAutoArm();
