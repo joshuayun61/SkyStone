@@ -1,18 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.sax.Element;
-import android.sax.TextElementListener;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.AI.TensorSense;
-import org.firstinspires.ftc.teamcode.AI.VufandTensor;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
-import org.firstinspires.ftc.teamcode.Robot.IMU;
-import org.firstinspires.ftc.teamcode.Robot.InetialMUnit;
+import org.firstinspires.ftc.teamcode.AI.armThread;
 import org.firstinspires.ftc.teamcode.Robot.Arm;
 
 @Autonomous(name = "Methods Test")
@@ -23,15 +17,12 @@ public class MethodTests extends LinearOpMode {
     public void runOpMode() {
 
         DriveTrain driveTrain = new DriveTrain(telemetry, hardwareMap, gamepad1, true);
-
         Arm arm = new Arm(telemetry, hardwareMap, gamepad1, driveTrain, true);
-
+        armThread dropThread = new armThread(telemetry, arm);
 
         waitForStart();
 
-        arm.closeGrabber();
-        arm.autoDrop();
-        arm.home();
-
+        dropThread.start();
+        driveTrain.spin(1500,.25);
     }
 }

@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.Robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -67,6 +69,20 @@ public class Arm extends LinearOpMode {
         Slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         Slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Slide.setDirection(DcMotor.Direction.REVERSE);
+    }
+
+    public Arm(Telemetry telemetry)
+    {
+        this.telemetry = telemetry;
+    }
+    public void reportActive()
+    {
+        ElapsedTime etime = new ElapsedTime();
+        while(etime.time() < 5)
+        {
+            telemetry.addData("Arm is active", etime.time());
+            telemetry.update();
+        }
     }
 
 
