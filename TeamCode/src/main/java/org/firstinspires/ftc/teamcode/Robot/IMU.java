@@ -20,7 +20,7 @@ public class IMU extends LinearOpMode {
     Orientation angles, originalAngles;
     Acceleration gravity;
     DriveTrain driveTrain;
-    public final float Ku = .85f;
+    public final float Ku = .8f;
     public float Kp = Ku/2;
     @Override
     public void runOpMode() throws InterruptedException {}

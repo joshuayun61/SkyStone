@@ -31,14 +31,63 @@ public class Stone_Zucc extends LinearOpMode {
 
         waitForStart();
 
-        stonePosition = cv.getValue();
-        driveTrain.suckOut();
-        arm.tipIn();
-        driveTrain.PropDriveIMU(-30,.6,imu);
+      //  stonePosition = cv.getValue();
+        //open grabber, move out tipper, turn on zucc
+        arm.grab.setPosition(.5);
+        driveTrain.suckIn();
+        arm.tipOut();
+        //drive to blocks
+        driveTrain.PropDriveIMU(-29,.7,imu);
+        switch (stonePosition)
+        {
+            case(0):
+                driveTrain.strafe(-3,.7);
+                break;
+            case(1):
+                break;
+            case(2):
+                driveTrain.strafe(6,.7);
+                break;
+        }
         driveTrain.drive(-12,.4);
-        driveTrain.drive(17,.5);
+        driveTrain.drive(18,.5);
+        arm.tipInward();
+        sleep(200);
         driveTrain.suckOff();
-        imu.proportionalIMU(90,false);
+        arm.closeGrabber();
+        imu.proportionalIMU(-90,false);
+        switch(stonePosition)
+        {
+            case(0):
+                driveTrain.PropDriveIMU(75,.7,imu);
+                break;
+            case(1):
+                driveTrain.PropDriveIMU(85,.4,imu);
+                break;
+            case(2):
+                driveTrain.PropDriveIMU(90,.4,imu);
+                break;
+        }
+        driveTrain.spin(-730,.7);
+        arm.openRepos();
+        driveTrain.drive(7,.45);
+        arm.autoDrop();
+        arm.home();
+        driveTrain.drive(-6,.6);
+        imu.proportionalIMU(-90,false);
+        switch(stonePosition)
+        {
+            case(0):
+                driveTrain.PropDriveIMU(-85,.7,imu);
+                break;
+            case(1):
+                driveTrain.PropDriveIMU(-85,.4,imu);
+                break;
+            case(2):
+                driveTrain.PropDriveIMU(-90,.4,imu);
+                break;
+        }
+
 
 
     }

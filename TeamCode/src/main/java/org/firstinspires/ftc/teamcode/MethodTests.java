@@ -23,12 +23,15 @@ public class MethodTests extends LinearOpMode {
     public void runOpMode() {
 
         DriveTrain driveTrain = new DriveTrain(telemetry, hardwareMap, gamepad1, true);
-        IMU imu = new IMU(telemetry, hardwareMap, driveTrain);
-        imu.imuSetup();
+
+        Arm arm = new Arm(telemetry, hardwareMap, gamepad1, driveTrain, true);
+
 
         waitForStart();
 
-        driveTrain.PropDriveIMU(20,.6,imu);
+        arm.closeGrabber();
+        arm.autoDrop();
+        arm.home();
 
     }
 }

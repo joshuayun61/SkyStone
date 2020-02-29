@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.Robot.Arm;
 
-@TeleOp(name = "NewTeleOp")
+@TeleOp(name = "Nebula TeleOp")
 public class NewTeleOp12382 extends LinearOpMode {
 
     public void runOpMode() {
@@ -18,12 +18,9 @@ public class NewTeleOp12382 extends LinearOpMode {
         while (opModeIsActive())
         {
             driveTrain.mecanumDrive();
-
             arm.newArm();
             driveTrain.suck();
-            telemetry.addLine()
-                    .addData("Slide", arm.Slide.getCurrentPosition())
-                    .addData("Auto_Arm", arm.auto_arm.getPosition());
+            telemetry.addData("Slide", arm.Slide.getCurrentPosition());
             telemetry.update();
         }
     }

@@ -174,7 +174,7 @@ public class DriveTrain extends LinearOpMode {
         }
     }
 
-    public void suckIn()
+    public void suckOut()
     {
 
             LS.setPower(.55);
@@ -189,7 +189,7 @@ public class DriveTrain extends LinearOpMode {
 
     }
 
-    public void suckOut()
+    public void suckIn()
     {
         LS.setPower(-.6);
         RS.setPower(-.6);
