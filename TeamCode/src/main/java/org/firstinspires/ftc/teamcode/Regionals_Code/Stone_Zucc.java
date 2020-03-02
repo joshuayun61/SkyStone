@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.AI.TensorSense;
+import org.firstinspires.ftc.teamcode.AI.armThread;
 import org.firstinspires.ftc.teamcode.Robot.Arm;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.Robot.IMU;
@@ -19,6 +20,7 @@ public class Stone_Zucc extends LinearOpMode {
         DriveTrain driveTrain = new DriveTrain(telemetry, hardwareMap, gamepad1, true);
         IMU imu = new IMU(telemetry, hardwareMap, driveTrain);
         Arm arm = new Arm(telemetry, hardwareMap, gamepad1, driveTrain, true);
+        armThread dropThread = new armThread(telemetry, arm);
         OpenCV cv = new OpenCV(telemetry, hardwareMap);
         imu.imuSetup();
         cv.setupWebCam();
@@ -68,17 +70,20 @@ public class Stone_Zucc extends LinearOpMode {
                 driveTrain.PropDriveIMU(90,.4,imu);
                 break;
         }
-        driveTrain.spin(-730,.7);
+        driveTrain.spin(-700,.6);
         arm.openRepos();
-        driveTrain.drive(7,.45);
-        arm.autoDrop();
-        arm.home();
-        driveTrain.drive(-6,.6);
-        imu.proportionalIMU(-90,false);
-        switch(stonePosition)
-        {
+        dropThread.start();
+        driveTrain.drive(13,.35);
+        arm.closeRepos();
+        sleep(100);
+        driveTrain.spline(.5,15,315);
+        driveTrain.drive(-10,.6);
+        imu.proportionalIMU(-90,true);
+        arm.openRepos();
+
+        switch (stonePosition){
             case(0):
-                driveTrain.PropDriveIMU(-85,.7,imu);
+                driveTrain.PropDriveIMU(-85,.6,imu);
                 break;
             case(1):
                 driveTrain.PropDriveIMU(-85,.4,imu);

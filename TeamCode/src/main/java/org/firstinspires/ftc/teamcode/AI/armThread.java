@@ -19,7 +19,7 @@ public class armThread extends Thread{
     @Override
     public void run()
     {
-        arm.dropBlock();
+        arm.autoDrop();
     }
 
 }

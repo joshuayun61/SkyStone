@@ -160,8 +160,8 @@ public class IMU extends LinearOpMode {
                 right = relativeDifference * Kp / 100;
 
                 if(repositioning) {
-                    left = limit(left, .23, .55);
-                    right = limit(right, .23, .55);
+                    left = limit(left, .22, .55);
+                    right = limit(right, .22, .55);
 
                     telemetry.addData("Left", left);
                     telemetry.addData("Right", -right);

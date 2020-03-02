@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.AI.armThread;
 import org.firstinspires.ftc.teamcode.Robot.Arm;
+import org.firstinspires.ftc.teamcode.Robot.IMU;
 
 @Autonomous(name = "Methods Test")
 public class MethodTests extends LinearOpMode {
@@ -19,10 +20,11 @@ public class MethodTests extends LinearOpMode {
         DriveTrain driveTrain = new DriveTrain(telemetry, hardwareMap, gamepad1, true);
         Arm arm = new Arm(telemetry, hardwareMap, gamepad1, driveTrain, true);
         armThread dropThread = new armThread(telemetry, arm);
+        IMU imu = new IMU(telemetry, hardwareMap, driveTrain);
 
         waitForStart();
-
-        dropThread.start();
-        driveTrain.spin(1500,.25);
+        arm.closeRepos();
+       imu.proportionalIMU(-90,true);
+        arm.openRepos();
     }
 }
