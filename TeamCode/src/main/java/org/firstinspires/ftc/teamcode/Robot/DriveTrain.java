@@ -18,6 +18,7 @@ public class DriveTrain extends LinearOpMode {
     public DcMotor FL, FR, BL, BR;
     public DcMotor LS, RS;
     Servo rightRepos, leftRepos;
+    public Servo cap;
     public DcMotor tapeMeasure;
 
     public final float Ku = .85f;
@@ -74,6 +75,7 @@ public class DriveTrain extends LinearOpMode {
         RS = hardwareMap.get(DcMotor.class, "RS");
 
         tapeMeasure = hardwareMap.get(DcMotor.class, "TM");
+        cap = hardwareMap.get(Servo.class, "cap");
 
         FR.setDirection(DcMotor.Direction.REVERSE);
         BR.setDirection(DcMotor.Direction.REVERSE);
@@ -144,29 +146,45 @@ public class DriveTrain extends LinearOpMode {
 
         if(gamepad1.dpad_right)
         {
-            tapeMeasure.setPower(-.7);
+            tapeIn();
         }
         else if(gamepad1.dpad_left)
         {
-            tapeMeasure.setPower(.7);
+            tapeOut();
         }
         else
         {
             tapeMeasure.setPower(0);
         }
 
-    }
+        if(gamepad1.a)
+        {
+            cap.setPosition(0);
+        }
+        if(gamepad1.b)
+        {
+            cap.setPosition(.3);
+        }
 
+    }
+    public void tapeIn()
+    {
+        tapeMeasure.setPower(-1);
+    }
+    public void tapeOut()
+    {
+        tapeMeasure.setPower(1);
+    }
     public void suck()
     {
 
         if(gamepad1.dpad_up)
         {
-            suckIn();
+            suckOut();
         }
         if(gamepad1.dpad_down)
         {
-            suckOut();
+            suckIn();
         }
         if(gamepad1.x)
         {
@@ -262,7 +280,7 @@ public class DriveTrain extends LinearOpMode {
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        while(FL.isBusy() && FR.isBusy() && BR.isBusy() && BL.isBusy()) {
+        while(FL.isBusy()) {
             telemetry.addData("EncoderPosition", FL.getCurrentPosition());
             telemetry.addData("EncoderTarget", ticks);
             telemetry.update();

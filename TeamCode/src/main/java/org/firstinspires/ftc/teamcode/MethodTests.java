@@ -21,10 +21,11 @@ public class MethodTests extends LinearOpMode {
         Arm arm = new Arm(telemetry, hardwareMap, gamepad1, driveTrain, true);
         armThread dropThread = new armThread(telemetry, arm);
         IMU imu = new IMU(telemetry, hardwareMap, driveTrain);
+        imu.imuSetup();
 
         waitForStart();
-        arm.closeRepos();
-       imu.proportionalIMU(-90,true);
-        arm.openRepos();
+        driveTrain.drive(15,.5);
+        sleep(1000);
+        driveTrain.drive(-15,.5);
     }
 }

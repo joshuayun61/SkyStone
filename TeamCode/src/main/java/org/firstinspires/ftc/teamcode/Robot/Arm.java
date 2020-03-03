@@ -122,29 +122,31 @@ public class Arm extends LinearOpMode {
         }
     }
 
-    public void autoDrop()
+    public  void autoDrop()
     {
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         closeGrabber();
         sleep(100);
-        while(Slide.getCurrentPosition() < 3600)
+        while(Slide.getCurrentPosition() < 1360)
         {
             Slide.setPower(1);
         }
         Slide.setPower(0);
         spinOut();
-        sleep(800);
-        while(Slide.getCurrentPosition() > 2100)
+        sleep(700);
+        //while for servo
+        while(Slide.getCurrentPosition() > 500)
         {
             Slide.setPower(-1);
         }
         openGrabber();
-        while(Slide.getCurrentPosition() < 3000)
+        while(Slide.getCurrentPosition() < 500)
         {
-            Slide.setPower(1);
+            Slide.setPower(.8);
         }
+        spinIn();
+        sleep(500);
         home();
-
     }
 
     public void readyToPlace()
@@ -295,7 +297,7 @@ public class Arm extends LinearOpMode {
 
     public void closeRepos()
     {
-        LR.setPosition(.3);
+        LR.setPosition(.2);
         RR.setPosition(.8);
     }
 

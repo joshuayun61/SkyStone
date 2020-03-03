@@ -52,7 +52,7 @@ public class Stone_Zucc extends LinearOpMode {
                 break;
         }
         driveTrain.drive(-12,.4);
-        driveTrain.drive(18,.5);
+        driveTrain.drive(18,.65);
         arm.tipInward();
         sleep(200);
         driveTrain.suckOff();
@@ -61,37 +61,48 @@ public class Stone_Zucc extends LinearOpMode {
         switch(stonePosition)
         {
             case(0):
-                driveTrain.PropDriveIMU(75,.7,imu);
+                driveTrain.PropDriveIMU(76,.7,imu);
                 break;
             case(1):
-                driveTrain.PropDriveIMU(85,.4,imu);
+                driveTrain.PropDriveIMU(85,.7,imu);
                 break;
             case(2):
                 driveTrain.PropDriveIMU(90,.4,imu);
                 break;
         }
-        driveTrain.spin(-700,.6);
-        arm.openRepos();
         dropThread.start();
-        driveTrain.drive(13,.35);
+        driveTrain.spin(-680,.55);
+        arm.openRepos();
+        driveTrain.drive(14,.4);
         arm.closeRepos();
-        sleep(100);
-        driveTrain.spline(.5,15,315);
-        driveTrain.drive(-10,.6);
+        sleep(300);
+        driveTrain.drive(-19,.6);
         imu.proportionalIMU(-90,true);
         arm.openRepos();
 
         switch (stonePosition){
             case(0):
-                driveTrain.PropDriveIMU(-85,.6,imu);
+                driveTrain.PropDriveIMU(-84,.73,imu);
                 break;
             case(1):
-                driveTrain.PropDriveIMU(-85,.4,imu);
+                driveTrain.PropDriveIMU(-93,.7,imu);
                 break;
             case(2):
-                driveTrain.PropDriveIMU(-90,.4,imu);
+                driveTrain.PropDriveIMU(-93,.4,imu);
                 break;
         }
+        driveTrain.spin(500,.5);
+        driveTrain.suckIn();
+        arm.openGrabber();
+        driveTrain.drive(-12,.38);
+        driveTrain.drive(15,.65);
+        arm.tipInward();
+        sleep(150);
+        driveTrain.suckOff();
+        arm.closeGrabber();
+        imu.proportionalIMU(-90, false);
+
+
 
 
 

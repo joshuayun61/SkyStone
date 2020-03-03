@@ -67,7 +67,7 @@ public class IMU extends LinearOpMode {
         @param repositioning - boolean used to toggle power so that when connected to the build plate the robot
                                can actually pull it.
     */
-    public void proportionalIMU(int angle, boolean repositioning)
+    public synchronized void proportionalIMU(int angle, boolean repositioning)
     {
         FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -160,8 +160,8 @@ public class IMU extends LinearOpMode {
                 right = relativeDifference * Kp / 100;
 
                 if(repositioning) {
-                    left = limit(left, .22, .55);
-                    right = limit(right, .22, .55);
+                    left = limit(left, .2, .55);
+                    right = limit(right, .2, .55);
 
                     telemetry.addData("Left", left);
                     telemetry.addData("Right", -right);

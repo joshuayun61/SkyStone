@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Robot.Arm;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class armThread extends Thread{
+public class armThread extends Thread {
 
     Arm arm;
 
@@ -14,7 +14,6 @@ public class armThread extends Thread{
         arm = passArm;
     }
 
-    ElapsedTime etime = new ElapsedTime();
 
     @Override
     public void run()
