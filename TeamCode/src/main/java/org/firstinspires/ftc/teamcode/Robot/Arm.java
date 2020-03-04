@@ -135,18 +135,20 @@ public class Arm extends LinearOpMode {
         spinOut();
         sleep(700);
         //while for servo
-        while(Slide.getCurrentPosition() > 500)
+        while(Slide.getCurrentPosition() > 200)
         {
             Slide.setPower(-1);
         }
-        openGrabber();
-        while(Slide.getCurrentPosition() < 500)
-        {
-            Slide.setPower(.8);
-        }
+        Slide.setPower(0);
+        grab.setPosition(.8);
         spinIn();
         sleep(500);
-        home();
+        while(Slide.getCurrentPosition() > 0)
+        {
+            Slide.setPower(-1);
+        }
+        Slide.setPower(0);
+        closeGrabber();
     }
 
     public void readyToPlace()

@@ -280,7 +280,7 @@ public class DriveTrain extends LinearOpMode {
             motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        while(FL.isBusy()) {
+        while(FL.isBusy() && FR.isBusy() && BR.isBusy() && BL.isBusy()) {
             telemetry.addData("EncoderPosition", FL.getCurrentPosition());
             telemetry.addData("EncoderTarget", ticks);
             telemetry.update();
