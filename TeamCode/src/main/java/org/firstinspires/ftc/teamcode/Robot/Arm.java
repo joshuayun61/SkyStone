@@ -17,7 +17,7 @@ public class Arm extends LinearOpMode {
 
     public Servo Intake;
 
-    public Servo LR, RR;
+    public Servo cap;
 
     public Servo grab, spin, auto_arm, auto_grab;
 
@@ -55,13 +55,14 @@ public class Arm extends LinearOpMode {
 
         myDrive = driveTrain;
 
-        RR = hardwareMap.get(Servo.class, "RR");
-        LR = hardwareMap.get(Servo.class, "LR");
+
 
         spin = hardwareMap.get(Servo.class, "spin");
         grab = hardwareMap.get(Servo.class, "grab");
 
         tipIn = hardwareMap.get(Servo.class, "tip");
+
+        cap = hardwareMap.get(Servo.class, "cap");
 
         auto_arm = hardwareMap.get(Servo.class, "auto_arm");
         auto_grab = hardwareMap.get(Servo.class, "auto_grab");
@@ -127,7 +128,7 @@ public class Arm extends LinearOpMode {
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         closeGrabber();
         sleep(100);
-        while(Slide.getCurrentPosition() < 1360)
+        while(Slide.getCurrentPosition() < 1390)
         {
             Slide.setPower(1);
         }
@@ -135,15 +136,15 @@ public class Arm extends LinearOpMode {
         spinOut();
         sleep(700);
         //while for servo
-        while(Slide.getCurrentPosition() > 200)
+        while(Slide.getCurrentPosition() > 300)
         {
             Slide.setPower(-1);
         }
         Slide.setPower(0);
         grab.setPosition(.8);
         spinIn();
-        sleep(500);
-        while(Slide.getCurrentPosition() > 0)
+        sleep(1750);
+        while(Slide.getCurrentPosition() > 2)
         {
             Slide.setPower(-1);
         }
@@ -154,7 +155,7 @@ public class Arm extends LinearOpMode {
     public void readyToPlace()
     {
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Slide.setTargetPosition(3500);
+        Slide.setTargetPosition(1390);
         Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Slide.setPower(1);
         while(Slide.getCurrentPosition() < 3500)
@@ -178,9 +179,17 @@ public class Arm extends LinearOpMode {
             Slide.setPower(-gamepad2.left_stick_y);
         }
 
-        if(Slide.getCurrentPosition() >= 9200)
+        if(Slide.getCurrentPosition() < -5)
         {
-            max();
+            home();
+        }
+        if(gamepad2.left_bumper)
+        {
+            cap.setPosition(0);
+        }
+        if(gamepad2.right_bumper)
+        {
+            cap.setPosition(.3);
         }
 
         //spin out
@@ -204,15 +213,7 @@ public class Arm extends LinearOpMode {
             closeGrabber();
         }
 
-        if(gamepad2.left_bumper)
-        {
-            closeRepos();
-        }
 
-        if(gamepad2.right_bumper)
-        {
-           openRepos();
-        }
 
         if(gamepad2.dpad_up)
         {
@@ -297,17 +298,7 @@ public class Arm extends LinearOpMode {
     }
 
 
-    public void closeRepos()
-    {
-        LR.setPosition(.2);
-        RR.setPosition(.8);
-    }
 
-    public void openRepos()
-    {
-        LR.setPosition(.8);
-        RR.setPosition(.3);
-    }
 
 
     public void raiseAutoArm()

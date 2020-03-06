@@ -35,7 +35,7 @@ public class Stones_Only extends LinearOpMode {
 
 
         stonePosition = cv.getValue();
-        arm.openRepos();
+        driveTrain.openRepos();
         arm.lowerAutoArm();
         driveTrain.imuStrafe(24, .37, imu);
         switch (stonePosition) {

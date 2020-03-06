@@ -3,15 +3,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.AI.TensorSense;
 import org.firstinspires.ftc.teamcode.AI.armThread;
 import org.firstinspires.ftc.teamcode.Robot.Arm;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.Robot.IMU;
 import org.firstinspires.ftc.teamcode.Robot.OpenCV;
 
-@Autonomous(name = "Stones Zucc")
-public class Stone_Zucc extends LinearOpMode {
+@Autonomous(name = "Stones Zucc HYDRO0.")
+public class Stone_Zucc_HYDRO extends LinearOpMode {
     int stonePosition = -100;
     ElapsedTime time = new ElapsedTime();
 
@@ -56,9 +55,9 @@ public class Stone_Zucc extends LinearOpMode {
         else
             driveTrain.drive(-14,.4);
         if(stonePosition != 1)
-            driveTrain.drive(18,.65);
+            driveTrain.drive(17,.65);
         else
-            driveTrain.drive(20,.65);
+            driveTrain.drive(19,.65);
         arm.tipInward();
         sleep(350);
         driveTrain.suckOff();
@@ -86,13 +85,14 @@ public class Stone_Zucc extends LinearOpMode {
         driveTrain.drive(-20,.6);
         imu.proportionalIMU(-90,true);
         driveTrain.openRepos();
+        driveTrain.strafe(-3,.5);
 
         switch (stonePosition){
             case(0):
                 driveTrain.PropDriveIMU(-83,.73,imu);
                 break;
             case(1):
-                driveTrain.PropDriveIMU(-93,.7,imu);
+                driveTrain.PropDriveIMU(-92,.7,imu);
                 break;
             case(2):
                 driveTrain.PropDriveIMU(-97,.7,imu);
@@ -101,8 +101,8 @@ public class Stone_Zucc extends LinearOpMode {
         driveTrain.spin(500,.5);
         driveTrain.suckIn();
         arm.openGrabber();
-        driveTrain.drive(-14,.38);
-        driveTrain.drive(11,.65);
+        driveTrain.drive(-15,.38);
+        driveTrain.drive(12,.65);
         arm.tipInward();
         sleep(350);
         driveTrain.suckOff();

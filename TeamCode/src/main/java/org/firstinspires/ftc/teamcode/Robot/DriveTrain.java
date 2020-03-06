@@ -18,7 +18,7 @@ public class DriveTrain extends LinearOpMode {
     public DcMotor FL, FR, BL, BR;
     public DcMotor LS, RS;
     Servo rightRepos, leftRepos;
-    public Servo cap;
+    public Servo RR, LR;
     public DcMotor tapeMeasure;
 
     public final float Ku = .85f;
@@ -75,7 +75,9 @@ public class DriveTrain extends LinearOpMode {
         RS = hardwareMap.get(DcMotor.class, "RS");
 
         tapeMeasure = hardwareMap.get(DcMotor.class, "TM");
-        cap = hardwareMap.get(Servo.class, "cap");
+
+        RR = hardwareMap.get(Servo.class, "RR");
+        LR = hardwareMap.get(Servo.class, "LR");
 
         FR.setDirection(DcMotor.Direction.REVERSE);
         BR.setDirection(DcMotor.Direction.REVERSE);
@@ -159,11 +161,16 @@ public class DriveTrain extends LinearOpMode {
 
         if(gamepad1.a)
         {
-            cap.setPosition(0);
+            openRepos();
         }
+
         if(gamepad1.b)
         {
-            cap.setPosition(.3);
+            closeRepos();
+        }
+        if(gamepad1.left_bumper && gamepad1.dpad_down)
+        {
+            suckInSlow();
         }
 
     }
@@ -190,6 +197,10 @@ public class DriveTrain extends LinearOpMode {
         {
             suckOff();
         }
+        if(gamepad1.left_bumper && gamepad1.dpad_down)
+        {
+            suckInSlow();
+        }
     }
 
     public void suckOut()
@@ -211,6 +222,11 @@ public class DriveTrain extends LinearOpMode {
     {
         LS.setPower(-.6);
         RS.setPower(-.6);
+    }
+    public void suckInSlow()
+    {
+        LS.setPower(-.2);
+        RS.setPower(-.2);
     }
 
 
@@ -241,9 +257,19 @@ public class DriveTrain extends LinearOpMode {
         FR.setPower(newStrafe);
         BR.setPower(-newStrafe);
         BL.setPower(newStrafe);
-
     }
 
+    public void closeRepos()
+    {
+        LR.setPosition(.2);
+        RR.setPosition(.8);
+    }
+
+    public void openRepos()
+    {
+        LR.setPosition(.8);
+        RR.setPosition(.3);
+    }
     public double PISpin(int angle,IMU imu, ElapsedTime time)
     {
        // while(imu.currentAngle() != angle)
@@ -488,6 +514,69 @@ public class DriveTrain extends LinearOpMode {
         BR.setPower(0);
 
     }
+
+    public void PropDriveIMU(double distance, double maxSpeed, IMU imu, int angle)
+    {
+        int ticks = inchesToTicks(distance);
+        double currentAngle = imu.currentAngle();
+
+        int toPower = (Integer.toString(Math.abs(ticks))).length();
+        toPower = (int)Math.pow(10, toPower);
+
+        for (DcMotor motor : motors) {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+
+        for (DcMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
+        BR.setTargetPosition(BR.getCurrentPosition() - ticks);
+        BL.setTargetPosition(BL.getCurrentPosition() - ticks);
+        FR.setTargetPosition(FR.getCurrentPosition() - ticks);
+        FL.setTargetPosition(FL.getCurrentPosition() - ticks);
+
+        //convert to abs to reference distance
+        double currentAbs = Math.abs(FR.getCurrentPosition());
+        double targetAbs = Math.abs(FR.getTargetPosition());
+
+        while(currentAbs < targetAbs - 20 || currentAbs > targetAbs + 20) {
+
+            // Left = -
+
+            double relativeDistance = FR.getTargetPosition() - FR.getCurrentPosition();
+            double power = relativeDistance * Kp / 1000;
+            power = limit(power, .15, maxSpeed);
+            double correction = angle - imu.currentAngle();
+            correction = correction * Kp /10;
+
+            FL.setPower(power + correction);
+            BL.setPower(power + correction);
+            BR.setPower(power - correction);
+            FR.setPower(power - correction);
+
+            // motor.setPower(power);
+            telemetry.addData("Left", power + correction);
+            telemetry.addData("Right", power - correction);
+
+
+            telemetry.addLine()
+                    .addData("Target", BL.getTargetPosition())
+                    .addData("Current", BL.getCurrentPosition());
+            telemetry.update();
+
+            currentAbs = Math.abs(FR.getCurrentPosition());
+            targetAbs = Math.abs(FR.getTargetPosition());
+        }
+
+        FL.setPower(0);
+        BL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+
+    }
+
     public double limit(double input, double lim, double lim2)
     {
         if(input > 0) {

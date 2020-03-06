@@ -20,14 +20,14 @@ public class AutoBlueRepoClose extends LinearOpMode {
 
         waitForStart();
 
-        arm.openRepos();
+        driveTrain.openRepos();
         driveTrain.spline(.5,35,135);
         driveTrain.drive(12,.5);
-        arm.closeRepos();
+        driveTrain.closeRepos();
         sleep(350);
         driveTrain.drive(-30,.5);
         imu.proportionalIMU(90,true);
-        arm.openRepos();
+        driveTrain.openRepos();
         driveTrain.strafe(6,.5);
         driveTrain.drive(-30,.6);
     }

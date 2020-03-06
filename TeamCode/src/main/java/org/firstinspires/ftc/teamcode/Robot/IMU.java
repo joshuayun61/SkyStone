@@ -18,6 +18,7 @@ public class IMU extends LinearOpMode {
     DcMotor FL,FR,BL,BR, slide;
     BNO055IMU imu;
     Orientation angles, originalAngles;
+    Orientation newAngles;
     Acceleration gravity;
     DriveTrain driveTrain;
     public final float Ku = .8f;
@@ -52,8 +53,6 @@ public class IMU extends LinearOpMode {
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
         parameters.loggingEnabled = false; //what does this do?
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
@@ -273,6 +272,53 @@ public class IMU extends LinearOpMode {
         telemetry.addData("Final Heading", currentAngle());
 
     }
+    public  void safeIMU(int angle, boolean repositioning)
+    {
+        FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        telemetry.addData("Starting Heading: ", currentAngle());
+        telemetry.addData("Heading input: ", angle);
+
+        double left, right;
+
+        if(angle == 90) // (0,179.9)
+        {
+            while(currentAngle() > 90.5)
+            {
+                left = -.44;
+                right = .44;
+
+                telemetry.addLine()
+                        .addData("target", angle)
+                        .addData("Current", currentAngle());
+                telemetry.addLine()
+                        .addData("Left Power", left)
+                        .addData("Left Tick", FL.getCurrentPosition());
+                telemetry.addLine()
+                        .addData("Right Power", right)
+                        .addData("Right Tick", FR.getCurrentPosition());
+
+
+            }
+        }
+
+
+        FL.setPower(0);
+        BL.setPower(0);
+        FR.setPower(0);
+        BR.setPower(0);
+
+        telemetry.addData("Final Heading", currentAngle());
+
+    }
 
     /*
         sends a motor power to the drivetrain that is to be manipulated and sent out there
@@ -287,6 +333,7 @@ public class IMU extends LinearOpMode {
         error = error * Kp / 100;
         return error;
     }
+
 
 
 

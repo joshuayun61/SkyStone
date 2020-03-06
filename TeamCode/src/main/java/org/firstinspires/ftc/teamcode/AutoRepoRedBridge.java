@@ -24,14 +24,14 @@ public class AutoRepoRedBridge extends LinearOpMode {
         waitForStart();
 
        driveTrain.drive(-24, .6);
-       arm.openRepos();
+       driveTrain.openRepos();
        driveTrain.strafe(15, .3);
        driveTrain.drive(-10,.3);
-       arm.closeRepos();
+       driveTrain.closeRepos();
        sleep(1000);
        driveTrain.drive(36,.6);
        imu.proportionalIMU(-90,true);
-       arm.openRepos();
+       driveTrain.openRepos();
         driveTrain.strafe(16, .3);
         driveTrain.drive(33,.3);
 
