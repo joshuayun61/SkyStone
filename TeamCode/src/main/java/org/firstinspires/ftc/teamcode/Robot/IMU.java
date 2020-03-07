@@ -296,10 +296,10 @@ public class IMU extends LinearOpMode {
                 left = -.42;
                 right = .42;
 
-                if(currentAngle() < 150 && currentAngle() > 88)
+                if(currentAngle() - angle  < 0 && currentAngle() > 0)
                 {
-                    left -= .16;
-                    right -= .16;
+                    left = .17;
+                    right = -.17;
                 }
 
                 FL.setPower(left);

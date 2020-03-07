@@ -44,7 +44,7 @@ public class Auto_Zucc_RED extends LinearOpMode {
             case (0):
                 break;
             case (1):
-                driveTrain.strafe(4, .7);
+                driveTrain.strafe(5, .7);
                 break;
             case (2):
                 driveTrain.strafe(12, .7);
@@ -70,7 +70,7 @@ public class Auto_Zucc_RED extends LinearOpMode {
         switch(stonePosition)
         {
             case(0):
-                driveTrain.PropDriveIMU(86,.7,imu);
+                driveTrain.PropDriveIMU(84,.7,imu);
                 break;
             case(1):
                 driveTrain.PropDriveIMU(85,.7,imu);
@@ -81,27 +81,33 @@ public class Auto_Zucc_RED extends LinearOpMode {
         }
 
         dropThread.start();
-        driveTrain.spin(590,.55);
+        if(stonePosition == 0) {
+            driveTrain.spin(590, .55);
+        }
+        else
+        driveTrain.spin(600,.55);
         driveTrain.openRepos();
-        driveTrain.drive(16,.3);
+        driveTrain.drive(16,.28);
         driveTrain.closeRepos();
         sleep(500);
-        driveTrain.drive(-20,.6);
+        driveTrain.drive(-26,.6);
         imu.safeIMU(90,true);
         driveTrain.openRepos();
         if(stonePosition == 0)
         {
-            driveTrain.strafe(1,.5);
+            driveTrain.strafe(2,.5);
         }
-        else {
-            driveTrain.strafe(2, .5);
+        else if(stonePosition == 1) {
+            driveTrain.strafe(4, .5);
         }
+        else
+            driveTrain.strafe(6,.5);
         switch (stonePosition){
             case(0):
-                driveTrain.PropDriveIMU(-94,.7,imu);
+                driveTrain.PropDriveIMU(-90,.7,imu);
                 break;
             case(1):
-                driveTrain.PropDriveIMU(-92,.65,imu);
+                driveTrain.PropDriveIMU(-90,.65,imu);
                 break;
             case(2):
                 driveTrain.PropDriveIMU(-85,.65,imu);
@@ -109,7 +115,7 @@ public class Auto_Zucc_RED extends LinearOpMode {
         }
         dropThread.interrupt();
         if(stonePosition != 0) {
-            driveTrain.spin(-350, .5);
+            driveTrain.spin(-320, .5);
         }
         else
         {
@@ -120,7 +126,7 @@ public class Auto_Zucc_RED extends LinearOpMode {
 
         if(stonePosition != 0) {
             driveTrain.drive(-14, .38);
-            driveTrain.drive(14, .6);
+            driveTrain.drive(16 , .6);
         }
         else
         {

@@ -66,20 +66,20 @@ public class Stone_Zucc_HYDRO extends LinearOpMode {
         switch(stonePosition)
         {
             case(0):
-                driveTrain.PropDriveIMU(76,.7,imu);
+                driveTrain.PropDriveIMU(73,.7,imu);
                 break;
             case(1):
-                driveTrain.PropDriveIMU(85,.7,imu);
+                driveTrain.PropDriveIMU(80,.7,imu);
                 break;
             case(2):
-                driveTrain.PropDriveIMU(86,.7,imu);
+                driveTrain.PropDriveIMU(83,.7,imu);
                 break;
         }
 
         dropThread.start();
         driveTrain.spin(-660,.55);
         driveTrain.openRepos();
-        driveTrain.drive(14,.4);
+        driveTrain.drive(15,.35);
         driveTrain.closeRepos();
         sleep(500);
         driveTrain.drive(-20,.6);
@@ -92,7 +92,7 @@ public class Stone_Zucc_HYDRO extends LinearOpMode {
 
         switch (stonePosition){
             case(0):
-                driveTrain.PropDriveIMU(-83,.73,imu);
+                driveTrain.PropDriveIMU(-81,.73,imu);
                 break;
             case(1):
                 driveTrain.PropDriveIMU(-92,.7,imu);

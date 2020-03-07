@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.Robot.IMU;
 import org.firstinspires.ftc.teamcode.Robot.OpenCV;
 
-@Autonomous(name = "Repo RED")
-public class Stones_Only extends LinearOpMode {
+@Autonomous(name = "Repo BLUE")
+public class Repo_BLUE extends LinearOpMode {
     int stonePosition = -100;
     ElapsedTime time = new ElapsedTime();
 
@@ -28,17 +28,16 @@ public class Stones_Only extends LinearOpMode {
 
         driveTrain.openRepos();
         driveTrain.drive(30,.7);
-        driveTrain.strafe(-6,.7);
+        driveTrain.strafe(6,.7);
         driveTrain.drive(3,.3);
         driveTrain.closeRepos();
         sleep(400);
         driveTrain.drive(-25,.7);
-        imu.proportionalIMU(-90, true);
+        imu.proportionalIMU(90, true);
         driveTrain.openRepos();
         driveTrain.drive(-3,.7);
         driveTrain.strafe(10,.7);
-        arm.openGrabber();
-        driveTrain.suckIn();
+        driveTrain.drive(-15,.7);
 
 
     }
