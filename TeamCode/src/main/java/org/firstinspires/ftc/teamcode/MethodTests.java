@@ -24,6 +24,8 @@ public class MethodTests extends LinearOpMode {
         imu.imuSetup();
 
         waitForStart();
-        imu.safeIMU(90,true);
+
+        driveTrain.PropDriveIMU(30,.7,imu, 90);
+
     }
 }

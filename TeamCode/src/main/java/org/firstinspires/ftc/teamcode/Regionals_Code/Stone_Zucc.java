@@ -102,7 +102,7 @@ public class Stone_Zucc extends LinearOpMode {
         driveTrain.suckIn();
         arm.openGrabber();
         driveTrain.drive(-14,.38);
-        driveTrain.drive(11,.65);
+        driveTrain.drive(13,.65);
         arm.tipInward();
         sleep(350);
         driveTrain.suckOff();

@@ -291,10 +291,21 @@ public class IMU extends LinearOpMode {
 
         if(angle == 90) // (0,179.9)
         {
-            while(currentAngle() > 90.5)
+            while(currentAngle() > 91 || currentAngle() < 89.25)
             {
-                left = -.44;
-                right = .44;
+                left = -.42;
+                right = .42;
+
+                if(currentAngle() < 150 && currentAngle() > 88)
+                {
+                    left -= .16;
+                    right -= .16;
+                }
+
+                FL.setPower(left);
+                BL.setPower(left);
+                FR.setPower(right);
+                BR.setPower(right);
 
                 telemetry.addLine()
                         .addData("target", angle)
@@ -305,6 +316,39 @@ public class IMU extends LinearOpMode {
                 telemetry.addLine()
                         .addData("Right Power", right)
                         .addData("Right Tick", FR.getCurrentPosition());
+                telemetry.update();
+
+
+            }
+        }
+        if(angle == 90) // (0,179.9)
+        {
+            while(currentAngle() > 93 || currentAngle() < 87)
+            {
+                left = -.42;
+                right = .42;
+
+                if(currentAngle() < 150 && currentAngle() > 88)
+                {
+                    left -= .16;
+                    right -= .16;
+                }
+
+                FL.setPower(left);
+                BL.setPower(left);
+                FR.setPower(right);
+                BR.setPower(right);
+
+                telemetry.addLine()
+                        .addData("target", angle)
+                        .addData("Current", currentAngle());
+                telemetry.addLine()
+                        .addData("Left Power", left)
+                        .addData("Left Tick", FL.getCurrentPosition());
+                telemetry.addLine()
+                        .addData("Right Power", right)
+                        .addData("Right Tick", FR.getCurrentPosition());
+                telemetry.update();
 
 
             }

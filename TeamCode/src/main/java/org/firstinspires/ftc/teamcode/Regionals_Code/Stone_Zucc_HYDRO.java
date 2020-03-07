@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.Robot.IMU;
 import org.firstinspires.ftc.teamcode.Robot.OpenCV;
 
-@Autonomous(name = "Stones Zucc HYDRO0.")
+@Autonomous(name = "Stones Zucc OFFICIAL.")
 public class Stone_Zucc_HYDRO extends LinearOpMode {
     int stonePosition = -100;
     ElapsedTime time = new ElapsedTime();
@@ -85,7 +85,10 @@ public class Stone_Zucc_HYDRO extends LinearOpMode {
         driveTrain.drive(-20,.6);
         imu.proportionalIMU(-90,true);
         driveTrain.openRepos();
+        if(stonePosition != 2)
         driveTrain.strafe(-3,.5);
+        else
+            driveTrain.strafe(-1,.5);
 
         switch (stonePosition){
             case(0):
@@ -117,7 +120,7 @@ public class Stone_Zucc_HYDRO extends LinearOpMode {
                 driveTrain.PropDriveIMU(70,.7,imu);
                 break;
             case(2) :
-                driveTrain.PropDriveIMU(75,.8,imu);
+                driveTrain.PropDriveIMU(73,.8,imu);
                 break;
 
         }

@@ -35,29 +35,33 @@ public class Auto_Zucc_RED extends LinearOpMode {
 
         //open grabber, move out tipper, turn on zucc
         arm.grab.setPosition(.5);
+        arm.spinIn();
         driveTrain.suckIn();
         arm.tipOut();
         //drive to blocks
-        driveTrain.PropDriveIMU(-28,.7,imu);
-        switch (stonePosition)
-        {
-            case(0):
+        driveTrain.PropDriveIMU(-28, .7, imu);
+        switch (stonePosition) {
+            case (0):
                 break;
-            case(1):
-                driveTrain.strafe(4,.7);
+            case (1):
+                driveTrain.strafe(4, .7);
                 break;
-            case(2):
-                driveTrain.strafe(12,.7);
+            case (2):
+                driveTrain.strafe(12, .7);
                 break;
         }
-        if(stonePosition != 1)
-            driveTrain.drive(-12,.4);
+        if (stonePosition != 1)
+            driveTrain.drive(-13, .4);
         else
-            driveTrain.drive(-14,.4);
-        if(stonePosition != 1)
-            driveTrain.drive(18,.65);
+            driveTrain.drive(-15, .4);
+
+        if (stonePosition == 2)
+            driveTrain.drive(18, .65);
+        else if (stonePosition == 0)
+            driveTrain.drive(15, .65);
         else
-            driveTrain.drive(20,.65);
+            driveTrain.drive(18, .65);
+
         arm.tipInward();
         sleep(350);
         driveTrain.suckOff();
@@ -77,31 +81,53 @@ public class Auto_Zucc_RED extends LinearOpMode {
         }
 
         dropThread.start();
-        driveTrain.spin(630,.55);
+        driveTrain.spin(590,.55);
         driveTrain.openRepos();
-        driveTrain.drive(14,.4);
+        driveTrain.drive(16,.3);
         driveTrain.closeRepos();
         sleep(500);
         driveTrain.drive(-20,.6);
-        imu.proportionalIMU(90,true);
+        imu.safeIMU(90,true);
         driveTrain.openRepos();
-
+        if(stonePosition == 0)
+        {
+            driveTrain.strafe(1,.5);
+        }
+        else {
+            driveTrain.strafe(2, .5);
+        }
         switch (stonePosition){
             case(0):
-                driveTrain.PropDriveIMU(-97,.73,imu);
+                driveTrain.PropDriveIMU(-94,.7,imu);
                 break;
             case(1):
-                driveTrain.PropDriveIMU(-93,.7,imu);
+                driveTrain.PropDriveIMU(-92,.65,imu);
                 break;
             case(2):
-                driveTrain.PropDriveIMU(-83,.7,imu);
+                driveTrain.PropDriveIMU(-85,.65,imu);
                 break;
         }
-        driveTrain.spin(-500,.5);
-        driveTrain.suckIn();
+        dropThread.interrupt();
+        if(stonePosition != 0) {
+            driveTrain.spin(-350, .5);
+        }
+        else
+        {
+            driveTrain.strafe(7,.5);
+        }
         arm.openGrabber();
-        driveTrain.drive(-14,.38);
-        driveTrain.drive(11,.65);
+        driveTrain.suckIn();
+
+        if(stonePosition != 0) {
+            driveTrain.drive(-14, .38);
+            driveTrain.drive(14, .6);
+        }
+        else
+        {
+            driveTrain.drive(-11, .38);
+            driveTrain.drive(11, .6);
+            driveTrain.strafe(-6,.5);
+        }
         arm.tipInward();
         sleep(350);
         driveTrain.suckOff();
@@ -110,17 +136,17 @@ public class Auto_Zucc_RED extends LinearOpMode {
         switch(stonePosition)
         {
             case(0):
-                driveTrain.PropDriveIMU(75,.7,imu);
-                break;
-            case(1):
                 driveTrain.PropDriveIMU(70,.7,imu);
                 break;
+            case(1):
+                driveTrain.PropDriveIMU(65,.7,imu);
+                break;
             case(2) :
-                driveTrain.PropDriveIMU(65,.8,imu);
+                driveTrain.PropDriveIMU(58,.8,imu);
                 break;
 
         }
-        driveTrain.drive(-8,.5);
+        driveTrain.drive(-10,.5);
 
 
 
