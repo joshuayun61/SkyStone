@@ -66,13 +66,13 @@ public class Stone_Zucc_HYDRO extends LinearOpMode {
         switch(stonePosition)
         {
             case(0):
-                driveTrain.PropDriveIMU(73,.7,imu);
+                driveTrain.PropDriveIMU(76,.7,imu);
                 break;
             case(1):
-                driveTrain.PropDriveIMU(80,.7,imu);
+                driveTrain.PropDriveIMU(85,.7,imu);
                 break;
             case(2):
-                driveTrain.PropDriveIMU(83,.7,imu);
+                driveTrain.PropDriveIMU(86,.7,imu);
                 break;
         }
 

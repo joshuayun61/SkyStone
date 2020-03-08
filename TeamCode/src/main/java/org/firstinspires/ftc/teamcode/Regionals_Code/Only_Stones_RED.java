@@ -3,15 +3,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.AI.TensorSense;
 import org.firstinspires.ftc.teamcode.AI.armThread;
 import org.firstinspires.ftc.teamcode.Robot.Arm;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.Robot.IMU;
 import org.firstinspires.ftc.teamcode.Robot.OpenCV;
 
-@Autonomous(name = "Stones Zucc RED")
-public class Auto_Zucc_RED extends LinearOpMode {
+@Autonomous(name = "bruh regionals")
+public class Only_Stones_RED extends LinearOpMode {
     int stonePosition = -100;
     ElapsedTime time = new ElapsedTime();
 
@@ -34,7 +33,7 @@ public class Auto_Zucc_RED extends LinearOpMode {
         waitForStart();
 
         //open grabber, move out tipper, turn on zucc
-        arm.grab.setPosition(.5);
+        arm.grab.setPosition(0);
         arm.spinIn();
         driveTrain.suckIn();
         arm.tipOut();
@@ -47,7 +46,7 @@ public class Auto_Zucc_RED extends LinearOpMode {
                 driveTrain.strafe(5, .7);
                 break;
             case (2):
-                driveTrain.strafe(12, .7);
+                driveTrain.strafe(13, .7);
                 break;
         }
         if (stonePosition != 1)
@@ -62,99 +61,64 @@ public class Auto_Zucc_RED extends LinearOpMode {
         else
             driveTrain.drive(18, .65);
 
-        arm.tipInward();
-        sleep(350);
         driveTrain.suckOff();
-        arm.closeGrabber();
-        imu.proportionalIMU(90,false);
+        imu.proportionalIMU(-90,false);
         switch(stonePosition)
         {
             case(0):
-                driveTrain.PropDriveIMU(84,.7,imu);
+                driveTrain.PropDriveIMU(-45,.7,imu);
                 break;
             case(1):
-                driveTrain.PropDriveIMU(85,.7,imu);
+                driveTrain.PropDriveIMU(-45,.7,imu);
                 break;
             case(2):
-                driveTrain.PropDriveIMU(76,.7,imu);
+                driveTrain.PropDriveIMU(-36,.7,imu);
                 break;
         }
+        driveTrain.suckOut();
+        switch(stonePosition)
+        {
+            case(0):
+                driveTrain.PropDriveIMU(68,.7,imu);
+                break;
+            case(1):
+                driveTrain.PropDriveIMU(72,.7,imu);
+                break;
+            case(2):
+                driveTrain.PropDriveIMU(60,.7,imu);
+                break;
+        }
+        driveTrain.suckOff();
 
-        dropThread.start();
         if(stonePosition == 0) {
-            driveTrain.spin(590, .55);
+            imu.proportionalIMU(0, false);
         }
         else
-        driveTrain.spin(600,.55);
-        driveTrain.openRepos();
-        driveTrain.drive(16,.28);
-        driveTrain.closeRepos();
-        sleep(500);
-        driveTrain.drive(2,.3);
-        driveTrain.drive(-26,.6);
-        imu.safeIMU(90,true);
-        driveTrain.openRepos();
-        if(stonePosition == 0)
-        {
-            driveTrain.strafe(2,.5);
-        }
-        else if(stonePosition == 1) {
-            driveTrain.strafe(4, .5);
-        }
-        else
-            driveTrain.strafe(6,.5);
-        switch (stonePosition){
-            case(0):
-                driveTrain.PropDriveIMU(-90,.7,imu);
-                break;
-            case(1):
-                driveTrain.PropDriveIMU(-90,.65,imu);
-                break;
-            case(2):
-                driveTrain.PropDriveIMU(-85,.65,imu);
-                break;
-        }
-        dropThread.interrupt();
-        if(stonePosition != 0) {
-            driveTrain.spin(-320, .5);
-        }
-        else
-        {
-            driveTrain.strafe(7,.5);
-        }
-        arm.openGrabber();
+            driveTrain.spin(800,.6);
         driveTrain.suckIn();
-
-        if(stonePosition != 0) {
-            driveTrain.drive(-14, .38);
-            driveTrain.drive(16 , .6);
-        }
-        else
-        {
-            driveTrain.drive(-11, .38);
-            driveTrain.drive(11, .6);
-            driveTrain.strafe(-6,.5);
-        }
+        arm.openGrabber();
+        driveTrain.drive(-10,.5);
+        driveTrain.drive(15, .6);
         arm.tipInward();
-        sleep(350);
-        driveTrain.suckOff();
+        sleep(400);
         arm.closeGrabber();
-        imu.proportionalIMU(90, false);
+        driveTrain.suckOff();
+        imu.proportionalIMU(-90,false);
+
+
         switch(stonePosition)
         {
             case(0):
-                driveTrain.PropDriveIMU(70,.7,imu);
+                driveTrain.PropDriveIMU(-76,.7,imu);
                 break;
             case(1):
-                driveTrain.PropDriveIMU(65,.7,imu);
+                driveTrain.PropDriveIMU(-73,.7,imu);
                 break;
-            case(2) :
-                driveTrain.PropDriveIMU(58,.8,imu);
+            case(2):
+                driveTrain.PropDriveIMU(-69,.7,imu);
                 break;
-
         }
-        driveTrain.drive(-10,.5);
-
+        driveTrain.drive(23,.5);
 
 
     }
