@@ -4,13 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.AI.TensorSense;
 import org.firstinspires.ftc.teamcode.Robot.Arm;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
-import org.firstinspires.ftc.teamcode.Robot.IMU;
-import org.firstinspires.ftc.teamcode.Robot.OpenCV;
+import org.firstinspires.ftc.teamcode.NewRobot.IMU;
 
 @Autonomous(name = "Repo BLUE")
+@Disabled
 public class Repo_BLUE extends LinearOpMode {
     int stonePosition = -100;
     ElapsedTime time = new ElapsedTime();
@@ -33,7 +32,7 @@ public class Repo_BLUE extends LinearOpMode {
         driveTrain.closeRepos();
         sleep(400);
         driveTrain.drive(-25,.7);
-        imu.proportionalIMU(90, true);
+        //imu.proportionalIMU(90, true);
         driveTrain.openRepos();
         driveTrain.drive(-3,.7);
         driveTrain.strafe(10,.7);

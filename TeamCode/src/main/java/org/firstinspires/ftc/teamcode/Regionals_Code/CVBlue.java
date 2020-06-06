@@ -1,16 +1,16 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Regionals_Code;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.AI.TensorSense;
-import org.firstinspires.ftc.teamcode.Robot.Arm;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
-import org.firstinspires.ftc.teamcode.Robot.IMU;
+import org.firstinspires.ftc.teamcode.NewRobot.IMU;
 import org.firstinspires.ftc.teamcode.Robot.OpenCV;
 
 @Autonomous(name = "CV AUTO BLUE ")
+@Disabled
 public class CVBlue extends LinearOpMode {
 
     int stonePosition = -100;

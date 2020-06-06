@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode.Regionals_Code;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.AI.armThread;
 import org.firstinspires.ftc.teamcode.Robot.Arm;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
-import org.firstinspires.ftc.teamcode.Robot.IMU;
-import org.firstinspires.ftc.teamcode.Robot.OpenCV;
 
 @Autonomous(name = "bruh park")
+@Disabled
 public class park extends LinearOpMode {
     int stonePosition = -100;
     ElapsedTime time = new ElapsedTime();

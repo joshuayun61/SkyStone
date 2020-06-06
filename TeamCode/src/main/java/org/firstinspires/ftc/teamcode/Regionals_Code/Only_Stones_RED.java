@@ -1,15 +1,17 @@
 package org.firstinspires.ftc.teamcode.Regionals_Code;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.AI.armThread;
 import org.firstinspires.ftc.teamcode.Robot.Arm;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
-import org.firstinspires.ftc.teamcode.Robot.IMU;
+import org.firstinspires.ftc.teamcode.NewRobot.IMU;
 import org.firstinspires.ftc.teamcode.Robot.OpenCV;
 
 @Autonomous(name = "bruh regionals")
+@Disabled
 public class Only_Stones_RED extends LinearOpMode {
     int stonePosition = -100;
     ElapsedTime time = new ElapsedTime();
@@ -62,7 +64,7 @@ public class Only_Stones_RED extends LinearOpMode {
             driveTrain.drive(18, .65);
 
         driveTrain.suckOff();
-        imu.proportionalIMU(-90,false);
+        //imu.proportionalIMU(-90,false);
         switch(stonePosition)
         {
             case(0):
@@ -91,7 +93,7 @@ public class Only_Stones_RED extends LinearOpMode {
         driveTrain.suckOff();
 
         if(stonePosition == 0) {
-            imu.proportionalIMU(0, false);
+          //  imu.proportionalIMU(0, false);
         }
         else
             driveTrain.spin(800,.6);
@@ -103,7 +105,7 @@ public class Only_Stones_RED extends LinearOpMode {
         sleep(400);
         arm.closeGrabber();
         driveTrain.suckOff();
-        imu.proportionalIMU(-90,false);
+        //imu.proportionalIMU(-90,false);
 
 
         switch(stonePosition)

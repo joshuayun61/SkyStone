@@ -1,15 +1,17 @@
 package org.firstinspires.ftc.teamcode.Regionals_Code;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.AI.armThread;
 import org.firstinspires.ftc.teamcode.Robot.Arm;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
-import org.firstinspires.ftc.teamcode.Robot.IMU;
+import org.firstinspires.ftc.teamcode.NewRobot.IMU;
 import org.firstinspires.ftc.teamcode.Robot.OpenCV;
 
 @Autonomous(name = "Stones Zucc OFFICIAL.")
+@Disabled
 public class Stone_Zucc_HYDRO extends LinearOpMode {
     int stonePosition = -100;
     ElapsedTime time = new ElapsedTime();
@@ -62,7 +64,7 @@ public class Stone_Zucc_HYDRO extends LinearOpMode {
         sleep(350);
         driveTrain.suckOff();
         arm.closeGrabber();
-        imu.proportionalIMU(-90,false);
+        //imu.proportionalIMU(-90,false);
         switch(stonePosition)
         {
             case(0):
@@ -83,7 +85,7 @@ public class Stone_Zucc_HYDRO extends LinearOpMode {
         driveTrain.closeRepos();
         sleep(500);
         driveTrain.drive(-20,.6);
-        imu.proportionalIMU(-90,true);
+        //imu.proportionalIMU(-90,true);
         driveTrain.openRepos();
         if(stonePosition != 2)
         driveTrain.strafe(-3,.5);
@@ -110,7 +112,7 @@ public class Stone_Zucc_HYDRO extends LinearOpMode {
         sleep(350);
         driveTrain.suckOff();
         arm.closeGrabber();
-        imu.proportionalIMU(-90, false);
+        //imu.proportionalIMU(-90, false);
         switch(stonePosition)
         {
             case(0):

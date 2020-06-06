@@ -4,12 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.AI.TensorSense;
 import org.firstinspires.ftc.teamcode.Robot.Arm;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
-import org.firstinspires.ftc.teamcode.Robot.IMU;
+import org.firstinspires.ftc.teamcode.NewRobot.IMU;
 
 @Autonomous(name = "Autonomous BLUE REPO (Park Close)")
+@Disabled
 public class AutoBlueRepoClose extends LinearOpMode {
 
     public void runOpMode() {
@@ -26,7 +26,7 @@ public class AutoBlueRepoClose extends LinearOpMode {
         driveTrain.closeRepos();
         sleep(350);
         driveTrain.drive(-30,.5);
-        imu.proportionalIMU(90,true);
+       // imu.proportionalIMU(90,true);
         driveTrain.openRepos();
         driveTrain.strafe(6,.5);
         driveTrain.drive(-30,.6);

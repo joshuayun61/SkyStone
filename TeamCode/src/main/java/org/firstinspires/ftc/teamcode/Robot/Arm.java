@@ -189,7 +189,7 @@ public class Arm extends LinearOpMode {
         }
         if(gamepad2.right_bumper)
         {
-            cap.setPosition(.3);
+            cap.setPosition(.46);
         }
 
         //spin out
@@ -277,7 +277,7 @@ public class Arm extends LinearOpMode {
     }
     public void tipInward()
     {
-        tipIn.setPosition(.7);
+        tipIn.setPosition(.8);
     }
     public void closeGrabber()
     {
