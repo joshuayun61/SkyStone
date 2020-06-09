@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.Robot;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorMRRangeSensor;
 import org.firstinspires.ftc.teamcode.NewRobot.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,6 +21,7 @@ public class DriveTrain extends LinearOpMode {
     Servo rightRepos, leftRepos;
     public Servo RR, LR;
     public DcMotor tapeMeasure;
+    public ModernRoboticsI2cRangeSensor rangeSensor;
 
     public final float Ku = .85f;
     public float Kp = Ku/2;
@@ -75,6 +80,8 @@ public class DriveTrain extends LinearOpMode {
 
         RR = hardwareMap.get(Servo.class, "RR");
         LR = hardwareMap.get(Servo.class, "LR");
+
+        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "range");
 
         FR.setDirection(DcMotor.Direction.REVERSE);
         BR.setDirection(DcMotor.Direction.REVERSE);
@@ -577,6 +584,21 @@ public class DriveTrain extends LinearOpMode {
 
     }
 
+    public void newDrive(double distance, ElapsedTime timePassed, double drift, LinearOpMode runSide)
+    {
+        double timeNormalize = timePassed.time()/45;
+
+        int avgCurrent = 0;
+        for(DcMotor motor: motors) {
+            avgCurrent += motor.getCurrentPosition();
+        }
+
+        while(runSide.opModeIsActive())
+        {
+
+        }
+    }
+
     public double limit(double input, double lim, double lim2)
     {
         if(input > 0) {
@@ -604,10 +626,10 @@ public class DriveTrain extends LinearOpMode {
     }
     public void turn (double error, boolean isRight, ElapsedTime timePassed)
     {
-        double timeNormalize = timePassed.time()/100;
-        double power = error + timeNormalize;
+        double timeNormalize = timePassed.time()/45;
+        double power = error + 2*timeNormalize;
 
-        power = limit(power, .07,.8);
+        power = limit(power, .08,.8);
 
         if(isRight)
         {
@@ -618,10 +640,10 @@ public class DriveTrain extends LinearOpMode {
         }
         else
         {
-            FL.setPower(-power);
-            BL.setPower(-power);
-            FR.setPower(power);
-            BR.setPower(power);
+            FL.setPower(power);
+            BL.setPower(power);
+            FR.setPower(-power);
+            BR.setPower(-power);
         }
 
     }
@@ -630,6 +652,21 @@ public class DriveTrain extends LinearOpMode {
     {
         for(DcMotor motor: motors)
             motor.setPower(0);
+    }
+
+    public double getOptical()
+    {
+        return rangeSensor.rawOptical();
+    }
+
+    public double cmOptical()
+    {
+        return rangeSensor.cmOptical();
+    }
+
+    public double ultrasonic()
+    {
+         return rangeSensor.rawUltrasonic();
     }
 
     public void driveAndArm(double distance, double power, Servo gripper, boolean open) {

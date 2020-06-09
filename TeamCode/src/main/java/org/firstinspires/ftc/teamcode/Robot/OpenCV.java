@@ -28,9 +28,16 @@ import java.util.List;
 
 public class OpenCV extends LinearOpMode {
 
-    public OpenCV(Telemetry telemetry, HardwareMap hardwareMap) {
+    private boolean redSide;
+    public OpenCV(Telemetry telemetry, HardwareMap hardwareMap, boolean isRed)
+    {
         this.telemetry = telemetry;
         this.hardwareMap = hardwareMap;
+        redSide = isRed;
+    }
+    public OpenCV(Telemetry telemetry, HardwareMap hardwareMap)
+    {
+        this.telemetry = telemetry;
     }
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -99,19 +106,33 @@ public class OpenCV extends LinearOpMode {
 
 
 
-    public int getValue() {
-
-        if (valLeft < 50) {
-            return 0;
-        }
-        else if (valMid < 50) {
-            return 1;
-        }
-        else if (valRight < 50) {
-            return 2;
+    public int getValue()
+    {
+        if(redSide)
+        {
+            if (valLeft < 50) {
+                return 2;
+            }
+            else if (valMid < 50) {
+                return 1;
+            }
+            else if (valRight < 50) {
+                return 0;
+            }
+            else {
+                return -1;
+            }
         }
         else {
-            return -1;
+            if (valLeft < 50) {
+                return 0;
+            } else if (valMid < 50) {
+                return 1;
+            } else if (valRight < 50) {
+                return 2;
+            } else {
+                return -1;
+            }
         }
     }
 

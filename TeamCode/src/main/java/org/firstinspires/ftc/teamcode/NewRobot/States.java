@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.NewRobot;
 
-public enum States{
-
+public enum States
+{
     INIT,
-    DRIVE,
-    TURN,
-    DRIVE_AND_TURN;
 
+    DRIVE,
+
+    TURN,
+
+    DRIVE_AND_TURN;
 }

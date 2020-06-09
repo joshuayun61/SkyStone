@@ -20,8 +20,9 @@ public class IMU extends LinearOpMode {
     Orientation newAngles;
     Acceleration gravity;
 
-    public final float Ku = .9f;
+    public final float Ku = 1f;
     public float Kp = Ku/2;
+
     @Override
     public void runOpMode() throws InterruptedException {}
 
@@ -378,6 +379,7 @@ public class IMU extends LinearOpMode {
         error = distance * Kp / 100;
         return error;
     }
+
 
 
 
