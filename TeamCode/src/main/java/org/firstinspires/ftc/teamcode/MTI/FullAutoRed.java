@@ -1,21 +1,18 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.MTI;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.NewRobot.DriveTrainV3;
+import org.firstinspires.ftc.teamcode.MethodTests;
 import org.firstinspires.ftc.teamcode.NewRobot.IMU;
-import org.firstinspires.ftc.teamcode.NewRobot.Odometry;
+import org.firstinspires.ftc.teamcode.Robot.Arm;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.Robot.OpenCV;
 
-import java.util.concurrent.TimeUnit;
-
-@Autonomous(name = "Methods Test")
-public class MethodTests extends LinearOpMode {
-
+@Autonomous(name = "FULL RED")
+public class FullAutoRed extends LinearOpMode
+{
     private enum States
     {
         GRAB_SKYSTONE,
@@ -24,18 +21,20 @@ public class MethodTests extends LinearOpMode {
         TURN;
     }
     int stonePosition = -100;
-    States currentState;
+    FullAutoRed.States currentState;
     ElapsedTime stateTime = new ElapsedTime();
+
     public void runOpMode() throws InterruptedException{
 
         DriveTrain driveTrain = new DriveTrain(telemetry, hardwareMap, gamepad1,true);
+        Arm arm = new Arm(telemetry,hardwareMap, gamepad2,driveTrain,true);
         IMU imu = new IMU(telemetry, hardwareMap);
         OpenCV cv = new OpenCV(telemetry,hardwareMap, true);
         imu.imuSetup();
         cv.setupWebCam();
         stonePosition = cv.getValue();
 
-        currentState = States.GRAB_SKYSTONE;
+        currentState = FullAutoRed.States.GRAB_SKYSTONE;
 
         while (!isStopRequested() && !opModeIsActive()) {
             telemetry.addData("Ready", true);
@@ -52,10 +51,12 @@ public class MethodTests extends LinearOpMode {
             {
                 case GRAB_SKYSTONE:
                     stateTime.reset();
+                    driveTrain.suckIn();
+                    arm.openGrabber();
                     switch(stonePosition)
                     {
                         case (0):
-                            driveTrain.newDrive(-30, stateTime, imu, -20, this);
+                            driveTrain.newDrive(-35, stateTime, imu, -10, this);
                             driveTrain.halt();
                             break;
                         case (1):
@@ -63,10 +64,12 @@ public class MethodTests extends LinearOpMode {
                             driveTrain.halt();
                             break;
                         case (2):
-                            driveTrain.newDrive(-30, stateTime, imu, 20, this);
+                            driveTrain.newDrive(-30, stateTime, imu, 10, this);
                             driveTrain.halt();
                             break;
                     }
+
+                    //TODO: add code to drive back and secure stone.
                     nextState(States.DRIVE);
                     break;
                 case TURN:

@@ -584,18 +584,101 @@ public class DriveTrain extends LinearOpMode {
 
     }
 
-    public void newDrive(double distance, ElapsedTime timePassed, double drift, LinearOpMode runSide)
+    public void newDrive(double distance, ElapsedTime timePassed, IMU imu, int angle, LinearOpMode runSide)
     {
         double timeNormalize = timePassed.time()/45;
+        int ticks = inchesToTicks(distance);
 
-        int avgCurrent = 0;
-        for(DcMotor motor: motors) {
-            avgCurrent += motor.getCurrentPosition();
+        for(DcMotor motor: motors)
+        {
+             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+             motor.setTargetPosition(ticks);
         }
 
-        while(runSide.opModeIsActive())
-        {
 
+        int avgCurrent = 0;
+
+        if(ticks > 0)
+        {
+            while(runSide.opModeIsActive() && ticks > avgCurrent)
+            {
+                double relativeDistance = ticks - avgCurrent;
+                double power = relativeDistance * Kp / 1000;
+                power = limit(power, .15, .8);
+                timeNormalize = timePassed.time()/75;
+                power += timeNormalize;
+                double correction = angle - imu.currentAngle();
+                correction = correction * Kp /60;
+
+                FL.setPower(-power + correction);
+                BL.setPower(-power + correction);
+                BR.setPower(-power - correction);
+                FR.setPower(-power - correction);
+
+                telemetry.addData("Left", power + correction);
+                telemetry.addData("Right", power - correction);
+
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+
+
+                telemetry.addLine()
+                        .addData("Target", ticks)
+                        .addData("Current", avgCurrent);
+                telemetry.update();
+
+                int motorSum = 0;
+                for(DcMotor motor: motors)
+                {
+                    motorSum -= motor.getCurrentPosition();
+                }
+                avgCurrent = motorSum/4;
+            }
+        }
+        else
+        {
+            while(runSide.opModeIsActive() && ticks < avgCurrent)
+            {
+                double relativeDistance = ticks - avgCurrent;
+                double power = relativeDistance * Kp / 1000;
+                timeNormalize = timePassed.time()/75;
+                power -= timeNormalize;
+                power = limit(power, .15, .8);
+
+                double correction = angle - imu.currentAngle();
+                correction = correction * Kp /60;
+//
+                FL.setPower(-power + correction);
+                BL.setPower(-power + correction);
+                BR.setPower(-power - correction);
+                FR.setPower(-power - correction);
+
+                telemetry.addData("Left", power + correction);
+                telemetry.addData("Right", power - correction);
+
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+
+                telemetry.addLine()
+                        .addData("Target", ticks)
+                        .addData("Current", avgCurrent)
+                        .addData("Correction", correction)
+                        .addData("RelDis", relativeDistance);
+                telemetry.update();
+
+                int motorSum = 0;
+                for(DcMotor motor: motors)
+                {
+                    motorSum += motor.getCurrentPosition();
+                }
+                avgCurrent = -(motorSum/4);
+            }
         }
     }
 
