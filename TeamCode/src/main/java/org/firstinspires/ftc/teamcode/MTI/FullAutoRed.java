@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.AI.armThread;
 import org.firstinspires.ftc.teamcode.MethodTests;
 import org.firstinspires.ftc.teamcode.NewRobot.IMU;
 import org.firstinspires.ftc.teamcode.Robot.Arm;
@@ -17,6 +18,7 @@ public class FullAutoRed extends LinearOpMode
     {
         GRAB_SKYSTONE,
         DRIVE,
+        TEST,
         DRIVE_AND_TURN,
         TURN;
     }
@@ -29,12 +31,13 @@ public class FullAutoRed extends LinearOpMode
         DriveTrain driveTrain = new DriveTrain(telemetry, hardwareMap, gamepad1,true);
         Arm arm = new Arm(telemetry,hardwareMap, gamepad2,driveTrain,true);
         IMU imu = new IMU(telemetry, hardwareMap);
+        armThread lockStone = new armThread(telemetry, arm, true);
         OpenCV cv = new OpenCV(telemetry,hardwareMap, true);
         imu.imuSetup();
         cv.setupWebCam();
         stonePosition = cv.getValue();
 
-        currentState = FullAutoRed.States.GRAB_SKYSTONE;
+        currentState = States.GRAB_SKYSTONE;
 
         while (!isStopRequested() && !opModeIsActive()) {
             telemetry.addData("Ready", true);
@@ -60,16 +63,24 @@ public class FullAutoRed extends LinearOpMode
                             driveTrain.halt();
                             break;
                         case (1):
-                            driveTrain.newDrive(-30, stateTime, imu, 0, this);
+                            driveTrain.newDrive(-40, stateTime, imu, 5, this);
                             driveTrain.halt();
                             break;
                         case (2):
-                            driveTrain.newDrive(-30, stateTime, imu, 10, this);
+                            driveTrain.newDrive(-37, stateTime, imu, 20, this);
                             driveTrain.halt();
                             break;
                     }
-
-                    //TODO: add code to drive back and secure stone.
+                    stateTime.reset();
+                    if(stonePosition == 1)
+                        driveTrain.newDrive(10, stateTime, imu, 0, this);
+                    else
+                        driveTrain.newDrive(5, stateTime, imu, 0, this);
+                    stateTime.reset();
+                    lockStone.run();
+                    driveTrain.newDrive(30, stateTime, imu, 90, this);
+                    stateTime.reset();
+                    driveTrain.newDrive(50, stateTime, imu, 90, this);
                     nextState(States.DRIVE);
                     break;
                 case TURN:
@@ -83,6 +94,15 @@ public class FullAutoRed extends LinearOpMode
                     }
 
                     break;
+                case TEST:
+                    driveTrain.suckIn();
+                    sleep(1500);
+                    driveTrain.suckOff();
+                    arm.tipInward();
+                    sleep(300);
+                    arm.closeGrabber();
+                    sleep(1000);
+                    nextState(States.DRIVE);
                 case DRIVE:
                     this.stop();
             }

@@ -152,6 +152,13 @@ public class Arm extends LinearOpMode {
         closeGrabber();
     }
 
+    public void autoLock()
+    {
+        tipInward();
+        sleep(300);
+        closeGrabber();
+    }
+
     public void readyToPlace()
     {
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

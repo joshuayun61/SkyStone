@@ -7,10 +7,17 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class armThread extends Thread {
 
-    Arm arm;
+    private Arm arm;
+    private boolean lockBlock;
 
-    public armThread(Telemetry telemetry, Arm passArm) {
 
+    public armThread(Telemetry telemetry, Arm passArm, boolean lock)
+    {
+        arm = passArm;
+        lockBlock = lock;
+    }
+    public armThread(Telemetry telemetry, Arm passArm)
+    {
         arm = passArm;
     }
 
@@ -18,7 +25,12 @@ public class armThread extends Thread {
     @Override
     public void run()
     {
-        arm.autoDrop();
+        if(lockBlock)
+        {
+            arm.autoLock();
+        }
+        else
+            arm.autoDrop();
     }
 
 }
