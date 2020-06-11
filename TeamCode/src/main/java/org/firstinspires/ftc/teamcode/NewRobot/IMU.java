@@ -377,6 +377,9 @@ public class IMU extends LinearOpMode {
                 distance = distance%360;
         }
         error = distance * Kp / 100;
+
+        telemetry.addData("IMU ERROR", error);
+        telemetry.update();
         return error;
     }
 

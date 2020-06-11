@@ -26,7 +26,7 @@ public class DriveTrain extends LinearOpMode {
     public final float Ku = .85f;
     public float Kp = Ku/2;
 
-    boolean reverse = false;
+    boolean reverse = true;
 
     public boolean powerOn = false;
     private double error;
@@ -166,12 +166,12 @@ public class DriveTrain extends LinearOpMode {
             tapeMeasure.setPower(0);
         }
 
-        if(gamepad1.a)
+        if(gamepad1.left_stick_button)
         {
             openRepos();
         }
 
-        if(gamepad1.b)
+        if(gamepad1.right_stick_button)
         {
             closeRepos();
         }
@@ -236,17 +236,6 @@ public class DriveTrain extends LinearOpMode {
         RS.setPower(-.2);
     }
 
-
-    public void reposClose()
-    {
-        leftRepos.setPosition(.42);
-        rightRepos.setPosition(.6);
-    }
-    public void reposOpen()
-    {
-        leftRepos.setPosition(.7);
-        rightRepos.setPosition(.35);
-    }
     public void slowStrafeRight() {
 
 
@@ -268,24 +257,16 @@ public class DriveTrain extends LinearOpMode {
 
     public void closeRepos()
     {
-        LR.setPosition(.2);
-        RR.setPosition(.8);
+        LR.setPosition(.15);
+        RR.setPosition(.9);
     }
 
     public void openRepos()
     {
-        LR.setPosition(.8);
+        LR.setPosition(1);
         RR.setPosition(.3);
     }
-//    public double PISpin(int angle,IMU imu, ElapsedTime time)
-//    {
-//       // while(imu.currentAngle() != angle)
-//        //{
-//            error = imu.PISend(angle);
-//            error += time.time()/20;
-//        //}
-//        return error;
-//    }
+
 
     public void drive(double distance, double power) {
 
@@ -584,7 +565,7 @@ public class DriveTrain extends LinearOpMode {
 
     }
 
-    public void newDrive(double distance, ElapsedTime timePassed, IMU imu, int angle, LinearOpMode runSide)
+    public void newDrive(double distance, ElapsedTime timePassed, IMU imu, int angle, boolean isRight, LinearOpMode runSide)
     {
         double timeNormalize = timePassed.time()/45;
         int ticks = inchesToTicks(distance);
@@ -610,15 +591,151 @@ public class DriveTrain extends LinearOpMode {
                 timeNormalize = timePassed.time()/75;
                 power += timeNormalize;
                 double correction = angle - imu.currentAngle();
+                if(angle == 180)
+                {
+                    correction = angle - Math.abs(imu.currentAngle());
+                }
+
+                if(isRight && correction < 0)
+                {
+                    correction = angle - (180 - imu.currentAngle());
+                }
                 correction = correction * Kp /60;
 
-                FL.setPower(-power + correction);
-                BL.setPower(-power + correction);
-                BR.setPower(-power - correction);
-                FR.setPower(-power - correction);
+                if(!isRight)
+                {
+                    FL.setPower(-power + correction);
+                    BL.setPower(-power + correction);
+                    BR.setPower(-power - correction);
+                    FR.setPower(-power - correction);
+                }
+                else
+                {
+                    FL.setPower(-power - correction);
+                    BL.setPower(-power - correction);
+                    BR.setPower(-power + correction);
+                    FR.setPower(-power + correction);
+                }
+
+                if(!isRight)
+                {
+                    telemetry.addData("Left", power + correction);
+                    telemetry.addData("Right", power - correction);
+                }
+                else
+                {
+                    telemetry.addData("Left", power - correction);
+                    telemetry.addData("Right", power + correction);
+                }
+
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+
+
+                telemetry.addLine()
+                        .addData("Target", ticks)
+                        .addData("Current", avgCurrent)
+                        .addData("ANGLE", imu.currentAngle());
+                telemetry.update();
+
+                int motorSum = 0;
+                for(DcMotor motor: motors)
+                {
+                    motorSum -= motor.getCurrentPosition();
+                }
+                avgCurrent = motorSum/4;
+            }
+        }
+        else
+        {
+            while(runSide.opModeIsActive() && ticks < avgCurrent)
+            {
+                double relativeDistance = ticks - avgCurrent;
+                double power = relativeDistance * Kp / 1000;
+                timeNormalize = timePassed.time()/75;
+                power -= timeNormalize;
+                power = limit(power, .15, .8);
+
+                double correction = angle - imu.currentAngle();
+                if(angle == 180)
+                {
+                    correction = angle - Math.abs(imu.currentAngle());
+                }
+
+                if(isRight && correction < 0)
+                {
+                    correction = angle - (180 - imu.currentAngle());
+                }
+
+                correction = correction * Kp /60;
+//
+                if(!isRight)
+                {
+                    FL.setPower(-power + correction);
+                    BL.setPower(-power + correction);
+                    BR.setPower(-power - correction);
+                    FR.setPower(-power - correction);
+                }
+                else
+                {
+                    FL.setPower(-power - correction);
+                    BL.setPower(-power - correction);
+                    BR.setPower(-power + correction);
+                    FR.setPower(-power + correction);
+                }
 
                 telemetry.addData("Left", power + correction);
                 telemetry.addData("Right", power - correction);
+
+                telemetry.addData("FL", FL.getCurrentPosition());
+                telemetry.addData("BL", BL.getCurrentPosition());
+                telemetry.addData("FR", FR.getCurrentPosition());
+                telemetry.addData("BR", BR.getCurrentPosition());
+
+                telemetry.addLine()
+                        .addData("Target", ticks)
+                        .addData("Current", avgCurrent)
+                        .addData("Correction", correction)
+                        .addData("RelDis", relativeDistance);
+                telemetry.update();
+
+                int motorSum = 0;
+                for(DcMotor motor: motors)
+                {
+                    motorSum += motor.getCurrentPosition();
+                }
+                avgCurrent = -(motorSum/4);
+            }
+        }
+    }
+
+    public void driveConst(double distance, double power, LinearOpMode runSide)
+    {
+        int ticks = inchesToTicks(distance);
+
+        for(DcMotor motor: motors)
+        {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            motor.setTargetPosition(ticks);
+        }
+
+        int avgCurrent = 0;
+
+        if(ticks > 0)
+        {
+            while(runSide.opModeIsActive() && ticks > avgCurrent)
+            {
+                FL.setPower(-power);
+                BL.setPower(-power);
+                BR.setPower(-power);
+                FR.setPower(-power);
+
+                telemetry.addData("Left", power);
+                telemetry.addData("Right", power);
 
                 telemetry.addData("FL", FL.getCurrentPosition());
                 telemetry.addData("BL", BL.getCurrentPosition());
@@ -643,22 +760,13 @@ public class DriveTrain extends LinearOpMode {
         {
             while(runSide.opModeIsActive() && ticks < avgCurrent)
             {
-                double relativeDistance = ticks - avgCurrent;
-                double power = relativeDistance * Kp / 1000;
-                timeNormalize = timePassed.time()/75;
-                power -= timeNormalize;
-                power = limit(power, .15, .8);
+                FL.setPower(power);
+                BL.setPower(power);
+                BR.setPower(power);
+                FR.setPower(power);
 
-                double correction = angle - imu.currentAngle();
-                correction = correction * Kp /60;
-//
-                FL.setPower(-power + correction);
-                BL.setPower(-power + correction);
-                BR.setPower(-power - correction);
-                FR.setPower(-power - correction);
-
-                telemetry.addData("Left", power + correction);
-                telemetry.addData("Right", power - correction);
+                telemetry.addData("Left", power);
+                telemetry.addData("Right", power);
 
                 telemetry.addData("FL", FL.getCurrentPosition());
                 telemetry.addData("BL", BL.getCurrentPosition());
@@ -667,9 +775,7 @@ public class DriveTrain extends LinearOpMode {
 
                 telemetry.addLine()
                         .addData("Target", ticks)
-                        .addData("Current", avgCurrent)
-                        .addData("Correction", correction)
-                        .addData("RelDis", relativeDistance);
+                        .addData("Current", avgCurrent);
                 telemetry.update();
 
                 int motorSum = 0;
@@ -707,9 +813,10 @@ public class DriveTrain extends LinearOpMode {
 
         return input;
     }
+
     public void turn (double error, boolean isRight, ElapsedTime timePassed)
     {
-        double timeNormalize = timePassed.time()/45;
+        double timeNormalize = timePassed.time()/60;
         double power = error + 2*timeNormalize;
 
         power = limit(power, .08,.8);

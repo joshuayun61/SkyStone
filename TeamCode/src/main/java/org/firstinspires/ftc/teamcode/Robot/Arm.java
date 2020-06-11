@@ -102,8 +102,8 @@ public class Arm extends LinearOpMode {
             Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             Slide.setPower(1);
             spin.setPosition(.05);
-            grab.setPosition(.1);
-            while (Slide.getCurrentPosition() > 3) {
+            grab.setPosition(.5);
+            while (Slide.getCurrentPosition() > 5) {
                 grab.setPosition(.1);
                 myDrive.mecanumDrive();
                 myDrive.suck();
@@ -136,7 +136,7 @@ public class Arm extends LinearOpMode {
         spinOut();
         sleep(700);
         //while for servo
-        while(Slide.getCurrentPosition() > 300)
+        while(Slide.getCurrentPosition() > 310)
         {
             Slide.setPower(-1);
         }
@@ -144,12 +144,13 @@ public class Arm extends LinearOpMode {
         grab.setPosition(.8);
         spinIn();
         sleep(1750);
-        while(Slide.getCurrentPosition() > 2)
+        while(Slide.getCurrentPosition() > 0)
         {
             Slide.setPower(-1);
         }
         Slide.setPower(0);
         closeGrabber();
+        sleep(100);
     }
 
     public void autoLock()

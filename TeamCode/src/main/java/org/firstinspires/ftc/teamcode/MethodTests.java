@@ -55,15 +55,15 @@ public class MethodTests extends LinearOpMode {
                     switch(stonePosition)
                     {
                         case (0):
-                            driveTrain.newDrive(-30, stateTime, imu, -20, this);
+                            driveTrain.newDrive(-30, stateTime, imu, -20, false, this);
                             driveTrain.halt();
                             break;
                         case (1):
-                            driveTrain.newDrive(-30, stateTime, imu, 0, this);
+                            driveTrain.newDrive(-30, stateTime, imu, 0, false,this);
                             driveTrain.halt();
                             break;
                         case (2):
-                            driveTrain.newDrive(-30, stateTime, imu, 20, this);
+                            driveTrain.newDrive(-30, stateTime, imu, 20, false,this);
                             driveTrain.halt();
                             break;
                     }
