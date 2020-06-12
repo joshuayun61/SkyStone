@@ -141,15 +141,16 @@ public class Arm extends LinearOpMode {
             Slide.setPower(-1);
         }
         Slide.setPower(0);
-        grab.setPosition(.8);
+        grab.setPosition(.9);
         spinIn();
-        sleep(1750);
-        while(Slide.getCurrentPosition() > 0)
-        {
-            Slide.setPower(-1);
-        }
-        Slide.setPower(0);
-        closeGrabber();
+        sleep(1250);
+//        while(Slide.getCurrentPosition() > 50)
+//        {
+//            Slide.setPower(-1);
+//        }
+//        Slide.setPower(0);
+//        closeGrabber();
+        home();
         sleep(100);
     }
 

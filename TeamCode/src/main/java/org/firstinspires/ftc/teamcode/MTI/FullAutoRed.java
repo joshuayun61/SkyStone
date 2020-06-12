@@ -17,8 +17,10 @@ public class FullAutoRed extends LinearOpMode
     private enum States
     {
         GRAB_SKYSTONE,
-        PLACE_1stSTONE,
+        PLACE_1STSTONE,
+        TURN_FOUNDATION,
         GRAB_2NDSKYSTONE,
+        PLACE_2NDSTONE,
         DRIVE,
         TEST,
         DRIVE_AND_TURN,
@@ -68,7 +70,7 @@ public class FullAutoRed extends LinearOpMode
                     switch (stonePosition)
                     {
                         case (0):
-                            driveTrain.newDrive(-37, stateTime, imu, -10,  false, this);
+                            driveTrain.newDrive(-40, stateTime, imu, -10,  false, this);
                             driveTrain.halt();
                             break;
                         case (1):
@@ -82,18 +84,27 @@ public class FullAutoRed extends LinearOpMode
                     }
                     stateTime.reset();
                     if (stonePosition == 1)
-                        driveTrain.newDrive(9, stateTime, imu, 0, false,this);
+                     //   driveTrain.newDrive(9, stateTime, imu, 0, false,this);
+                        driveTrain.driveConst(7,.4,this);
                     else
-                        driveTrain.newDrive(6, stateTime, imu, 0, false,this);
+                        driveTrain.driveConst(6,.4,this);
+                      //  driveTrain.newDrive(6, stateTime, imu, 0, false,this);
                     stateTime.reset();
                     lockStone.run();
                     driveTrain.newDrive(30, stateTime, imu, 90, false,this);
                     driveTrain.suckOff();
                     stateTime.reset();
-                    driveTrain.newDrive(55, stateTime, imu, 100, false,this);
-                    nextState(States.PLACE_1stSTONE);
+                    if(stonePosition == 2)
+                    {
+                        driveTrain.newDrive(63, stateTime, imu, 100, false,this);
+                    }
+                    else
+                    {
+                        driveTrain.newDrive(60, stateTime, imu, 100, false, this);
+                    }
+                        nextState(States.PLACE_1STSTONE);
                     break;
-                case PLACE_1stSTONE:
+                case PLACE_1STSTONE:
                     if (!turn)
                     {
                         if (imu.PISend(180, false) > 0.01)
@@ -113,16 +124,62 @@ public class FullAutoRed extends LinearOpMode
                         stateTime.reset();
                         driveTrain.driveConst(5,.45,this);
                         driveTrain.closeRepos();
-                        sleep(300);
-                        driveTrain.driveConst(-16,.57,this);
-                        driveTrain.newDrive(-20, stateTime, imu, 90, true, this);
-                        driveTrain.openRepos();
-                        nextState(States.GRAB_2NDSKYSTONE);
+                        sleep(400);
+                        driveTrain.driveConst(-12,.57,this);
+                        driveTrain.halt();
+                        nextState(States.TURN_FOUNDATION);
                     }
                     break;
+                case TURN_FOUNDATION:
+                    driveTrain.closeRepos();
+                    driveTrain.pivotTurn(-20,.63,true, this);
+                    driveTrain.pivotTurn(-30,.67,true, this);
+                   // driveTrain.pivotTurn(-50,.63,true, this);
+                    driveTrain.halt();
+                    driveTrain.openRepos();
+                    nextState(States.GRAB_2NDSKYSTONE);
+                    moves = 0;
+                    break;
                 case GRAB_2NDSKYSTONE:
-                    driveTrain.newDrive(-40, stateTime, imu, 90,  false, this);
-                    nextState(States.END);
+                    switch (stonePosition)
+                    {
+                        case(0):
+                            if(moves == 0)
+                            {
+                                driveTrain.newDrive(-67,stateTime,imu,90,false,this);
+                                driveTrain.suckIn();
+                                driveTrain.halt();
+                                stateTime.reset();
+                                moves++;
+                            }
+                            else if(moves == 1)
+                            {
+                                if(driveTrain.ultrasonic() > 90)
+                                {
+                                    driveTrain.driveConst(-4, .5, this);
+                                }
+                                arm.openGrabber();
+                                driveTrain.newDrive(-11,stateTime, imu,15, false, this);
+                                driveTrain.driveConst(-7, .35, this);
+                                driveTrain.driveConst(8,.45,this);
+                                lockStone.run();
+                                driveTrain.newDrive(25,stateTime, imu,90, false, this);
+                                nextState(States.PLACE_2NDSTONE);
+                            }
+                            break;
+                    }
+                    break;
+                case PLACE_2NDSTONE:
+                        driveTrain.halt();
+                        stateTime.reset();
+                        driveTrain.newDrive(40, stateTime,imu,90,false, this);
+                        dropStone.start();
+                        stateTime.reset();
+                        driveTrain.newDrive(20,stateTime,imu,90,false,this);
+                        driveTrain.halt();
+                        stateTime.reset();
+                        driveTrain.newDrive(-40,stateTime,imu,90,false, this);
+                        nextState(States.END);
                     break;
                 case TURN:
                     stateTime.reset();
@@ -138,7 +195,7 @@ public class FullAutoRed extends LinearOpMode
 
                     break;
                 case TEST:
-                    nextState(States.PLACE_1stSTONE);
+                    nextState(States.PLACE_1STSTONE);
                     break;
                 case END:
                     this.stop();

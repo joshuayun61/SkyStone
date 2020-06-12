@@ -2,12 +2,16 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.AI.armThread;
 import org.firstinspires.ftc.teamcode.NewRobot.DriveTrainV3;
 import org.firstinspires.ftc.teamcode.NewRobot.IMU;
 import org.firstinspires.ftc.teamcode.NewRobot.Odometry;
+import org.firstinspires.ftc.teamcode.Robot.Arm;
 import org.firstinspires.ftc.teamcode.Robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.Robot.OpenCV;
 
@@ -24,13 +28,16 @@ public class MethodTests extends LinearOpMode {
         TURN;
     }
     int stonePosition = -100;
+    private int moves = 0;
     States currentState;
     ElapsedTime stateTime = new ElapsedTime();
     public void runOpMode() throws InterruptedException{
 
         DriveTrain driveTrain = new DriveTrain(telemetry, hardwareMap, gamepad1,true);
+        Arm arm = new Arm(telemetry, hardwareMap, gamepad2, driveTrain,true);
         IMU imu = new IMU(telemetry, hardwareMap);
         OpenCV cv = new OpenCV(telemetry,hardwareMap, true);
+        armThread dropStone = new armThread(telemetry, arm, false);
         imu.imuSetup();
         cv.setupWebCam();
         stonePosition = cv.getValue();
@@ -51,34 +58,21 @@ public class MethodTests extends LinearOpMode {
             switch (currentState)
             {
                 case GRAB_SKYSTONE:
-                    stateTime.reset();
-                    switch(stonePosition)
+                    if(moves == 0)
                     {
-                        case (0):
-                            driveTrain.newDrive(-30, stateTime, imu, -20, false, this);
-                            driveTrain.halt();
-                            break;
-                        case (1):
-                            driveTrain.newDrive(-30, stateTime, imu, 0, false,this);
-                            driveTrain.halt();
-                            break;
-                        case (2):
-                            driveTrain.newDrive(-30, stateTime, imu, 20, false,this);
-                            driveTrain.halt();
-                            break;
+                        stateTime.reset();
+                        driveTrain.newDrive(-15,stateTime, imu,45, false, this);
+                        moves++;
                     }
-                    nextState(States.DRIVE);
-                    break;
-                case TURN:
-                    stateTime.reset();
-                    if (imu.PISend(90, false) > 0.001) {
-                        telemetry.addData("Low", imu.PISend(90, false));
-                        driveTrain.turn(imu.PISend(90, false), false, stateTime);
-                    } else {
+                    else
+                    {
                         driveTrain.halt();
                         nextState(States.DRIVE);
                     }
-
+                    break;
+                case TURN:
+                    driveTrain.pivotTurn(-30,.4,true, this);
+                    nextState(States.DRIVE);
                     break;
                 case DRIVE:
                     this.stop();
