@@ -70,10 +70,12 @@ public class FullAutoRed extends LinearOpMode
                     stateTime.reset();
                     driveTrain.suckIn();
                     arm.openGrabber();
+                    driveTrain.openRepos();
+                    arm.tipOut();
                     switch (stonePosition)
                     {
                         case (0):
-                            driveTrain.newDrive(-40, stateTime, imu, -12,  false, this);
+                            driveTrain.newDrive(-41, stateTime, imu, -14,  false, this);
                             driveTrain.halt();
                             break;
                         case (1):
@@ -81,7 +83,7 @@ public class FullAutoRed extends LinearOpMode
                             driveTrain.halt();
                             break;
                         case (2):
-                            driveTrain.newDrive(-38, stateTime, imu, 20, false,this);
+                            driveTrain.newDrive(-41, stateTime, imu, 15, false,this);
                             driveTrain.halt();
                             break;
                     }
@@ -89,8 +91,10 @@ public class FullAutoRed extends LinearOpMode
                     if (stonePosition == 1)
                      //   driveTrain.newDrive(9, stateTime, imu, 0, false,this);
                         driveTrain.driveConst(7,.34,this);
-                    else
+                    else if(stonePosition == 2)
                         driveTrain.driveConst(6,.4,this);
+                    else
+                        driveTrain.driveConst(4,.4,this);
                       //  driveTrain.newDrive(6, stateTime, imu, 0, false,this);
                     stateTime.reset();
                     lockStone.run();
@@ -103,7 +107,7 @@ public class FullAutoRed extends LinearOpMode
                     }
                     else
                     {
-                        driveTrain.newDrive(60, stateTime, imu, 100, false, this);
+                        driveTrain.newDrive(63, stateTime, imu, 105, false, this);
                     }
                         nextState(States.PLACE_1STSTONE);
                     break;
@@ -125,7 +129,10 @@ public class FullAutoRed extends LinearOpMode
                         lockStone.interrupt();
                         dropStone.start();
                         stateTime.reset();
-                        driveTrain.driveConst(3,.45,this);
+                        if(stonePosition == 2)
+                            driveTrain.driveConst(9,.45,this);
+                        else
+                            driveTrain.driveConst(5,.45,this);
                         driveTrain.closeRepos();
                         sleep(400);
                         driveTrain.driveConst(-14,.57,this);
@@ -136,8 +143,12 @@ public class FullAutoRed extends LinearOpMode
                 case TURN_FOUNDATION:
                     driveTrain.closeRepos();
                     sleep(300);
-                    driveTrain.pivotTurn(-20,.63,true, this);
-                    driveTrain.pivotTurn(-30,.67,true, this);
+                    driveTrain.pivotTurn(-20,.75,true, this);
+                    if(stonePosition == 1)
+                       driveTrain.pivotTurn(-34,.7,true,this);
+                        //driveTrain.newDriveFast(-30,stateTime,imu,100,false,this);
+                    else
+                        driveTrain.pivotTurn(-33,.7,true, this);
                    // driveTrain.pivotTurn(-50,.63,true, this);
                     driveTrain.halt();
                     driveTrain.openRepos();
@@ -148,19 +159,19 @@ public class FullAutoRed extends LinearOpMode
                     switch (stonePosition)
                     {
                         case (0):
-                            driveTrain.newDrive(-67, stateTime, imu, 88, false, this);
+                            driveTrain.newDrive(-65, stateTime, imu, 80, false, this);
                             driveTrain.suckIn();
                             driveTrain.halt();
                             stateTime.reset();
                             break;
                         case (1):
-                            driveTrain.newDrive(-74, stateTime, imu, 88, false, this);
+                            driveTrain.newDrive(-72, stateTime, imu, 75, false, this);
                             driveTrain.suckIn();
                             driveTrain.halt();
                             stateTime.reset();
                             break;
                         case (2):
-                            driveTrain.newDrive(-79, stateTime, imu, 88, false, this);
+                            driveTrain.newDrive(-76, stateTime, imu, 75, false, this);
                             //driveTrain.suckIn();
                             driveTrain.halt();
                             stateTime.reset();
@@ -173,7 +184,7 @@ public class FullAutoRed extends LinearOpMode
                     stateTime.reset();
                     if(stonePosition != 2)
                     {
-                        driveTrain.newDrive(-11, stateTime, imu, 15, false, this);
+                        driveTrain.newDrive(-14, stateTime, imu, 15, false, this);
                         driveTrain.driveConst(-6, .35, this);
                         driveTrain.driveConst(7, .45, this);
                         lockStone.run();
@@ -183,9 +194,19 @@ public class FullAutoRed extends LinearOpMode
                     else
                     {
                         driveTrain.halt();
-                        driveTrain.pivotTurn(-15,.45,true, this);
+                        if(stonePosition == 1)
+                            driveTrain.pivotTurn(-12,.45,true, this);
+                        else if(stonePosition == 2)
+                            driveTrain.pivotTurn(-13,.45,true,this);
+                        else
+                            driveTrain.pivotTurn(-14,.45,true, this);
                         driveTrain.suckIn();
-                        driveTrain.driveConst(-7,.35,this);
+                        if(stonePosition == 1)
+                            driveTrain.driveConst(-13,.37,this);
+                        else if(stonePosition == 2)
+                            driveTrain.driveConst(-10,.37,this);
+                        else
+                            driveTrain.driveConst(-8,.35,this);
                         driveTrain.driveConst(8,.5,this);
                         lockStone.run();
                         driveTrain.suckOff();
@@ -226,17 +247,15 @@ public class FullAutoRed extends LinearOpMode
                     {
                         case(1):
                             driveTrain.suckIn();
-                            stateTime.reset();
-                            driveTrain.newDrive(-20,stateTime,imu,15,false,this);
-                            driveTrain.pivotTurn(15,.4, true, this);
-                            driveTrain.driveConst(7,.7,this);
-                            driveTrain.driveConst(-7,.6,this);
+                            driveTrain.tapeOutSlow();
+                            arm.openGrabber();
+                            driveTrain.newDrive(-40,stateTime,imu,27, false, this);
                             break;
                         case(2):
                             driveTrain.suckIn();
                             driveTrain.tapeOutSlow();
                             arm.openGrabber();
-                            driveTrain.newDrive(-35,stateTime,imu,35, false, this);
+                            driveTrain.newDrive(-40,stateTime,imu,27, false, this);
                             break;
                     }
                        nextState(States.END);

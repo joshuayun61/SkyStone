@@ -118,7 +118,10 @@ public class FullAutoBlue extends LinearOpMode
                         lockStone.interrupt();
                         dropStone.start();
                         stateTime.reset();
-                        driveTrain.driveConst(3,.45,this);
+                        if(stonePosition != 0)
+                            driveTrain.driveConst(3,.45,this);
+                        else
+                            driveTrain.driveConst(6,.46,this);
                         driveTrain.closeRepos();
                         sleep(400);
                         driveTrain.driveConst(-14,.57,this);

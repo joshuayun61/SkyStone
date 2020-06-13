@@ -61,8 +61,8 @@ public class MethodTests extends LinearOpMode {
                     if(moves == 0)
                     {
                         stateTime.reset();
-                        //dropStone.start();
-                        sleep(5000);
+                        dropStone.start();
+                        sleep(6000);
                         moves++;
                     }
                     else
