@@ -111,6 +111,17 @@ public class Arm extends LinearOpMode {
         }
 
     }
+    public void home(boolean auto)
+    {
+        if(Slide.getCurrentPosition() > 100)
+        {
+            Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            Slide.setTargetPosition(0);
+            Slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Slide.setPower(1);
+            while (Slide.getCurrentPosition() > 5) { }
+        }
+    }
     public void max()
     {
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -126,11 +137,15 @@ public class Arm extends LinearOpMode {
     public  void autoDrop()
     {
         Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("SLIDE", Slide.getCurrentPosition());
+        telemetry.update();
         closeGrabber();
         sleep(100);
         while(Slide.getCurrentPosition() < 1390)
         {
             Slide.setPower(1);
+            telemetry.addData("SLIDE", Slide.getCurrentPosition());
+            telemetry.update();
         }
         Slide.setPower(0);
         spinOut();
@@ -141,17 +156,12 @@ public class Arm extends LinearOpMode {
             Slide.setPower(-1);
         }
         Slide.setPower(0);
-        grab.setPosition(.9);
-        spinIn();
-        sleep(1250);
-//        while(Slide.getCurrentPosition() > 50)
-//        {
-//            Slide.setPower(-1);
-//        }
-//        Slide.setPower(0);
-//        closeGrabber();
-        home();
         sleep(100);
+        grab.setPosition(.6);
+        spinIn();
+        sleep(800);
+        grab.setPosition(.1);
+        home(true);
     }
 
     public void autoLock()
@@ -256,11 +266,11 @@ public class Arm extends LinearOpMode {
         }
         if(gamepad2.right_stick_y > 0)
         {
-            grab.setPosition(grab.getPosition() + .005);
+            grab.setPosition(grab.getPosition() - .005);
         }
         if(gamepad2.right_stick_y < 0)
         {
-            grab.setPosition(grab.getPosition() - .005);
+            grab.setPosition(grab.getPosition() + .005);
         }
 
         if(gamepad2.left_trigger > 0)
@@ -299,11 +309,11 @@ public class Arm extends LinearOpMode {
     }
     public void spinIn()
     {
-        spin.setPosition(.05);
+        spin.setPosition(.06);
     }
     public void spinOut()
     {
-        spin.setPosition(.78);
+        spin.setPosition(.81);
     }
 
 

@@ -36,7 +36,7 @@ public class MethodTests extends LinearOpMode {
         DriveTrain driveTrain = new DriveTrain(telemetry, hardwareMap, gamepad1,true);
         Arm arm = new Arm(telemetry, hardwareMap, gamepad2, driveTrain,true);
         IMU imu = new IMU(telemetry, hardwareMap);
-        OpenCV cv = new OpenCV(telemetry,hardwareMap, true);
+        OpenCV cv = new OpenCV(telemetry,hardwareMap, false);
         armThread dropStone = new armThread(telemetry, arm, false);
         imu.imuSetup();
         cv.setupWebCam();
@@ -61,7 +61,8 @@ public class MethodTests extends LinearOpMode {
                     if(moves == 0)
                     {
                         stateTime.reset();
-                        driveTrain.newDrive(-15,stateTime, imu,45, false, this);
+                        //dropStone.start();
+                        sleep(5000);
                         moves++;
                     }
                     else

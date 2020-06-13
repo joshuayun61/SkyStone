@@ -165,7 +165,7 @@ public class DriveTrain extends LinearOpMode
             tapeOut();
         } else
         {
-            tapeMeasure.setPower(0);
+            tapeOff();
         }
 
         if (gamepad1.left_stick_button)
@@ -186,13 +186,17 @@ public class DriveTrain extends LinearOpMode
 
     public void tapeIn()
     {
-        tapeMeasure.setPower(-1);
+        tapeMeasure.setPower(1);
     }
 
     public void tapeOut()
     {
-        tapeMeasure.setPower(1);
+        tapeMeasure.setPower(-1);
     }
+
+    public void tapeOutSlow() { tapeMeasure.setPower(-.5); }
+
+    public void tapeOff() {tapeMeasure.setPower(0); }
 
     public void suck()
     {
