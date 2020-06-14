@@ -164,6 +164,36 @@ public class Arm extends LinearOpMode {
         home(true);
     }
 
+    public void stackDrop()
+    {
+        Slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("SLIDE", Slide.getCurrentPosition());
+        telemetry.update();
+        closeGrabber();
+        sleep(100);
+        while(Slide.getCurrentPosition() < 1390)
+        {
+            Slide.setPower(1);
+            telemetry.addData("SLIDE", Slide.getCurrentPosition());
+            telemetry.update();
+        }
+        Slide.setPower(0);
+        spinOut();
+        sleep(700);
+        //while for servo
+        while(Slide.getCurrentPosition() > 600)
+        {
+            Slide.setPower(-1);
+        }
+        Slide.setPower(0);
+        sleep(100);
+        grab.setPosition(.65);
+        spinIn();
+        sleep(800);
+        grab.setPosition(.1);
+        home(true);
+    }
+
     public void autoLock()
     {
         tipInward();

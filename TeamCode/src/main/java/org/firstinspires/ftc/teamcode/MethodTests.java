@@ -38,6 +38,7 @@ public class MethodTests extends LinearOpMode {
         IMU imu = new IMU(telemetry, hardwareMap);
         OpenCV cv = new OpenCV(telemetry,hardwareMap, false);
         armThread dropStone = new armThread(telemetry, arm, false);
+        armThread stackTry = new armThread(telemetry,arm,1);
         imu.imuSetup();
         cv.setupWebCam();
         stonePosition = cv.getValue();
@@ -58,18 +59,9 @@ public class MethodTests extends LinearOpMode {
             switch (currentState)
             {
                 case GRAB_SKYSTONE:
-                    if(moves == 0)
-                    {
-                        stateTime.reset();
-                        dropStone.start();
-                        sleep(6000);
-                        moves++;
-                    }
-                    else
-                    {
-                        driveTrain.halt();
-                        nextState(States.DRIVE);
-                    }
+                    stackTry.start();
+                    sleep(4000);
+                    nextState(States.DRIVE);
                     break;
                 case TURN:
                     driveTrain.pivotTurn(-30,.4,true, this);

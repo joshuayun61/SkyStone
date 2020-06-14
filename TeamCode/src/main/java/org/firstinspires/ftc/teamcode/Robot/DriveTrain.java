@@ -990,10 +990,10 @@ public class DriveTrain extends LinearOpMode
 
         if (isRight)
         {
-            FL.setPower(power);
-            BL.setPower(power);
-            FR.setPower(-power);
-            BR.setPower(-power);
+            FL.setPower(-power);
+            BL.setPower(-power);
+            FR.setPower(power);
+            BR.setPower(power);
         }
         else
         {

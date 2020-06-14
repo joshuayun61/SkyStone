@@ -9,6 +9,7 @@ public class armThread extends Thread {
 
     private Arm arm;
     private boolean lockBlock;
+    private int stack;
 
 
     public armThread(Telemetry telemetry, Arm passArm, boolean lock)
@@ -20,12 +21,20 @@ public class armThread extends Thread {
     {
         arm = passArm;
     }
-
+    public armThread(Telemetry telemetry, Arm passArm, int s)
+    {
+        stack = 1;
+        arm = passArm;
+    }
 
     @Override
     public void run()
     {
-        if(lockBlock)
+        if(stack == 1)
+        {
+            arm.stackDrop();
+        }
+        else if(lockBlock)
         {
             arm.autoLock();
         }
